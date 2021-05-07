@@ -2,13 +2,13 @@
 
 A set of utilities enhancing the development of react applications.
 
-# Installation
+## Installation
 
 ```sh
 npm i @terrestris/react-util
 ```
 
-# Usage
+## Usage
 
 ```js
 import { useObjectState } from '@terrestris/react-util';
