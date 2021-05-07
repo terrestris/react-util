@@ -3,7 +3,7 @@ name: Test build of react-util
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
