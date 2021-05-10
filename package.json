@@ -13,10 +13,11 @@
     "lint:test:build": "npm run lint:test && npm run build",
     "lint:test": "npm run lint && npm run test",
     "lint": "npm run typecheck && npm run eslint ",
+    "prepublishOnly": "npm run lint:test:build",
     "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git master",
+    "test-ci": "jest --ci --coverage",
     "test-watch": "jest --watch",
     "test": "jest --coverage",
-    "test-ci": "jest --ci --coverage",
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "repository": {
