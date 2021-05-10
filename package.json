@@ -14,7 +14,7 @@
     "lint:test": "npm run lint && npm run test",
     "lint": "npm run typecheck && npm run eslint ",
     "prepublishOnly": "npm run lint:test:build",
-    "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git master",
+    "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git main",
     "test-ci": "jest --ci --coverage",
     "test-watch": "jest --watch",
     "test": "jest --coverage",
