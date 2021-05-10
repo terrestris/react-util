@@ -11,6 +11,7 @@ coverage/
 build/
 dist/
 target/
+*.tgz
 
 # misc
 .DS_Store
