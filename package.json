@@ -34,11 +34,13 @@
     "url": "https://github.com/terrestris/react-util/issues"
   },
   "homepage": "https://github.com/terrestris/react-util#readme",
+  "peerDependencies": {
+    "react": "^16.8",
+    "react-dom": "^16.8"
+  },
   "dependencies": {
     "@terrestris/base-util": "^1.0.1",
-    "lodash": "^4.17.21",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
@@ -67,6 +69,8 @@
     "np": "^7.5.0",
     "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "ts-jest": "^26.5.6",
     "typescript": "^4.2.4"
   }
