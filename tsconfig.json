@@ -13,7 +13,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
     "noImplicitReturns": true,
