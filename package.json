@@ -1,6 +1,6 @@
 {
   "name": "@terrestris/react-util",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A set of utilities enhancing the development of react applications.",
   "main": "./dist/index.js",
   "files": [
