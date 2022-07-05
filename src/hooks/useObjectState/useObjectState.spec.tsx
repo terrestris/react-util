@@ -1,5 +1,5 @@
 import { useObjectState } from './useObjectState';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 
 import { Logger } from '@terrestris/base-util';
 
