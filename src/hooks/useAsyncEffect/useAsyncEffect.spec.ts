@@ -7,6 +7,10 @@ jest.mock('react');
 
 import { useEffect } from 'react';
 
+const asyncTimeout = (time: number) => new Promise(resolve => {
+  setTimeout(resolve, time);
+});
+
 describe('useAsyncEffect', () => {
   beforeEach(() => {
     fetch.resetMocks();
@@ -92,9 +96,6 @@ describe('useAsyncEffect', () => {
         cleanup(); // abort
       }, 500);
     });
-    const asyncTimeout = (time: number) => new Promise(resolve => {
-      setTimeout(resolve, time);
-    });
     useAsyncEffect(async ({ isUnmounted }) => {
       await asyncTimeout(100);
       expect(++count).toBe(1);
@@ -110,7 +111,21 @@ describe('useAsyncEffect', () => {
     }, 1000);
   });
 
-  it('should abort fetch', done => {
+  it('should reject if an error happens', () => {
+    // @ts-ignore
+    useEffect.mockImplementation(handler => {
+      handler();
+    });
+
+    expect(
+      useAsyncEffect(async () => {
+        await asyncTimeout(100);
+        throw new Error('Expect the unexpected.');
+      })
+    ).rejects.toThrow('Expect the unexpected.');
+  });
+
+  it('should abort fetch', () => {
     // @ts-ignore
     useEffect.mockImplementation(handler => {
       const cleanup = handler();
@@ -118,23 +133,18 @@ describe('useAsyncEffect', () => {
         cleanup(); // abort
       }, 500);
     });
-    const asyncTimeout = (time: number) => new Promise(resolve => {
-      setTimeout(resolve, time);
-    });
-    useAsyncEffect(async ({ isUnmounted, signal }) => {
-      await asyncTimeout(100);
-      fetch.mockResponse(async () => new Promise(resolve => {
-        setTimeout(() => resolve(''), 600);
-      }));
-      await fetch('http://some.url', {
-        signal
-      });
-      expect(isUnmounted()).toBe(true);
-    });
-    setTimeout(() => {
-      expect(fetch.mock.calls.length).toBe(1);
-      expect(fetch.mock.results[0].value).rejects.toThrow('The operation was aborted. ');
-      done();
-    }, 1000);
+
+    expect(
+      useAsyncEffect(async ({ isUnmounted, signal }) => {
+        await asyncTimeout(100);
+        fetch.mockResponse(async () => new Promise(resolve => {
+          setTimeout(() => resolve(''), 600);
+        }));
+        await fetch('http://some.url', {
+          signal
+        });
+        expect(isUnmounted()).toBe(true);
+      })
+    ).rejects.toThrow('The operation was aborted. ');
   });
 });
