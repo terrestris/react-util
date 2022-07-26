@@ -35,8 +35,8 @@
   },
   "homepage": "https://github.com/terrestris/react-util#readme",
   "peerDependencies": {
-    "react": "^18.0",
-    "react-dom": "^18.0"
+    "react": ">=17",
+    "react-dom": ">=17"
   },
   "dependencies": {
     "@terrestris/base-util": "^1.0.1",
