@@ -24,8 +24,7 @@
     "rootDir": "./src",
     "sourceMap": true,
     "strictNullChecks": false,
-    "suppressImplicitAnyIndexErrors": true,
-    "target": "es5"
+    "target": "ES2015"
   },
   "include": [
     "src"
