@@ -4,7 +4,7 @@ import {
 
 import OlMap from 'ol/Map';
 
-import MapContext from '../contexts/MapContext';
+import MapContext from '../Context/MapContext/MapContext';
 
 export const useMap = (): (OlMap | undefined) => {
   return useContext(MapContext);
