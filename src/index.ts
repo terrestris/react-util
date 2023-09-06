@@ -20,7 +20,10 @@ import useSelectFeatures from './Hooks/useSelectFeatures/useSelectFeatures';
 import useTimeLayerAware from './Hooks/useTimeLayerAware/useTimeLayerAware';
 import ClickAwayListener from './Util/ClickAwayListener/ClickAwayListener';
 import DigitizeUtil from './Util/DigitizeUtil';
+import { InkmapPrintSpec } from './Util/InkmapTypes';
 import PrintUtil from './Util/PrintUtil';
+import { isWmsLayer, WmsLayer } from './Util/typeUtils';
+import { zoomTo } from './Util/ZoomUtil';
 
 export {
   BackgroundLayerChooser,
@@ -28,6 +31,8 @@ export {
   ClickAwayListener,
   DigitizeUtil,
   FloatingMapLogo,
+  InkmapPrintSpec,
+  isWmsLayer,
   MapComponent,
   MapContext,
   PrintUtil,
@@ -45,5 +50,7 @@ export {
   usePermalink,
   usePropOrDefault,
   useSelectFeatures,
-  useTimeLayerAware
+  useTimeLayerAware,
+  WmsLayer,
+  zoomTo
 };
