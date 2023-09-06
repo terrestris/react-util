@@ -6,14 +6,17 @@ import OlInteractionDraw, { createBox, DrawEvent as OlDrawEvent, Options as OlDr
 import OlVectorLayer from 'ol/layer/Vector';
 import OlVectorSource from 'ol/source/Vector';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
-import { useEffect, useState } from 'react';
 
 import {useOlListener} from "./useOlListener";
 import {useOlInteraction} from "./useOlInteraction";
+import {usePropOrDefault} from "./usePropOrDefault";
 
 export type UseDrawType = 'Point' | 'LineString' | 'Polygon' | 'Circle' | 'Rectangle';
 
 export interface UseDrawProps {
+    /**
+     * Active state of interaction
+     */
     active: boolean;
     /**
      * Whether the line, point, polygon, circle, rectangle or text shape should
@@ -62,21 +65,13 @@ export const useDraw = ({
     onDrawEnd,
     onDrawStart
 }: UseDrawProps) => {
-    const [layer, setLayer] = useState<OlVectorLayer<OlVectorSource<OlGeometry>> | null>(null);
-
     const map = useMap();
 
-    useEffect(() => {
-        if (!map) {
-            return;
-        }
-
-        if (digitizeLayer) {
-            setLayer(digitizeLayer);
-        } else {
-            setLayer(DigitizeUtil.getDigitizeLayer(map));
-        }
-    }, [map, digitizeLayer]);
+    const layer = usePropOrDefault(
+        digitizeLayer,
+        () => map ? DigitizeUtil.getDigitizeLayer(map) : undefined,
+        [map]
+    );
 
     const drawInteraction = useOlInteraction(
         () => {
