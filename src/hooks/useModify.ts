@@ -6,7 +6,7 @@ import Modify, { ModifyEvent, Options as ModifyOptions } from 'ol/interaction/Mo
 import Translate, { Options as TranslateOptions, TranslateEvent } from 'ol/interaction/Translate';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlVectorSource from 'ol/source/Vector';
-import {useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 
 import { DigitizeUtil } from '../Util/DigitizeUtil';
 import useMap from './useMap';
@@ -104,6 +104,12 @@ export const useModify = ({
   const featuresRef = useRef(new OlCollection<OlFeature>());
 
   const layers = useMemo(() => layer ? [layer] : [], [layer]);
+
+  useEffect(() => {
+    if (!active) {
+      featuresRef.current.clear();
+    }
+  }, [active]);
 
   useSelectFeatures({
     clearAfterSelect: false,
