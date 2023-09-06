@@ -1,4 +1,3 @@
-import {DigitizeUtil} from '../Util/DigitizeUtil';
 import OlCollection from 'ol/Collection';
 import * as OlEventConditions from 'ol/events/condition';
 import OlFeature from 'ol/Feature';
@@ -9,9 +8,10 @@ import OlVectorSource from 'ol/source/Vector';
 import {StyleLike as OlStyleLike} from 'ol/style/Style';
 import {useEffect} from 'react';
 
-import {useOlInteraction} from "./useOlInteraction";
-import {usePropOrDefault} from "./usePropOrDefault";
-import {useOlListener} from "./useOlListener";
+import {DigitizeUtil} from '../Util/DigitizeUtil';
+import {useOlInteraction} from './useOlInteraction';
+import {useOlListener} from './useOlListener';
+import {usePropOrDefault} from './usePropOrDefault';
 
 export interface UseSelectFeaturesProps {
     /**
@@ -56,58 +56,58 @@ export interface UseSelectFeaturesProps {
 }
 
 export const useSelectFeatures = ({
-    active,
-    selectStyle,
-    selectInteractionConfig,
-    onFeatureSelect,
-    hitTolerance = 5,
-    layers,
-    clearAfterSelect = false,
-    featuresCollection,
+  active,
+  selectStyle,
+  selectInteractionConfig,
+  onFeatureSelect,
+  hitTolerance = 5,
+  layers,
+  clearAfterSelect = false,
+  featuresCollection,
 }: UseSelectFeaturesProps) => {
-    const features = usePropOrDefault(
-        featuresCollection,
-        () => new OlCollection(),
-        []
-    );
+  const features = usePropOrDefault(
+    featuresCollection,
+    () => new OlCollection(),
+    []
+  );
 
-    const selectInteraction = useOlInteraction(
-        () => {
-            if (!features) {
-                return undefined;
-            }
+  const selectInteraction = useOlInteraction(
+    () => {
+      if (!features) {
+        return undefined;
+      }
 
-            const newInteraction = new OlInteractionSelect({
-                condition: OlEventConditions.singleClick,
-                features,
-                hitTolerance: hitTolerance,
-                style: selectStyle ?? DigitizeUtil.DEFAULT_SELECT_STYLE,
-                layers: layers,
-                ...(selectInteractionConfig ?? {})
-            });
+      const newInteraction = new OlInteractionSelect({
+        condition: OlEventConditions.singleClick,
+        features,
+        hitTolerance: hitTolerance,
+        style: selectStyle ?? DigitizeUtil.DEFAULT_SELECT_STYLE,
+        layers: layers,
+        ...(selectInteractionConfig ?? {})
+      });
 
-            newInteraction.set('name', 'react-geo-select-interaction');
+      newInteraction.set('name', 'react-geo-select-interaction');
 
-            return newInteraction;
-        },
-        [features, hitTolerance, selectStyle, layers, selectInteractionConfig],
-        active
-    );
+      return newInteraction;
+    },
+    [features, hitTolerance, selectStyle, layers, selectInteractionConfig],
+    active
+  );
 
-    useOlListener(
-        selectInteraction,
-        i => i.on('select', e => {
-            if (features && clearAfterSelect) {
-                features.clear();
-            }
-            onFeatureSelect?.(e);
-        }),
-        [features, clearAfterSelect, onFeatureSelect]
-    );
+  useOlListener(
+    selectInteraction,
+    i => i.on('select', e => {
+      if (features && clearAfterSelect) {
+        features.clear();
+      }
+      onFeatureSelect?.(e);
+    }),
+    [features, clearAfterSelect, onFeatureSelect]
+  );
 
-    useEffect(() => {
-        if (!active && features) {
-            features.clear();
-        }
-    }, []);
+  useEffect(() => {
+    if (!active && features) {
+      features.clear();
+    }
+  }, []);
 };
