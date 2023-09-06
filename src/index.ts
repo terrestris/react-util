@@ -9,7 +9,7 @@ import ClickAwayListener from './Util/ClickAwayListener/ClickAwayListener';
 import { DigitizeUtil } from './Util/DigitizeUtil';
 import { InkmapPrintSpec } from './Util/InkmapTypes';
 import { PrintUtil } from './Util/PrintUtil';
-import { isWmsLayer,WmsLayer } from './Util/typeUtils';
+import { isWmsLayer, WmsLayer } from './Util/typeUtils';
 
 export {
   BackgroundLayerChooser,
