@@ -24,4 +24,5 @@ export {
   PrintUtil,
   timeLayerAware,
   useMap,
-  WmsLayer};
+  WmsLayer
+};
