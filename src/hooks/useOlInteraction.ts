@@ -1,16 +1,14 @@
 import {
+  isNil
+} from 'lodash';
+import {
+  Interaction
+} from 'ol/interaction';
+import {
   DependencyList,
   useEffect,
   useState
 } from 'react';
-
-import {
-  isNil
-} from 'lodash';
-
-import {
-  Interaction
-} from 'ol/interaction';
 
 import useMap from './useMap';
 

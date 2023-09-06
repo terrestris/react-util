@@ -1,16 +1,17 @@
-import OlMap from 'ol/Map';
-import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 import {
   downloadBlob,
   getJobStatus,
   queuePrint
 } from '@camptocamp/inkmap';
+import Logger from '@terrestris/base-util/dist/Logger';
+import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
+import { jsPDF } from 'jspdf';
+import _isString from 'lodash/isString';
+import OlMap from 'ol/Map';
+
 import {
   InkmapPrintSpec
 } from './InkmapTypes';
-import { jsPDF } from 'jspdf';
-import _isString from 'lodash/isString';
-import Logger from '@terrestris/base-util/dist/Logger';
 
 export class PrintUtil {
 

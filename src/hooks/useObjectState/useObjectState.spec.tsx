@@ -1,7 +1,7 @@
-import { useObjectState } from './useObjectState';
-import { renderHook, act } from '@testing-library/react';
-
 import { Logger } from '@terrestris/base-util';
+import { act,renderHook } from '@testing-library/react';
+
+import { useObjectState } from './useObjectState';
 
 type User = {
   name: string;
