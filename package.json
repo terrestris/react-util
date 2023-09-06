@@ -1,6 +1,6 @@
 {
   "name": "@terrestris/react-util",
-  "version": "2.2.0-beta.1",
+  "version": "2.2.0-beta.2",
   "description": "A set of utilities enhancing the development of react applications.",
   "main": "./dist/index.js",
   "files": [
@@ -9,10 +9,8 @@
   ],
   "scripts": {
     "build": "rimraf ./dist/* && tsc -p tsconfig.json",
-    "eslint": "eslint -c .eslintrc.js --ext .js,.ts,.tsx && tsc --noEmit --project tsconfig.json",
-    "lint:test:build": "npm run lint:test && npm run build",
-    "lint:test": "npm run lint && npm run test",
-    "lint": "npm run typecheck && npm run eslint ",
+    "lint": "eslint -c .eslintrc --ext .tsx,.ts src/",
+    "lint:fix": "eslint -c .eslintrc --ext .tsx,.ts src/ --fix",
     "prepublishOnly": "npm run lint:test:build",
     "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git main",
     "test-ci": "jest --ci --coverage",
@@ -36,12 +34,12 @@
   "homepage": "https://github.com/terrestris/react-util#readme",
   "peerDependencies": {
     "react": ">=17",
-    "react-dom": ">=17"
+    "react-dom": ">=17",
+    "ol": ">=7"
   },
   "dependencies": {
     "@terrestris/base-util": "^1.0.1",
-    "lodash": "^4.17.21",
-    "ol": "^8.0.0"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",
@@ -50,6 +48,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-react": "^7.13.13",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "@babel/preset-typescript": "^7.13.0",
     "@cfaester/enzyme-adapter-react-18": "^0.7.1",
     "@terrestris/eslint-config-typescript": "^3.0.0",

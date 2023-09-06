@@ -1,22 +1,19 @@
-import React, {
-  useState,
-  useEffect,
-  useRef
-} from 'react';
-
 import OlOverviewMap from 'ol/control/OverviewMap';
 import OlLayerBase from 'ol/layer/Base';
-import OlLayer from 'ol/layer/Layer';
-import OlView from 'ol/View';
-import OlLayerTile from 'ol/layer/Tile';
 import OlLayerImage from 'ol/layer/Image';
+import OlLayer from 'ol/layer/Layer';
+import OlLayerTile from 'ol/layer/Tile';
 import { ObjectEvent } from 'ol/Object';
 import { getUid } from 'ol/util';
+import OlView from 'ol/View';
+import React, {
+  useEffect,
+  useRef,
+  useState} from 'react';
 
 import BackgroundLayerPreview, {
   BackgroundLayerLoadingMaskProps
 } from '../BackgroundLayerPreview/BackgroundLayerPreview';
-
 import useMap from '../hooks/useMap';
 
 export type BackgroundLayerButtonProps = {

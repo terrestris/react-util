@@ -1,6 +1,5 @@
-import * as React from 'react';
-
 import _cloneDeep from 'lodash/cloneDeep';
+import * as React from 'react';
 
 import { CSS_PREFIX } from '../../constants';
 

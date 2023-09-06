@@ -1,9 +1,4 @@
 import {
-  DependencyList,
-  useEffect
-} from 'react';
-
-import {
   Observable
 } from 'ol';
 import {
@@ -12,6 +7,10 @@ import {
 import {
   unByKey
 } from 'ol/Observable';
+import {
+  DependencyList,
+  useEffect
+} from 'react';
 
 /**
  * This hook unregisters listeners if the dependency array changes
