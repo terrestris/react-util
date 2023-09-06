@@ -1,7 +1,7 @@
-import { useAsyncEffect } from './useAsyncEffect';
-
 // @ts-ignore
 import fetch from 'jest-fetch-mock';
+
+import { useAsyncEffect } from './useAsyncEffect';
 
 jest.mock('react');
 

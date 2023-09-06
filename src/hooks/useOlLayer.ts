@@ -1,13 +1,12 @@
 import {
+  isNil
+} from 'lodash';
+import BaseLayer from 'ol/layer/Base';
+import {
   DependencyList,
   useEffect,
   useState
 } from 'react';
-
-import {
-  isNil
-} from 'lodash';
-import BaseLayer from 'ol/layer/Base';
 
 import useMap from './useMap';
 

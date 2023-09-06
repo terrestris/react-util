@@ -1,28 +1,28 @@
 import BackgroundLayerChooser from './BackgroundLayerChooser/BackgroundLayerChooser';
 import BackgroundLayerPreview from './BackgroundLayerPreview/BackgroundLayerPreview';
-import useMap from './hooks/useMap';
-import MapComponent from './Map/MapComponent/MapComponent';
-import FloatingMapLogo from './Map/FloatingMapLogo/FloatingMapLogo';
 import onDropAware from './HigherOrderComponent/DropTargetMap/DropTargetMap';
 import timeLayerAware from './HigherOrderComponent/TimeLayerAware/TimeLayerAware';
+import useMap from './hooks/useMap';
+import FloatingMapLogo from './Map/FloatingMapLogo/FloatingMapLogo';
+import MapComponent from './Map/MapComponent/MapComponent';
 import ClickAwayListener from './Util/ClickAwayListener/ClickAwayListener';
 import { DigitizeUtil } from './Util/DigitizeUtil';
-import { WmsLayer, isWmsLayer } from './Util/typeUtils';
-import { PrintUtil } from './Util/PrintUtil';
 import { InkmapPrintSpec } from './Util/InkmapTypes';
+import { PrintUtil } from './Util/PrintUtil';
+import { isWmsLayer, WmsLayer } from './Util/typeUtils';
 
 export {
   BackgroundLayerChooser,
   BackgroundLayerPreview,
-  useMap,
-  MapComponent,
-  FloatingMapLogo,
-  onDropAware,
-  timeLayerAware,
   ClickAwayListener,
   DigitizeUtil,
+  FloatingMapLogo,
+  InkmapPrintSpec,
   isWmsLayer,
-  WmsLayer,
+  MapComponent,
+  onDropAware,
   PrintUtil,
-  InkmapPrintSpec
+  timeLayerAware,
+  useMap,
+  WmsLayer
 };
