@@ -1,4 +1,3 @@
-// @ts-ignore
 import { useGeoLocation } from './useGeoLocation';
 
 jest.mock('react');

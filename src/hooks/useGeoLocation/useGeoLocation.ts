@@ -86,8 +86,8 @@ export const useGeoLocation = ({
   }), [], showMarker);
 
   /**
-     * Callback of the interactions on change event.
-     */
+   * Callback of the interactions on change event.
+   */
   const onLocationChanged = (geoLocationEvent: BaseEvent) => {
     const ac = geoLocationEvent.target as OlGeolocation;
 
