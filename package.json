@@ -8,15 +8,19 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf ./dist/* && tsc -p tsconfig.json",
+    "build": "npm run clean && npm run build:dist && npm run build:declaration",
+    "build:declaration": "tsc --emitDeclarationOnly",
+    "build:dist": "tsc -p tsconfig.json",
+    "clean": "rimraf ./build/* ./coverage/* ./dist/*",
     "lint": "eslint -c .eslintrc --ext .tsx,.ts src/",
     "lint:fix": "eslint -c .eslintrc --ext .tsx,.ts src/ --fix",
     "prepublishOnly": "npm run lint:test:build",
     "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git main",
+    "test": "jest --maxWorkers=4 --coverage",
     "test-ci": "jest --ci --coverage",
     "test-watch": "jest --watch",
-    "test": "jest --maxWorkers=4 --coverage",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "watch:buildto": "node watchBuild.js"
   },
   "repository": {
     "type": "git",
@@ -33,9 +37,9 @@
   },
   "homepage": "https://github.com/terrestris/react-util#readme",
   "peerDependencies": {
+    "ol": ">=7",
     "react": ">=17",
-    "react-dom": ">=17",
-    "ol": ">=7"
+    "react-dom": ">=17"
   },
   "dependencies": {
     "@terrestris/base-util": "^1.0.1",
@@ -48,7 +52,6 @@
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-react": "^7.13.13",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
     "@babel/preset-typescript": "^7.13.0",
     "@cfaester/enzyme-adapter-react-18": "^0.7.1",
     "@terrestris/eslint-config-typescript": "^3.0.0",
@@ -66,6 +69,8 @@
     "core-js": "^3.12.0",
     "enzyme": "^3.11.0",
     "eslint": "^8.14.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "fs-extra": "^11.1.1",
     "jest": "^29.6.4",
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^29.6.4",
@@ -83,6 +88,7 @@
     "ts-jest": "^29.1.1",
     "typescript": "^4.2.4",
     "use-resize-observer": "^9.1.0",
+    "watch": "^1.0.2",
     "whatwg-fetch": "^3.6.18"
   }
 }
