@@ -2,6 +2,7 @@ import BackgroundLayerChooser from './BackgroundLayerChooser/BackgroundLayerChoo
 import BackgroundLayerPreview from './BackgroundLayerPreview/BackgroundLayerPreview';
 import onDropAware from './HigherOrderComponent/DropTargetMap/DropTargetMap';
 import timeLayerAware from './HigherOrderComponent/TimeLayerAware/TimeLayerAware';
+import {GeoLocation, useGeoLocation } from './hooks/useGeoLocation/useGeoLocation';
 import useMap from './hooks/useMap';
 import FloatingMapLogo from './Map/FloatingMapLogo/FloatingMapLogo';
 import MapComponent from './Map/MapComponent/MapComponent';
@@ -17,12 +18,13 @@ export {
   ClickAwayListener,
   DigitizeUtil,
   FloatingMapLogo,
+  GeoLocation,
   InkmapPrintSpec,
   isWmsLayer,
   MapComponent,
   onDropAware,
   PrintUtil,
   timeLayerAware,
+  useGeoLocation,
   useMap,
-  WmsLayer
-};
+  WmsLayer};
