@@ -32,6 +32,14 @@ export type BackgroundLayerChooserProps = {
   LoadingMask: React.FC<BackgroundLayerLoadingMaskProps>;
 };
 
+/**
+ * This component supports TileWMS and ImageWMS layers. Besides that, mapbox vector tile layers are
+ * also supported in a limited way:
+ *
+ * * you'll need to render the vector tile layer inside of a group layer
+ * * the group layer needs to have a property isVectorTile set to true
+ * * the group layer needs to have a property url pointing to the json description
+ */
 export const BackgroundLayerChooser: React.FC<BackgroundLayerChooserProps> = ({
   layers,
   backgroundLayerFilter = (l: OlLayerBase) => !!l.get('isBackgroundLayer'),
