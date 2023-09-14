@@ -1,11 +1,15 @@
+import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 import { Coordinate } from 'ol/coordinate';
 import OlLayerBase from 'ol/layer/Base';
+import LayerGroup from 'ol/layer/Group';
 import OlLayerImage from 'ol/layer/Image';
 import OlLayer from 'ol/layer/Layer';
 import OlLayerTile from 'ol/layer/Tile';
+import OlLayerVector from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import { getUid } from 'ol/util';
 import OlView from 'ol/View';
+import { apply as applyMapboxStyle } from 'ol-mapbox-style';
 import React, { useEffect,useState } from 'react';
 
 import useMap from '../hooks/useMap';
@@ -51,10 +55,23 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
       previewLayer = new OlLayerTile({
         source: layer.getSource()
       });
-    } else if (layer instanceof OlLayerImage){
+    } else if (layer instanceof OlLayerImage) {
       previewLayer = new OlLayerImage({
         source: layer.getSource()
       });
+    } else if (layer instanceof OlLayerVector) {
+      previewLayer = new OlLayerVector({
+        source: layer.getSource()
+      });
+    } else if (layer instanceof LayerGroup) {
+      if (layer.get('isVectorTile')) {
+        previewLayer = new LayerGroup();
+        applyMapboxStyle(previewLayer, layer.get('url'));
+      } else {
+        previewLayer = new LayerGroup({
+          layers: layer.getLayers()
+        });
+      }
     }
 
     setPreviewMap(new OlMap({
@@ -98,8 +115,8 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
   }, [zoom, center]);
 
   const getBgLayersFromMap = (): OlLayer[] => {
-    return mainMap?.getLayerGroup().getLayers()
-      .getArray().filter(backgroundLayerFilter) as OlLayer[] || [];
+    return MapUtil.getAllLayers(mainMap)
+      .filter(backgroundLayerFilter) as OlLayer[] || [];
   };
 
   const updateBgLayerVisibility = (evt: React.MouseEvent<HTMLDivElement>) => {
@@ -110,7 +127,7 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
       return;
     }
 
-    const newBgLayer = mainMap?.getLayerGroup().getLayers().getArray()
+    const newBgLayer = MapUtil.getAllLayers(mainMap)
       .find(l => getUid(l) === layerId);
 
     if (!newBgLayer) {
@@ -123,7 +140,6 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
     if (evt.type === 'click') {
       onClick(newBgLayer as OlLayer);
     }
-
   };
 
   const restoreBgLayerVisibility = () => {
@@ -134,7 +150,6 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
   const uid = getUid(layer);
   const activeUid = getUid(activeLayer);
   const isActive = uid === activeUid;
-
   if (!previewMap) {
     return <></>;
   }
