@@ -14,7 +14,7 @@
     "clean": "rimraf ./build/* ./coverage/* ./dist/*",
     "lint": "eslint -c .eslintrc --ext .tsx,.ts src/",
     "lint:fix": "eslint -c .eslintrc --ext .tsx,.ts src/ --fix",
-    "prepublishOnly": "npm run lint:test:build",
+    "prepublishOnly": "npm run lint",
     "release": "np --no-yarn && git push https://github.com/terrestris/react-util.git main",
     "test": "jest --maxWorkers=4 --coverage",
     "test-ci": "jest --ci --coverage",
