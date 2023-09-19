@@ -1,11 +1,13 @@
 import OlOverviewMap from 'ol/control/OverviewMap';
 import OlLayerBase from 'ol/layer/Base';
+import LayerGroup from 'ol/layer/Group';
 import OlLayerImage from 'ol/layer/Image';
 import OlLayer from 'ol/layer/Layer';
 import OlLayerTile from 'ol/layer/Tile';
 import { ObjectEvent } from 'ol/Object';
 import { getUid } from 'ol/util';
 import OlView from 'ol/View';
+import { apply as applyMapboxStyle } from 'ol-mapbox-style';
 import React, {
   useEffect,
   useRef,
@@ -88,6 +90,15 @@ export const BackgroundLayerChooser: React.FC<BackgroundLayerChooserProps> = ({
         ovLayer = new OlLayerImage({
           source: selectedLayer.getSource()
         });
+      } else if (selectedLayer instanceof LayerGroup) {
+        if (selectedLayer.get('isVectorTile')) {
+          ovLayer = new LayerGroup();
+          applyMapboxStyle(ovLayer, selectedLayer.get('url'));
+        } else {
+          ovLayer = new LayerGroup({
+            layers: selectedLayer.getLayers()
+          });
+        }
       }
       if (ovLayer && mapTarget.current) {
         const overViewControl = new OlOverviewMap({
