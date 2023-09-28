@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x]
 
     steps:
     - name: Checkout sources
@@ -32,7 +32,7 @@ jobs:
           ${{ runner.OS }}-
 
     - name: Install dependencies ⏬
-      run: npm ci --force
+      run: npm ci
 
     - name: Lint code 💄
       run: npm run lint

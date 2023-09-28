@@ -2,13 +2,27 @@
   "name": "@terrestris/react-util",
   "version": "3.0.0",
   "description": "A set of utilities enhancing the development of react applications.",
+  "keywords": [
+    "react",
+    "util"
+  ],
+  "homepage": "https://github.com/terrestris/react-util#readme",
+  "bugs": {
+    "url": "https://github.com/terrestris/react-util/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terrestris/react-util.git"
+  },
+  "license": "BSD-2-Clause",
+  "author": "terrestris GmbH & Co. KG <info@terrestris.de>",
   "main": "./dist/index.js",
   "files": [
     "src",
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:dist && npm run build:declaration",
+    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles -u 1 src/**/*.png dist/",
     "build:declaration": "tsc --emitDeclarationOnly",
     "build:dist": "tsc -p tsconfig.json",
     "clean": "rimraf ./build/* ./coverage/* ./dist/*",
@@ -22,27 +36,8 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "watch:buildto": "node watchBuild.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/terrestris/react-util.git"
-  },
-  "author": "terrestris GmbH & Co. KG <info@terrestris.de>",
-  "keywords": [
-    "react",
-    "util"
-  ],
-  "license": "BSD-2-Clause",
-  "bugs": {
-    "url": "https://github.com/terrestris/react-util/issues"
-  },
-  "homepage": "https://github.com/terrestris/react-util#readme",
-  "peerDependencies": {
-    "ol": ">=7",
-    "react": ">=17",
-    "react-dom": ">=17"
-  },
   "dependencies": {
-    "@terrestris/base-util": "^1.0.1",
+    "@terrestris/base-util": "^1.0.2",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
@@ -56,17 +51,18 @@
     "@cfaester/enzyme-adapter-react-18": "^0.7.1",
     "@release-it/conventional-changelog": "^7.0.1",
     "@terrestris/eslint-config-typescript": "^3.0.0",
-    "@terrestris/ol-util": "^12.0.1",
+    "@terrestris/ol-util": "^13.0.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^13.1.1",
     "@types/jest": "^29.5.4",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.10.2",
     "@typescript-eslint/parser": "^5.21.0",
     "babel-plugin-import": "^1.13.3",
     "canvas": "^2.11.2",
+    "copyfiles": "^2.4.1",
     "core-js": "^3.12.0",
     "enzyme": "^3.11.0",
     "eslint": "^8.14.0",
@@ -79,18 +75,23 @@
     "jspdf": "^2.5.1",
     "less": "^4.1.1",
     "moment": "^2.29.4",
-    "ol": "^7.5.2",
+    "ol": "^8.1.0",
     "ol-mapbox-style": "^11.0.3",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",
     "react-dom": "^18.1.0",
-    "release-it": "^16.1.5",
     "regenerator-runtime": "^0.13.7",
+    "release-it": "^16.1.5",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
     "typescript": "^4.2.4",
     "use-resize-observer": "^9.1.0",
     "watch": "^1.0.2",
     "whatwg-fetch": "^3.6.18"
+  },
+  "peerDependencies": {
+    "ol": ">=7",
+    "react": ">=17",
+    "react-dom": ">=17"
   }
 }
