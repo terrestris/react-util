@@ -37,7 +37,7 @@
     "watch:buildto": "node watchBuild.js"
   },
   "dependencies": {
-    "@terrestris/base-util": "^1.0.1",
+    "@terrestris/base-util": "^1.0.2",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
