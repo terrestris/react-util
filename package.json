@@ -22,10 +22,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles -u 1 src/**/*.png dist/",
+    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles -u 1 src/**/*.png dist/ && rimraf ./dist/test",
     "build:declaration": "tsc --emitDeclarationOnly",
     "build:dist": "tsc -p tsconfig.json",
-    "clean": "rimraf ./build/* ./coverage/* ./dist/*",
+    "clean": "rimraf ./coverage/* ./dist/*",
     "lint": "eslint -c .eslintrc --ext .tsx,.ts src/",
     "lint:fix": "eslint -c .eslintrc --ext .tsx,.ts src/ --fix",
     "release": "release-it",
