@@ -13,8 +13,8 @@ import OlStyleIcon from 'ol/style/Icon';
 import OlStyleStyle from 'ol/style/Style';
 import {useEffect, useMemo, useState} from 'react';
 
-import useMap from '../useMap';
-import {useOlLayer} from '../useOlLayer';
+import useMap from '../useMap/useMap';
+import {useOlLayer} from '../useOlLayer/useOlLayer';
 import mapMarker from './geolocation-marker.png';
 import mapMarkerHeading from './geolocation-marker-heading.png';
 

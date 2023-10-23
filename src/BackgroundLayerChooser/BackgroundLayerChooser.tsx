@@ -16,7 +16,7 @@ import React, {
 import BackgroundLayerPreview, {
   BackgroundLayerLoadingMaskProps
 } from '../BackgroundLayerPreview/BackgroundLayerPreview';
-import useMap from '../hooks/useMap';
+import useMap from '../hooks/useMap/useMap';
 
 export type BackgroundLayerButtonProps = {
   layerOptionsVisible: boolean;

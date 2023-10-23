@@ -3,7 +3,7 @@ import BackgroundLayerPreview from './BackgroundLayerPreview/BackgroundLayerPrev
 import onDropAware from './HigherOrderComponent/DropTargetMap/DropTargetMap';
 import timeLayerAware from './HigherOrderComponent/TimeLayerAware/TimeLayerAware';
 import {GeoLocation, useGeoLocation } from './hooks/useGeoLocation/useGeoLocation';
-import useMap from './hooks/useMap';
+import useMap from './hooks/useMap/useMap';
 import FloatingMapLogo from './Map/FloatingMapLogo/FloatingMapLogo';
 import MapComponent from './Map/MapComponent/MapComponent';
 import ClickAwayListener from './Util/ClickAwayListener/ClickAwayListener';

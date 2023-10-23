@@ -8,12 +8,12 @@ import OlVectorLayer from 'ol/layer/Vector';
 import OlVectorSource from 'ol/source/Vector';
 import {useEffect, useMemo, useRef} from 'react';
 
-import { DigitizeUtil } from '../Util/DigitizeUtil';
-import useMap from './useMap';
-import {useOlInteraction} from './useOlInteraction';
-import {useOlListener} from './useOlListener';
-import {usePropOrDefault} from './usePropOrDefault';
-import {useSelectFeatures, UseSelectFeaturesProps} from './useSelectFeatures';
+import { DigitizeUtil } from '../../Util/DigitizeUtil';
+import useMap from '../useMap/useMap';
+import {useOlInteraction} from '../useOlInteraction/useOlInteraction';
+import {useOlListener} from '../useOlListener/useOlListener';
+import {usePropOrDefault} from '../usePropOrDefault/usePropOrDefault';
+import {useSelectFeatures, UseSelectFeaturesProps} from '../useSelectFeatures/useSelectFeatures';
 
 interface OwnProps {
     /**

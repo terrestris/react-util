@@ -8,10 +8,10 @@ import OlVectorSource from 'ol/source/Vector';
 import {StyleLike as OlStyleLike} from 'ol/style/Style';
 import {useEffect} from 'react';
 
-import {DigitizeUtil} from '../Util/DigitizeUtil';
-import {useOlInteraction} from './useOlInteraction';
-import {useOlListener} from './useOlListener';
-import {usePropOrDefault} from './usePropOrDefault';
+import {DigitizeUtil} from '../../Util/DigitizeUtil';
+import {useOlInteraction} from '../useOlInteraction/useOlInteraction';
+import {useOlListener} from '../useOlListener/useOlListener';
+import {usePropOrDefault} from '../usePropOrDefault/usePropOrDefault';
 
 export interface UseSelectFeaturesProps {
     /**

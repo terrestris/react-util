@@ -5,55 +5,55 @@ import OlVectorLayer from 'ol/layer/Vector';
 import OlVectorSource from 'ol/source/Vector';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
-import { DigitizeUtil } from '../Util/DigitizeUtil';
-import useMap from './useMap';
-import {useOlInteraction} from './useOlInteraction';
-import {useOlListener} from './useOlListener';
-import {usePropOrDefault} from './usePropOrDefault';
+import { DigitizeUtil } from '../../Util/DigitizeUtil';
+import useMap from '../useMap/useMap';
+import {useOlInteraction} from '../useOlInteraction/useOlInteraction';
+import {useOlListener} from '../useOlListener/useOlListener';
+import {usePropOrDefault} from '../usePropOrDefault/usePropOrDefault';
 
 export type UseDrawType = 'Point' | 'LineString' | 'Polygon' | 'Circle' | 'Rectangle';
 
 export interface UseDrawProps {
-    /**
-     * Active state of interaction
-     */
-    active: boolean;
-    /**
-     * Whether the line, point, polygon, circle, rectangle or text shape should
-     * be drawn.
-     */
-    drawType: UseDrawType;
-    /**
-     * Style object / style function for drawn feature.
-     */
-    drawStyle?: OlStyleLike;
-    /**
-     * Listener function for the 'drawend' event of an ol.interaction.Draw.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-DrawEvent.html
-     * for more information.
-     */
-    onDrawEnd?: (event: OlDrawEvent) => void;
-    /**
-     * Listener function for the 'drawstart' event of an ol.interaction.Draw.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-DrawEvent.html
-     * for more information.
-     */
-    onDrawStart?: (event: OlDrawEvent) => void;
-    /**
-     * The vector layer which will be used for digitize features.
-     * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
-     */
-    digitizeLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
-    /**
-     * Additional configuration object to apply to the ol.interaction.Draw.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-Draw.html
-     * for more information
-     *
-     * Note: The keys source, type, geometryFunction, style and freehandCondition
-     *       are handled internally and shouldn't be overwritten without any
-     *       specific cause.
-     */
-    drawInteractionConfig?: Omit<OlDrawOptions, 'source'|'type'|'geometryFunction'|'style'|'freehandCondition'>;
+  /**
+   * Active state of interaction
+   */
+  active: boolean;
+  /**
+   * Whether the line, point, polygon, circle, rectangle or text shape should
+   * be drawn.
+   */
+  drawType: UseDrawType;
+  /**
+   * Style object / style function for drawn feature.
+   */
+  drawStyle?: OlStyleLike;
+  /**
+   * Listener function for the 'drawend' event of an ol.interaction.Draw.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-DrawEvent.html
+   * for more information.
+   */
+  onDrawEnd?: (event: OlDrawEvent) => void;
+  /**
+   * Listener function for the 'drawstart' event of an ol.interaction.Draw.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-DrawEvent.html
+   * for more information.
+   */
+  onDrawStart?: (event: OlDrawEvent) => void;
+  /**
+   * The vector layer which will be used for digitize features.
+   * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
+   */
+  digitizeLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  /**
+   * Additional configuration object to apply to the ol.interaction.Draw.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-Draw.html
+   * for more information
+   *
+   * Note: The keys source, type, geometryFunction, style and freehandCondition
+   *       are handled internally and shouldn't be overwritten without any
+   *       specific cause.
+   */
+  drawInteractionConfig?: Omit<OlDrawOptions, 'source'|'type'|'geometryFunction'|'style'|'freehandCondition'>;
 }
 
 export const useDraw = ({

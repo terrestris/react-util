@@ -8,7 +8,7 @@ import {
   useState
 } from 'react';
 
-import useMap from './useMap';
+import useMap from '../useMap/useMap';
 
 /**
  * This hook adds a layer to the map and removes/updates it if the dependency array changes.
