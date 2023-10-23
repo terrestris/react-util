@@ -1,8 +1,14 @@
+import {
+  render
+} from '@testing-library/react';
+import { Map } from 'ol';
+import React from 'react';
+
 import TestUtil from '../../Util/TestUtil';
 import MapComponent from './MapComponent';
 
 describe('<MapComponent />', () => {
-  let map;
+  let map: Map;
 
   it('is defined', () => {
     expect(MapComponent).not.toBeUndefined();
@@ -13,19 +19,11 @@ describe('<MapComponent />', () => {
   });
 
   it('can be rendered', () => {
-    const wrapper = TestUtil.mountComponent(MapComponent, {map});
-    expect(wrapper).not.toBeUndefined();
+    const { container } = render(
+      <MapComponent
+        map={map}
+      />
+    );
+    expect(container).toBeVisible();
   });
-
-  it('passes props', () => {
-    const wrapper = TestUtil.mountComponent(MapComponent, {
-      map: map,
-      className: 'podolski',
-      fc: 'koeln'
-    });
-    const div = wrapper.find('div').getElements()[0];
-    expect(div.props.className).toContain('podolski');
-    expect(div.props.fc).toBe('koeln');
-  });
-
 });

@@ -3,10 +3,10 @@ import React, {
   useCallback
 } from 'react';
 
-export interface MapComponentProps extends React.ComponentProps<'div'> {
+export type MapComponentProps = React.ComponentProps<'div'> & {
   map: OlMap;
   mapDivId?: string;
-}
+};
 
 export const MapComponent: React.FC<MapComponentProps> = ({
   map,

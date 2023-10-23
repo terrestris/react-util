@@ -12,7 +12,7 @@ import OlView from 'ol/View';
 import { apply as applyMapboxStyle } from 'ol-mapbox-style';
 import React, { useEffect,useState } from 'react';
 
-import useMap from '../hooks/useMap';
+import useMap from '../hooks/useMap/useMap';
 import MapComponent from '../Map/MapComponent/MapComponent';
 
 export type BackgroundLayerPreviewProps = {
