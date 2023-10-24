@@ -37,3 +37,5 @@ export const useOlListener = <ObservableType extends Observable>(
     };
   }, [observable, active, ...dependencies]);
 };
+
+export default useOlListener;

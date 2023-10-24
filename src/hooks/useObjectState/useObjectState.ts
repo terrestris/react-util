@@ -41,3 +41,5 @@ export const useObjectState = <S extends object>(
     setState
   ];
 };
+
+export default useObjectState;

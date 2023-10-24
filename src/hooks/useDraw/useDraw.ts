@@ -121,3 +121,5 @@ export const useDraw = ({
     [drawInteraction, onDrawStart]
   );
 };
+
+export default useDraw;

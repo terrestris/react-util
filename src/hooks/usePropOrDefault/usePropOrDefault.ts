@@ -16,3 +16,5 @@ export const usePropOrDefault = <T>(
 
   return value;
 };
+
+export default usePropOrDefault;

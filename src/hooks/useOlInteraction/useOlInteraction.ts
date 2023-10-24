@@ -56,3 +56,5 @@ export const useOlInteraction = <InteractionType extends Interaction> (
 
   return interaction;
 };
+
+export default useOlInteraction;

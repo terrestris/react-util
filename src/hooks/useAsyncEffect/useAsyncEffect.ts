@@ -45,3 +45,5 @@ export const useAsyncEffect = (effect: AsyncEffect, dependencies?: DependencyLis
     }, dependencies);
   });
 };
+
+export default useAsyncEffect;

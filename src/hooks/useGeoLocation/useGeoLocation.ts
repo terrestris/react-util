@@ -186,3 +186,5 @@ export const useGeoLocation = ({
     trackedLine
   };
 };
+
+export default useGeoLocation;

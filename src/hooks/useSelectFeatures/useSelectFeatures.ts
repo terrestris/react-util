@@ -111,3 +111,5 @@ export const useSelectFeatures = ({
     }
   }, []);
 };
+
+export default useSelectFeatures;

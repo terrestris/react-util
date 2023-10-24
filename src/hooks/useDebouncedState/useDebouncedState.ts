@@ -26,3 +26,5 @@ export const useDebouncedState = <T>({ initialValue, time = 100 }: UseDebouncedS
 
   return [state, setDelayedState];
 };
+
+export default useDebouncedState;

@@ -55,3 +55,5 @@ export const useOlLayer = <LayerType extends BaseLayer>(
 
   return layer;
 };
+
+export default useOlLayer;

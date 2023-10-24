@@ -180,3 +180,5 @@ export const useModify = ({
     [onTranslating]
   );
 };
+
+export default useModify;

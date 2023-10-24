@@ -232,3 +232,4 @@ export class DigitizeUtil {
   }
 }
 
+export default DigitizeUtil;
