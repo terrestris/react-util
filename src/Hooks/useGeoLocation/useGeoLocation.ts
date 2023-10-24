@@ -73,8 +73,8 @@ export const useGeoLocation = ({
     }),
     style: (feature: OlFeature<OlGeometry> | RenderFeature) => {
       const heading = feature.get('heading');
-      const src = heading !== 0 ? mapMarkerHeading : mapMarker;
-      const rotation = heading !== 0 ? heading * Math.PI / 180 : 0;
+      const src = (Number.isFinite(heading) && heading !== 0) ? mapMarkerHeading : mapMarker;
+      const rotation = (Number.isFinite(heading) && heading !== 0) ? heading * Math.PI / 180 : 0;
 
       return [new OlStyleStyle({
         image: new OlStyleIcon({
@@ -83,7 +83,7 @@ export const useGeoLocation = ({
         })
       })];
     }
-  }), [], showMarker);
+  }), [], showMarker && active);
 
   /**
    * Callback of the interactions on change event.
