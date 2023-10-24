@@ -22,7 +22,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles -u 1 src/**/*.png dist/ && rimraf ./dist/test",
+    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles src/**/*.png dist/ && rimraf ./dist/test",
     "build:declaration": "tsc --emitDeclarationOnly",
     "build:dist": "tsc -p tsconfig.json",
     "clean": "rimraf ./coverage/* ./dist/*",
