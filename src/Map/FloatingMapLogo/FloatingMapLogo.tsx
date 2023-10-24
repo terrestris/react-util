@@ -5,7 +5,7 @@ import { CSS_PREFIX } from '../../constants';
 
 export type FloatingMapLogoProps = Exclude<React.ComponentProps<'img'>, 'src' | 'height'> & {
   /**
-   * Whether the map-logo is absolutely postioned or not. Default is to false.
+   * Whether the map logo is absolutely postioned or not. Default is false.
    */
   absolutelyPositioned?: boolean;
 
