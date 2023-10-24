@@ -13,7 +13,7 @@ import React, {
   useRef,
   useState} from 'react';
 
-import useMap from '../../hooks/useMap/useMap';
+import useMap from '../../Hooks/useMap/useMap';
 import BackgroundLayerPreview, {
   BackgroundLayerLoadingMaskProps
 } from '../BackgroundLayerPreview/BackgroundLayerPreview';
