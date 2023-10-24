@@ -98,7 +98,7 @@ export const useDraw = ({
         ...(drawInteractionConfig ?? {})
       });
 
-      newInteraction.set('name', `react-geo-draw-interaction-${drawType}`);
+      newInteraction.set('name', `react-util-draw-interaction-${drawType}`);
       return newInteraction;
     },
     [map, layer, drawType, drawStyle, drawInteractionConfig],

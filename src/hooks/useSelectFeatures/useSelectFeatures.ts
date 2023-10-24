@@ -86,7 +86,7 @@ export const useSelectFeatures = ({
         ...(selectInteractionConfig ?? {})
       });
 
-      newInteraction.set('name', 'react-geo-select-interaction');
+      newInteraction.set('name', 'react-util-select-interaction');
 
       return newInteraction;
     },

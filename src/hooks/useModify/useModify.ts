@@ -128,7 +128,7 @@ export const useModify = ({
         features: featuresRef.current,
         ...translateInteractionConfig
       });
-      newTranslateInteraction.set('name', 'react-geo-translate-interaction');
+      newTranslateInteraction.set('name', 'react-util-translate-interaction');
       return newTranslateInteraction;
     },
     [translateInteractionConfig],
@@ -143,7 +143,7 @@ export const useModify = ({
         style: selectStyle ?? DigitizeUtil.DEFAULT_SELECT_STYLE,
         ...modifyInteractionConfig
       });
-      newModifyInteraction.set('name', 'react-geo-modify-interaction');
+      newModifyInteraction.set('name', 'react-util-modify-interaction');
       return newModifyInteraction;
     },
     [modifyInteractionConfig],

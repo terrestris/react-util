@@ -25,6 +25,6 @@ describe('<FloatingMapLogo />', () => {
     );
 
     const imgEl = screen.getByRole('img');
-    expect(imgEl).toHaveClass('react-geo-floatingmaplogo');
+    expect(imgEl).toHaveClass('react-util-floatingmaplogo');
   });
 });

@@ -112,7 +112,7 @@ export const BackgroundLayerChooser: React.FC<BackgroundLayerChooserProps> = ({
         const overViewControl = new OlOverviewMap({
           collapsible: false,
           target: mapTarget.current,
-          className: 'ol-overviewmap react-geo-bg-layer-chooser-overviewmap',
+          className: 'ol-overviewmap react-util-bg-layer-chooser-overviewmap',
           layers: [ovLayer],
           view: new OlView({
             projection: map.getView().getProjection()

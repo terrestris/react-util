@@ -1,3 +1,3 @@
-const CSS_PREFIX = 'react-geo-';
+const CSS_PREFIX = 'react-util-';
 
 export { CSS_PREFIX };
