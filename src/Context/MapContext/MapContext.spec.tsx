@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import OlMap from 'ol/Map';
 import React from 'react';
 
-import { useMap } from '../../hooks/useMap/useMap';
+import { useMap } from '../../Hooks/useMap/useMap';
 import { TestUtil } from '../../Util/TestUtil';
 import MapContext from './MapContext';
 

@@ -7,8 +7,8 @@ import OlVectorSource from 'ol/source/Vector';
 import * as React from 'react';
 import { ReactElement } from 'react';
 
+import MapComponent from '../Components/MapComponent/MapComponent';
 import MapContext from '../Context/MapContext/MapContext';
-import MapComponent from '../Map/MapComponent/MapComponent';
 
 export async function actSetTimeout(time: number): Promise<void> {
   // @ts-ignore
