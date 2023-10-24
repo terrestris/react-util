@@ -13,10 +13,10 @@ import React, {
   useRef,
   useState} from 'react';
 
+import useMap from '../../hooks/useMap/useMap';
 import BackgroundLayerPreview, {
   BackgroundLayerLoadingMaskProps
 } from '../BackgroundLayerPreview/BackgroundLayerPreview';
-import useMap from '../hooks/useMap/useMap';
 
 export type BackgroundLayerButtonProps = {
   layerOptionsVisible: boolean;
