@@ -26,7 +26,7 @@ export class PrintUtil {
       units: 'metric'
     },
     dpi: 120,
-    outputFileName: 'react-geo-image',
+    outputFileName: 'react-util-image',
     format: 'png',
     title: 'Print',
     legendTitle: 'Legend'
@@ -157,3 +157,5 @@ export class PrintUtil {
     });
   };
 }
+
+export default PrintUtil;

@@ -1,8 +1,8 @@
-import { mount,shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import OlMap from 'ol/Map';
 import React from 'react';
 
-import { useMap } from '../../hooks/useMap';
+import { useMap } from '../../Hooks/useMap/useMap';
 import { TestUtil } from '../../Util/TestUtil';
 import MapContext from './MapContext';
 
@@ -27,40 +27,53 @@ describe('MapContext', () => {
 
   describe('with useMap', () => {
     it('provides the default value', () => {
-      const got = shallow(<Thing />);
-      expect(got.props().map).toEqual(null);
+      render(<Thing />);
+
+      expect(screen.getByText('No map found')).toBeVisible();
     });
 
     it('provides a map if given', () => {
-      const container = mount(
-        <MapContext.Provider value={olMap}>
-          <Thing />
-        </MapContext.Provider>
-      );
-      const got = container.childAt(0);
-      expect(got.props().map).toEqual(olMap);
+      render(<Thing />, {
+        wrapper: props => (
+          <MapContext.Provider
+            value={olMap}
+          >
+            {props.children}
+          </MapContext.Provider>
+        )
+      });
+
+      expect(screen.queryByText('No map found')).toBeNull();
     });
   });
 
   describe('with Consumer', () => {
     it('provides the default value', () => {
-      const got = mount(
+      render(
         <MapContext.Consumer>
           {(map) => <MapThing map={map} />}
         </MapContext.Consumer>
       );
-      expect(got.props().map).toEqual(null);
+
+      expect(screen.getByText('No map found')).toBeVisible();
     });
 
     it('provides a map if given', () => {
-      const got = mount(
-        <MapContext.Provider value={olMap}>
-          <MapContext.Consumer>
-            {(map) => <MapThing map={map} />}
-          </MapContext.Consumer>
-        </MapContext.Provider>
+      render(
+        <MapContext.Consumer>
+          {(map) => <MapThing map={map} />}
+        </MapContext.Consumer>, {
+          wrapper: props => (
+            <MapContext.Provider
+              value={olMap}
+            >
+              {props.children}
+            </MapContext.Provider>
+          )
+        }
       );
-      expect(got.props().map).toEqual(olMap);
+
+      expect(screen.queryByText('No map found')).toBeNull();
     });
   });
 

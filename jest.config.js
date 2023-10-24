@@ -5,14 +5,14 @@ const config = {
     '<rootDir>/src/**/*.{ts,js,tsx,jsx}'
   ],
   setupFilesAfterEnv: [
-    '<rootDir>/test/setup.js',
-    // '@testing-library/react/cleanup-after-each',
-    // '@testing-library/jest-dom/extend-expect'
+    '<rootDir>/test/setup.ts'
   ],
   testMatch: [
     '<rootDir>/src/**/?(*.)(spec).(j|t)s?(x)'
   ],
-  testURL: 'http://localhost',
+  testEnvironmentOptions: {
+    url: 'http://localhost'
+  },
   transform: {
     '^.+\\.jsx?$': 'babel-jest',
     '^.+\\.tsx?$': 'babel-jest'
@@ -23,7 +23,7 @@ const config = {
     '\\.(css|less|scss)$': '<rootDir>/test/__mocks__/styleMock.js'
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(ol|antd|(rc-*[a-z]*)|css-animation|@babel/runtime|@ant-design))'
+    '<rootDir>/node_modules/(?!(ol))'
   ],
   moduleFileExtensions: [
     'ts',

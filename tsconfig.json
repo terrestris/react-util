@@ -21,12 +21,12 @@
     "noUnusedLocals": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "rootDir": "./src",
     "sourceMap": true,
     "strictNullChecks": false,
     "target": "ES2015"
   },
   "include": [
-    "src"
+    "src",
+    "test"
   ]
 }
