@@ -38,7 +38,8 @@
   },
   "dependencies": {
     "@terrestris/base-util": "^1.0.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
@@ -63,7 +64,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
     "jspdf": "^2.5.1",
-    "moment": "^2.29.4",
     "ol": "^8.1.0",
     "ol-mapbox-style": "^12.0.0",
     "react": "^18.2.0",
@@ -75,8 +75,11 @@
     "watch": "^1.0.2"
   },
   "peerDependencies": {
-    "ol": ">=7",
-    "react": ">=17",
-    "react-dom": ">=17"
+    "@terrestris/ol-util": ">=14",
+    "@types/react": ">=18",
+    "ol": ">=8",
+    "ol-mapbox-style": ">=12",
+    "react": ">=18",
+    "react-dom": ">=18"
   }
 }
