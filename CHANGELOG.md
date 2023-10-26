@@ -1,5 +1,32 @@
 
 
+## [4.0.0-beta.0](https://github.com/terrestris/react-util/compare/v3.0.0...v4.0.0-beta.0) (2023-10-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* imports must be adjusted
+* imports must be adjusted
+* removed all HOCs in favour of hooks
+* updates several hook export paths
+
+### Features
+
+* move HOCs to hooks ([ac6ef33](https://github.com/terrestris/react-util/commit/ac6ef33723180366594d9d60222ce398549e1a9e))
+
+
+### Bug Fixes
+
+* export all default exports ([b184210](https://github.com/terrestris/react-util/commit/b184210556d4585c693ddaac4ee2607a7bed2b95))
+* harmonize hooks files/folders ([6eae470](https://github.com/terrestris/react-util/commit/6eae470de68ef4ddb296250e77416c8233ef4416))
+* hide the layer depending on the active status and add NaN check ([2508d21](https://github.com/terrestris/react-util/commit/2508d21b766027e14f5cfb042537e33d86725f23))
+* list required peer dependencies ([17ec6ff](https://github.com/terrestris/react-util/commit/17ec6ff58ad31a0a6c1a94cd43e91f6d644d9427))
+* place components in dedicated subdirectory ([8c9bc29](https://github.com/terrestris/react-util/commit/8c9bc29331e21d9da4e14d7dac7e261d12a9db7b))
+* rename hooks directory to Hooks ([36597a2](https://github.com/terrestris/react-util/commit/36597a209008e80335c8706f973ce6494bf2690f))
+* replace react-geo statics with react-util ([8fb8353](https://github.com/terrestris/react-util/commit/8fb835344f8f244405241a5bcccc310d48ccdc19))
+* set correct import paths ([6472a3a](https://github.com/terrestris/react-util/commit/6472a3a410ee55dccb764039198eaf1ded99d86d))
+* update doc ([9157002](https://github.com/terrestris/react-util/commit/9157002e13c006f142ea38a43cbde101fb92c93a))
+
 ## [3.0.0](https://github.com/terrestris/react-util/compare/v2.2.0-beta.2...v3.0.0) (2023-09-19)
 
 
