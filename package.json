@@ -22,16 +22,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:dist && npm run build:declaration && copyfiles src/**/*.png dist/ && mv ./dist/src/** ./dist && rimraf ./dist/test ./dist/src",
+    "build": "npm run clean:dist && npm run build:dist && npm run build:declaration && copyfiles src/**/*.png dist/ && mv ./dist/src/** ./dist && rimraf ./dist/test ./dist/src",
     "build:declaration": "tsc --emitDeclarationOnly",
     "build:dist": "tsc -p tsconfig.json",
-    "clean": "rimraf ./coverage/* ./dist/*",
+    "clean": "npm run clean:dist && npm run clean:coverage",
+    "clean:dist": "rimraf ./dist/*",
+    "clean:coverage": "rimraf ./coverage/*",
     "lint": "eslint -c .eslintrc --ext .tsx,.ts src/",
     "lint:fix": "eslint -c .eslintrc --ext .tsx,.ts src/ --fix",
     "release": "release-it",
     "release-manual": "release-it --plugins.@release-it/conventional-changelog.ignoreRecommendedBump=true",
-    "test": "jest --maxWorkers=4 --coverage",
-    "test-ci": "jest --ci --coverage",
+    "test": "npm run clean:coverage && jest --maxWorkers=4 --coverage",
+    "test-ci": "npm run clean:coverage && jest --ci --coverage",
     "test-watch": "jest --watch",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "watch:buildto": "node watchBuild.js"
