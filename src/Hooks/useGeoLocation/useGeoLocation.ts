@@ -68,7 +68,7 @@ export const useGeoLocation = ({
     properties: {
       name: 'react-geo_geolocationlayer',
     },
-    source: new OlSourceVector<OlGeomPoint>({
+    source: new OlSourceVector<OlFeature<OlGeomPoint>>({
       features: [markerFeature]
     }),
     style: (feature: OlFeature<OlGeometry> | RenderFeature) => {

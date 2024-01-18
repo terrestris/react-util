@@ -2,7 +2,6 @@ import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 import OlCollection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
-import Geometry from 'ol/geom/Geometry';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlLayerVector from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
@@ -95,7 +94,7 @@ export class DigitizeUtil {
    *
    * @param map
    */
-  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlSourceVector<Geometry>> {
+  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlSourceVector<OlFeature>> {
     let digitizeLayer = MapUtil.getLayerByName(map, DigitizeUtil.DIGITIZE_LAYER_NAME) as OlVectorLayer<OlSourceVector>;
 
     if (!digitizeLayer) {

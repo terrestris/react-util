@@ -40,7 +40,7 @@ export interface UseSelectFeaturesProps {
     /**
      * Array of layers the SelectFeaturesButton should operate on.
      */
-    layers: OlVectorLayer<OlVectorSource<OlGeometry>>[];
+    layers: OlVectorLayer<OlVectorSource<OlFeature>>[];
     /**
      * Hit tolerance of the select action. Default: 5
      */
