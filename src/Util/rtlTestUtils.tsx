@@ -100,7 +100,7 @@ export function mockForEachFeatureAtPixel(
   map: OlMap,
   pixel: [number, number],
   feature: OlFeature<OlGeometry>,
-  layer?: OlVectorLayer<OlVectorSource<OlGeometry>>
+  layer?: OlVectorLayer<OlVectorSource<OlFeature>>
 ): jest.SpyInstance {
   return jest.spyOn(map, 'forEachFeatureAtPixel').mockImplementation((atPixel, callback) => {
     if (pixel[0] === atPixel[0] && pixel[1] === atPixel[1]) {

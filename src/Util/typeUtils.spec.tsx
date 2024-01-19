@@ -1,5 +1,5 @@
 import OlBaseLayer from 'ol/layer/Base';
-import OlHeatmapLayer from 'ol/layer/Heatmap';
+import OlGraticuleLayer from 'ol/layer/Graticule';
 import OlImageLayer from 'ol/layer/Image';
 import OlLayer from 'ol/layer/Layer';
 import OlTileLayer from 'ol/layer/Tile';
@@ -30,7 +30,7 @@ const getWmsSources = () => {
 const getNonWmsLikeLayers = () => {
   return {
     'ol/layer/Vector': new OlVectorLayer(),
-    'ol/layer/Heatmap': new OlHeatmapLayer()
+    'ol/layer/Heatmap': new OlGraticuleLayer()
   };
 };
 

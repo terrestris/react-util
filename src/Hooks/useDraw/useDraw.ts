@@ -1,5 +1,5 @@
 import * as OlEventConditions from 'ol/events/condition';
-import OlGeometry from 'ol/geom/Geometry';
+import OlFeature from 'ol/Feature';
 import OlInteractionDraw, { createBox, DrawEvent as OlDrawEvent, Options as OlDrawOptions } from 'ol/interaction/Draw';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlVectorSource from 'ol/source/Vector';
@@ -43,7 +43,7 @@ export interface UseDrawProps {
    * The vector layer which will be used for digitize features.
    * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
    */
-  digitizeLayer?: OlVectorLayer<OlVectorSource<OlGeometry>>;
+  digitizeLayer?: OlVectorLayer<OlVectorSource<OlFeature>>;
   /**
    * Additional configuration object to apply to the ol.interaction.Draw.
    * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-Draw.html
