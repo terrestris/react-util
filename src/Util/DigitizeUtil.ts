@@ -88,13 +88,13 @@ export class DigitizeUtil {
   /**
    * This function gets the standard react geo digitize layer and creates it if it does not exist.
    * If another layer should be used, the layer property of the respective button should be used.
-   * By default the digitize layer is styled via {@link DigitizeUtil.defaultDigitizeStyleFunction},
+   * By default, the digitize layer is styled via {@link DigitizeUtil.defaultDigitizeStyleFunction},
    * if another style is desired either use another layer or set the style of the digitize layer
    * via `setStyle`.
    *
    * @param map
    */
-  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlSourceVector<OlFeature>> {
+  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlSourceVector> {
     let digitizeLayer = MapUtil.getLayerByName(map, DigitizeUtil.DIGITIZE_LAYER_NAME) as OlVectorLayer<OlSourceVector>;
 
     if (!digitizeLayer) {
