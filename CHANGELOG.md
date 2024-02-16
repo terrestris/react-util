@@ -1,5 +1,26 @@
 
 
+## [4.0.0-beta.1](https://github.com/terrestris/react-util/compare/v4.0.0-beta.0...v4.0.0-beta.1) (2024-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* ol 8.2.0 is now the minimum required peer version
+
+### Features
+
+* add zoomTo util function ([e3fb4ee](https://github.com/terrestris/react-util/commit/e3fb4ee86fdd66d18e65c7b2a9df4a6dc9a75b15))
+
+
+### Bug Fixes
+
+* typings of digitize layer ([51e301e](https://github.com/terrestris/react-util/commit/51e301e2cb209e9667a658c73a5e0e83f297f95a))
+
+
+### Miscellaneous Chores
+
+* update to ol 8.2.0 ([ddbd97a](https://github.com/terrestris/react-util/commit/ddbd97a47fc6a16102d5d2237cdc30a3b768fc63))
+
 ## [4.0.0-beta.0](https://github.com/terrestris/react-util/compare/v3.0.0...v4.0.0-beta.0) (2023-10-26)
 
 
