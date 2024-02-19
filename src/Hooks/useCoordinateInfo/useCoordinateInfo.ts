@@ -2,16 +2,16 @@ import Logger from '@terrestris/base-util/dist/Logger';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
-import {Coordinate as OlCoordinate} from 'ol/coordinate';
+import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
 import OlFormatGML2 from 'ol/format/GML2';
 import OlGeometry from 'ol/geom/Geometry';
 import OlBaseLayer from 'ol/layer/Base';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
-import {getUid} from 'ol/util';
-import {useCallback, useEffect, useState} from 'react';
+import { getUid } from 'ol/util';
+import { useCallback, useEffect, useState } from 'react';
 
-import {isWmsLayer, WmsLayer} from '../../Util/typeUtils';
+import { isWmsLayer, WmsLayer } from '../../Util/typeUtils';
 import useMap from '../useMap/useMap';
 
 export type FeatureMap = {
@@ -123,7 +123,7 @@ export const useCoordinateInfo = ({
         return Promise.all(textResponses);
       })
       .then((textResponses: string[]) => {
-        const featureMap: {[index: string]: OlFeature[]} = {};
+        const featureMap: { [index: string]: OlFeature[] } = {};
 
         textResponses.forEach((featureCollection: string, idx: number) => {
           const fc = format.readFeatures(featureCollection);
