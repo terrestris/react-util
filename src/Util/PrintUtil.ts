@@ -6,7 +6,6 @@ import {
 import Logger from '@terrestris/base-util/dist/Logger';
 import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 import { jsPDF } from 'jspdf';
-import _isString from 'lodash/isString';
 import OlMap from 'ol/Map';
 
 import {
