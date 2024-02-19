@@ -1,11 +1,12 @@
 import Logger from '@terrestris/base-util/dist/Logger';
 import _cloneDeep from 'lodash/cloneDeep';
+import _groupBy from 'lodash/groupBy';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
+import _uniqueId from 'lodash/uniqueId';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
 import OlFormatGML2 from 'ol/format/GML2';
-import OlGeometry from 'ol/geom/Geometry';
 import OlBaseLayer from 'ol/layer/Base';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { getUid } from 'ol/util';
@@ -33,7 +34,6 @@ export type UseCoordinateInfoArgs = {
     [uid: string]: RequestInit;
   } | ((layer: WmsLayer) => RequestInit);
   onError?: (error: any) => void;
-  onSuccess?: (features: CoordinateInfoResult) => void;
   queryLayers?: OlBaseLayer[];
 };
 
@@ -42,9 +42,8 @@ export const useCoordinateInfo = ({
   featureCount = 1,
   fetchOpts = {},
   drillDown = false,
-  onSuccess = () => {},
   onError = () => {}
-}: UseCoordinateInfoArgs): void => {
+}: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
   const map = useMap();
 
@@ -52,24 +51,11 @@ export const useCoordinateInfo = ({
   const [features, setFeatures] = useState<FeatureMap>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-
-  /**
-   * We're cloning the click coordinate and features to
-   * not pass the internal state reference to the parent component.
-   * Also note that we explicitly don't use feature.clone() to
-   * keep all feature properties (in particular the id) intact.
-   */
-  const getCoordinateInfoStateObject = useCallback((): CoordinateInfoResult => ({
-    clickCoordinate: _cloneDeep(clickCoordinate),
-    loading,
-    features: _cloneDeep(features)
-  }), [clickCoordinate, features, loading]);
-
   const layerFilter = useCallback((layerCandidate: OlBaseLayer): boolean => {
     return queryLayers.includes(layerCandidate);
   }, [queryLayers]);
 
-  const onMapClick = useCallback((olEvt: OlMapBrowserEvent<MouseEvent>) => {
+  const onMapClick = useCallback(async (olEvt: OlMapBrowserEvent<MouseEvent>) => {
     if (_isNil(map)) {
       return;
     }
@@ -79,80 +65,61 @@ export const useCoordinateInfo = ({
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
 
-    const promises: Promise<any>[] = [];
-
+    const olFeatures: OlFeature[] = [];
     const mapLayers =
       map.getAllLayers()
         .filter(layerFilter)
         .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l));
-    mapLayers.forEach(l => {
-      const layerSource = (l as WmsLayer).getSource();
-      if (!layerSource) {
-        return Promise.resolve();
-      }
-      const featureInfoUrl = layerSource.getFeatureInfoUrl(
-        coordinate,
-        viewResolution!,
-        viewProjection,
-        {
-          INFO_FORMAT: 'application/vnd.ogc.gml',
-          FEATURE_COUNT: featureCount
-        }
-      );
-      if (featureInfoUrl) {
-        let opts;
-        if (fetchOpts instanceof Function) {
-          opts = fetchOpts(l as WmsLayer);
-        } else {
-          opts = fetchOpts[getUid(l)];
-        }
-        promises.push(fetch(featureInfoUrl, opts));
-      }
-
-      return !drillDown;
-    });
-
-    map.getTargetElement().style.cursor = 'wait';
 
     setLoading(true);
+    map.getTargetElement().style.cursor = 'wait';
 
-    Promise.all(promises)
-      .then((responses: Response[]) => {
-        setClickCoordinate(coordinate);
-        const textResponses = responses.map(response => response.text());
-        return Promise.all(textResponses);
-      })
-      .then((textResponses: string[]) => {
-        const featureMap: { [index: string]: OlFeature[] } = {};
+    try {
+      for (const l of mapLayers) {
+        const layerSource = (l as WmsLayer).getSource();
+        if (!layerSource) {
+          continue;
+        }
+        const featureInfoUrl = layerSource.getFeatureInfoUrl(
+          coordinate,
+          viewResolution!,
+          viewProjection,
+          {
+            INFO_FORMAT: 'application/vnd.ogc.gml',
+            FEATURE_COUNT: featureCount
+          }
+        );
+        if (featureInfoUrl) {
+          let opts;
+          if (fetchOpts instanceof Function) {
+            opts = fetchOpts(l as WmsLayer);
+          } else {
+            opts = fetchOpts[getUid(l)];
+          }
+          const fetchedResult = await fetch(featureInfoUrl, opts).then(r => r.text());
+          const featureCollection = format.readFeatures(fetchedResult);
+          olFeatures.push(...featureCollection);
+        }
 
-        textResponses.forEach((featureCollection: string, idx: number) => {
-          const fc = format.readFeatures(featureCollection);
-          fc.forEach((feature: OlFeature<OlGeometry>) => {
-            const id = feature.getId();
-            const featureTypeName = _isString(id) ? id.split('.')[0] : id?.toString() ?? `UNKNOWN-${idx}`;
-
-            if (!featureMap[featureTypeName]) {
-              featureMap[featureTypeName] = [];
-            }
-
-            featureMap[featureTypeName].push(feature);
-          });
-        });
-
-        setFeatures(featureMap);
-        onSuccess(getCoordinateInfoStateObject());
-
-      })
-      .catch((error: any) => {
-        Logger.error(error);
-
-        onError(error);
-      })
-      .finally(() => {
-        map.getTargetElement().style.cursor = '';
-        setLoading(false);
+        if (!drillDown && olFeatures.length > 0) {
+          return;
+        }
+      }
+      const featureMap: { [index: string]: OlFeature[] } = _groupBy(olFeatures, (feature: OlFeature) => {
+        const id = feature.getId();
+        return _isString(id) ? id.split('.')[0] : id?.toString() ?? _uniqueId('UNKNOWN');
       });
-  }, [drillDown, featureCount, fetchOpts, getCoordinateInfoStateObject, layerFilter, map, onError, onSuccess]);
+      setFeatures(featureMap);
+      setClickCoordinate(coordinate);
+
+    } catch (error: any) {
+      Logger.error(error);
+      onError(error);
+    }
+    map.getTargetElement().style.cursor = '';
+    setLoading(false);
+
+  }, [drillDown, featureCount, fetchOpts, layerFilter, map, onError]);
 
   useEffect(() => {
     map?.on('click', onMapClick);
@@ -162,6 +129,11 @@ export const useCoordinateInfo = ({
     };
   }, [map, onMapClick]);
 
+  return {
+    clickCoordinate: _cloneDeep(clickCoordinate),
+    loading,
+    features: _cloneDeep(features)
+  };
 };
 
 export default useCoordinateInfo;
