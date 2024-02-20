@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
  *      If you want to update only on value its sufficient to only pass this key-value pair.
  *
  * @param initial Object like value.
+ * @param allowPartialUpdates
  */
 export const useObjectState = <S extends object>(
   initial?: S | (() => S),
