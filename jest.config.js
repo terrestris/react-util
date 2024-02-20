@@ -23,7 +23,7 @@ const config = {
     '\\.(css|less|scss)$': '<rootDir>/test/__mocks__/styleMock.js'
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-parse))'
+    '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-*[a-z]*|@camptocamp|d3-*[a-z]*))'
   ],
   moduleFileExtensions: [
     'ts',

@@ -39,6 +39,7 @@
     "watch:buildto": "node watchBuild.js"
   },
   "dependencies": {
+    "@camptocamp/inkmap": "^1.4.0",
     "@terrestris/base-util": "^1.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1"
@@ -78,7 +79,6 @@
   },
   "peerDependencies": {
     "@terrestris/ol-util": ">=15",
-    "@types/react": ">=18",
     "ol": ">=8.2.0",
     "ol-mapbox-style": ">=12",
     "react": ">=18",
