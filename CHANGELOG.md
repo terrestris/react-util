@@ -1,5 +1,21 @@
 
 
+## [4.0.0-beta.2](https://github.com/terrestris/react-util/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2024-02-29)
+
+
+### Features
+
+* introduce useCoordinateInfoHook ([45a132a](https://github.com/terrestris/react-util/commit/45a132a9009290c1cc7d34c9a7dc06ef8ae03f8e))
+* introduce useNominatim hook ([db4375b](https://github.com/terrestris/react-util/commit/db4375b33089c293684164a9b5a74bf58ee57f93))
+* introduce useProjFromEpsgIO hook ([8cf5fb2](https://github.com/terrestris/react-util/commit/8cf5fb24306ae076ad8dd730085e49c9a9aae67b))
+
+
+### Bug Fixes
+
+* adds missing inkmap dependency ([83eb5c5](https://github.com/terrestris/react-util/commit/83eb5c57e4db06bea44a419bbab26dd1fc57f1ca))
+* remove [@types-react](https://github.com/types-react) from peer-dependencies ([0cebe8b](https://github.com/terrestris/react-util/commit/0cebe8b81c978a65179dde9bfe6c71e8ccfff672))
+* use async function call and return CoordinateInfoResult directly ([894cd83](https://github.com/terrestris/react-util/commit/894cd830b440c480ad44d182587f43da0dbbe3cd))
+
 ## [4.0.0-beta.1](https://github.com/terrestris/react-util/compare/v4.0.0-beta.0...v4.0.0-beta.1) (2024-02-16)
 
 
