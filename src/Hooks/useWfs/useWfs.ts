@@ -75,6 +75,9 @@ export const useWfs = ({
   useAsyncEffect(async () => {
     if (!_isNil(searchTerm) && searchTerm.length >= minChars) {
       await doSearch();
+    } else {
+      setFeatures([]);
+      setLoading(false);
     }
   }, [searchTerm]);
 
