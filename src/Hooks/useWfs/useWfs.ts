@@ -6,13 +6,14 @@ import OlFormatGml3 from 'ol/format/GML3';
 import { useState } from 'react';
 
 import { useAsyncEffect } from '../../index';
+import Logger from "@terrestris/base-util/dist/Logger";
 
 export type WfsQueryArgs = {
   additionalFetchOptions?: Partial<RequestInit>;
   baseUrl: string;
   minChars?: number;
   onFetchError?: (s: any) => void;
-  searchConfig: SearchConfig;
+  searchConfig?: SearchConfig;
   searchTerm?: string;
 };
 
@@ -38,6 +39,10 @@ export const useWfs = ({
    * @private
    */
   const performWfsRequest = async () => {
+    if (_isNil(searchConfig)) {
+      Logger.error('No search configuration given.');
+      return;
+    }
     const request = WfsFilterUtil.getCombinedRequests(searchConfig, searchTerm);
     const requestBody = (new XMLSerializer()).serializeToString(request);
     if (!_isNil(request)) {
