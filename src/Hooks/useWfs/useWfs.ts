@@ -34,10 +34,10 @@ export const useWfs = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   /**
-   * Perform the search.
+   * Perform the WFS request.
    * @private
    */
-  const doSearch = async () => {
+  const performWfsRequest = async () => {
     const request = WfsFilterUtil.getCombinedRequests(searchConfig, searchTerm);
     const requestBody = (new XMLSerializer()).serializeToString(request);
     if (!_isNil(request)) {
@@ -74,7 +74,7 @@ export const useWfs = ({
 
   useAsyncEffect(async () => {
     if (!_isNil(searchTerm) && searchTerm.length >= minChars) {
-      await doSearch();
+      await performWfsRequest();
     } else {
       setFeatures([]);
       setLoading(false);
