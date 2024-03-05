@@ -1,3 +1,4 @@
+import Logger from '@terrestris/base-util/dist/Logger';
 import WfsFilterUtil, { SearchConfig } from '@terrestris/ol-util/dist/WfsFilterUtil/WfsFilterUtil';
 import _isNil from 'lodash/isNil';
 import OlFeature from 'ol/Feature';
@@ -6,7 +7,6 @@ import OlFormatGml3 from 'ol/format/GML3';
 import { useState } from 'react';
 
 import { useAsyncEffect } from '../../index';
-import Logger from '@terrestris/base-util/dist/Logger';
 
 export type WfsQueryArgs = {
   additionalFetchOptions?: Partial<RequestInit>;
