@@ -6,7 +6,7 @@ import OlFormatGml3 from 'ol/format/GML3';
 import { useState } from 'react';
 
 import { useAsyncEffect } from '../../index';
-import Logger from "@terrestris/base-util/dist/Logger";
+import Logger from '@terrestris/base-util/dist/Logger';
 
 export type WfsQueryArgs = {
   additionalFetchOptions?: Partial<RequestInit>;
