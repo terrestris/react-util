@@ -1,5 +1,18 @@
 
 
+## [4.0.0-beta.3](https://github.com/terrestris/react-util/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2024-03-11)
+
+
+### Features
+
+* introduce wfs hook ([a9b17c2](https://github.com/terrestris/react-util/commit/a9b17c2c4d4eedcf260e9f600a5dfb719d578c88))
+
+
+### Bug Fixes
+
+* null check for searchConfig ([29f0797](https://github.com/terrestris/react-util/commit/29f0797ec73ab46d8930a95309636c1227a357f2))
+* set features and loading state to init values for empty search term ([4cb06b7](https://github.com/terrestris/react-util/commit/4cb06b78b4058553445e25b76caa815d3c928c5c))
+
 ## [4.0.0-beta.2](https://github.com/terrestris/react-util/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2024-02-29)
 
 
