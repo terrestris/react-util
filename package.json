@@ -78,8 +78,8 @@
     "watch": "^1.0.2"
   },
   "peerDependencies": {
-    "@terrestris/ol-util": ">=15",
-    "ol": ">=8.2.0",
+    "@terrestris/ol-util": ">=16",
+    "ol": ">=9",
     "ol-mapbox-style": ">=12",
     "react": ">=18",
     "react-dom": ">=18"
