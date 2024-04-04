@@ -1,5 +1,16 @@
 
 
+## [4.0.0-beta.4](https://github.com/terrestris/react-util/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2024-04-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* ol 9 is now the minimum required peer version
+
+### Miscellaneous Chores
+
+* update peer dependencies ([c57370c](https://github.com/terrestris/react-util/commit/c57370cc155be4870455680a0411a5320f14bc32))
+
 ## [4.0.0-beta.3](https://github.com/terrestris/react-util/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2024-03-11)
 
 
