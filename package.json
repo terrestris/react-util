@@ -51,11 +51,11 @@
     "@babel/preset-typescript": "^7.23.3",
     "@release-it/conventional-changelog": "^8.0.1",
     "@terrestris/eslint-config-typescript": "^5.0.0",
-    "@terrestris/ol-util": "^16.0.0",
+    "@terrestris/ol-util": "^17.0.0",
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.11",
-    "@types/react": "^18.2.48",
+    "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
@@ -78,8 +78,8 @@
     "watch": "^1.0.2"
   },
   "peerDependencies": {
-    "@terrestris/ol-util": ">=15",
-    "ol": ">=8.2.0",
+    "@terrestris/ol-util": ">=17",
+    "ol": ">=9",
     "ol-mapbox-style": ">=12",
     "react": ">=18",
     "react-dom": ">=18"
