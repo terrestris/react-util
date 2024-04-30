@@ -1,5 +1,7 @@
 
 
+## [4.0.0](https://github.com/terrestris/react-util/compare/v4.0.0-beta.4...v4.0.0) (2024-04-30)
+
 ## [4.0.0-beta.4](https://github.com/terrestris/react-util/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2024-04-04)
 
 
