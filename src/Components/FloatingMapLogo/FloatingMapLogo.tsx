@@ -1,3 +1,5 @@
+import './FloatingMapLogo.less';
+
 import _cloneDeep from 'lodash/cloneDeep';
 import * as React from 'react';
 
