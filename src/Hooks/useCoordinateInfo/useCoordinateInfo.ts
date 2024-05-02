@@ -113,10 +113,15 @@ export const useCoordinateInfo = ({
       });
       setFeatures(featureMap);
       setClickCoordinate(coordinate);
+
+      // We're cloning the click coordinate and features to
+      // not pass the internal state reference to the parent component.
+      // Also note that we explicitly don't use feature.clone() to
+      // keep all feature properties (in particular the id) intact.
       onSuccess({
-        clickCoordinate: _cloneDeep(clickCoordinate),
+        clickCoordinate: _cloneDeep(coordinate),
         loading,
-        features: _cloneDeep(features)
+        features: _cloneDeep(featureMap)
       });
 
     } catch (error: any) {
