@@ -34,6 +34,7 @@ export type UseCoordinateInfoArgs = {
     [uid: string]: RequestInit;
   } | ((layer: WmsLayer) => RequestInit);
   onError?: (error: any) => void;
+  onSuccess?: (result: CoordinateInfoResult) => void;
   queryLayers?: OlBaseLayer[];
 };
 
@@ -42,7 +43,8 @@ export const useCoordinateInfo = ({
   featureCount = 1,
   fetchOpts = {},
   drillDown = false,
-  onError = () => {}
+  onError = () => {},
+  onSuccess = () => {}
 }: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
   const map = useMap();
@@ -111,6 +113,11 @@ export const useCoordinateInfo = ({
       });
       setFeatures(featureMap);
       setClickCoordinate(coordinate);
+      onSuccess({
+        clickCoordinate: _cloneDeep(clickCoordinate),
+        loading,
+        features: _cloneDeep(features)
+      });
 
     } catch (error: any) {
       Logger.error(error);
