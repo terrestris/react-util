@@ -1,16 +1,18 @@
-import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
+import './BackgroundLayerPreview.less';
+
 import { Coordinate } from 'ol/coordinate';
 import OlLayerBase from 'ol/layer/Base';
-import LayerGroup from 'ol/layer/Group';
 import OlLayerImage from 'ol/layer/Image';
 import OlLayer from 'ol/layer/Layer';
 import OlLayerTile from 'ol/layer/Tile';
-import OlLayerVector from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import { getUid } from 'ol/util';
 import OlView from 'ol/View';
-import { apply as applyMapboxStyle } from 'ol-mapbox-style';
-import React, { useEffect,useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import useMap from '../../Hooks/useMap/useMap';
 import MapComponent from '../MapComponent/MapComponent';
@@ -19,7 +21,7 @@ export type BackgroundLayerPreviewProps = {
   width?: number;
   height?: number;
   layer: OlLayer;
-  activeLayer: OlLayer;
+  activeLayer?: OlLayer;
   onClick: (l: OlLayer) => void;
   zoom?: number;
   center?: Coordinate;
@@ -29,7 +31,7 @@ export type BackgroundLayerPreviewProps = {
 
 export type BackgroundLayerLoadingMaskProps = {
   loading: boolean;
-  children: any[];
+  children: React.ReactNode;
 };
 
 export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
@@ -43,38 +45,26 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
   backgroundLayerFilter,
   LoadingMask
 }) => {
+
+  const [loading, setLoading] = useState(false);
+
   const mainMap = useMap();
-  const [previewMap, setPreviewMap] = useState<OlMap | null>(null);
 
-  const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    let previewLayer;
-
+  const previewLayer = useMemo(() => {
     if (layer instanceof OlLayerTile) {
-      previewLayer = new OlLayerTile({
+      return new OlLayerTile({
         source: layer.getSource()
       });
     } else if (layer instanceof OlLayerImage) {
-      previewLayer = new OlLayerImage({
+      return new OlLayerImage({
         source: layer.getSource()
       });
-    } else if (layer instanceof OlLayerVector) {
-      previewLayer = new OlLayerVector({
-        source: layer.getSource()
-      });
-    } else if (layer instanceof LayerGroup) {
-      if (layer.get('isVectorTile')) {
-        previewLayer = new LayerGroup();
-        applyMapboxStyle(previewLayer, layer.get('url'));
-      } else {
-        previewLayer = new LayerGroup({
-          layers: layer.getLayers()
-        });
-      }
     }
+    return null;
+  }, [layer]);
 
-    setPreviewMap(new OlMap({
+  const previewMap = useMemo(() => {
+    return new OlMap({
       view: new OlView({
         projection: mainMap?.getView().getProjection(),
         resolutions: mainMap?.getView().getResolutions(),
@@ -84,17 +74,15 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
       controls: [],
       interactions: [],
       layers: previewLayer && [previewLayer]
-    }));
-  }, [layer]);
+    });
+  }, [mainMap, previewLayer]);
 
   useEffect(() => {
-    if (!previewMap) {
-      return undefined;
-    }
     const setTrue = () => setLoading(true);
     const setFalse = () => setLoading(false);
     previewMap.on('loadstart', setTrue);
     previewMap.on('loadend', setFalse);
+
     return () => {
       previewMap.un('loadstart', setTrue);
       previewMap.un('loadend', setFalse);
@@ -102,11 +90,7 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
   }, [previewMap]);
 
   useEffect(() => {
-    if (!previewMap) {
-      return;
-    }
-
-    if (zoom ) {
+    if (zoom) {
       previewMap.getView().setZoom(zoom);
     }
     if (center) {
@@ -115,7 +99,9 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
   }, [zoom, center]);
 
   const getBgLayersFromMap = (): OlLayer[] => {
-    return MapUtil.getAllLayers(mainMap)
+    return mainMap?.getLayerGroup()
+      .getLayers()
+      .getArray()
       .filter(backgroundLayerFilter) as OlLayer[] || [];
   };
 
@@ -127,7 +113,9 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
       return;
     }
 
-    const newBgLayer = MapUtil.getAllLayers(mainMap)
+    const newBgLayer = mainMap?.getLayerGroup()
+      .getLayers()
+      .getArray()
       .find(l => getUid(l) === layerId);
 
     if (!newBgLayer) {
@@ -144,14 +132,14 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
 
   const restoreBgLayerVisibility = () => {
     getBgLayersFromMap().forEach(l => l.setVisible(false));
-    activeLayer.setVisible(true);
+    activeLayer?.setVisible(true);
   };
 
+  let isActive = false;
   const uid = getUid(layer);
-  const activeUid = getUid(activeLayer);
-  const isActive = uid === activeUid;
-  if (!previewMap) {
-    return <></>;
+  if (activeLayer) {
+    const activeUid = getUid(activeLayer);
+    isActive = uid === activeUid;
   }
 
   return (
@@ -163,7 +151,9 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
       onMouseLeave={restoreBgLayerVisibility}
       onClick={updateBgLayerVisibility}
     >
-      <LoadingMask loading={loading}>
+      <LoadingMask
+        loading={loading}
+      >
         <MapComponent
           mapDivId={`previewmap-${uid}`}
           style={{
@@ -172,11 +162,14 @@ export const BackgroundLayerPreview: React.FC<BackgroundLayerPreviewProps> = ({
           }}
           map={previewMap}
         />
-        <span className="layer-title">
+        <span
+          className="layer-title"
+        >
           {layer.get('name')}
         </span>
       </LoadingMask>
     </div>
   );
 };
+
 export default BackgroundLayerPreview;
