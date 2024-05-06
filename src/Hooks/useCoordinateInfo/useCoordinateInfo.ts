@@ -75,6 +75,7 @@ export const useCoordinateInfo = ({
 
     const wfsMapLayers =
       map.getAllLayers()
+        .filter(layerFilter)
         .filter(l => isWfsLayer(l));
 
     setLoading(true);
