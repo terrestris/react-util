@@ -1,7 +1,3 @@
-import BackgroundLayerChooser from './Components/BackgroundLayerChooser/BackgroundLayerChooser';
-import BackgroundLayerPreview from './Components/BackgroundLayerPreview/BackgroundLayerPreview';
-import FloatingMapLogo from './Components/FloatingMapLogo/FloatingMapLogo';
-import MapComponent from './Components/MapComponent/MapComponent';
 import MapContext from './Context/MapContext/MapContext';
 import useAsyncEffect from './Hooks/useAsyncEffect/useAsyncEffect';
 import useDebouncedState from './Hooks/useDebouncedState/useDebouncedState';
@@ -26,14 +22,10 @@ import { isWmsLayer, WmsLayer } from './Util/typeUtils';
 import { zoomTo } from './Util/ZoomUtil';
 
 export {
-  BackgroundLayerChooser,
-  BackgroundLayerPreview,
   ClickAwayListener,
   DigitizeUtil,
-  FloatingMapLogo,
   InkmapPrintSpec,
   isWmsLayer,
-  MapComponent,
   MapContext,
   PrintUtil,
   useAsyncEffect,
