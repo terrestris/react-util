@@ -1,5 +1,12 @@
 
 
+## [5.0.0-beta.1](https://github.com/terrestris/react-util/compare/v5.0.0-beta.0...v5.0.0-beta.1) (2024-05-06)
+
+
+### Features
+
+* adds wfs feature info handling ([#692](https://github.com/terrestris/react-util/issues/692)) ([7fe12bd](https://github.com/terrestris/react-util/commit/7fe12bd9d0a407f54353e05d57fc5ed0ed0d2b41))
+
 ## [5.0.0-beta.0](https://github.com/terrestris/react-util/compare/v4.0.0...v5.0.0-beta.0) (2024-05-06)
 
 
