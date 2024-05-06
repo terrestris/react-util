@@ -1,5 +1,28 @@
 
 
+## [5.0.0-beta.0](https://github.com/terrestris/react-util/compare/v4.0.0...v5.0.0-beta.0) (2024-05-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* the removed components have been moved to react-geo
+
+### Features
+
+* init useMeasure ([2beae76](https://github.com/terrestris/react-util/commit/2beae764e600c6a408d0ed28a6a27c8beae256e3))
+
+
+### Bug Fixes
+
+* include the style ([6e1aaae](https://github.com/terrestris/react-util/commit/6e1aaaeb1a5a07fb1faafddcf4c6b7f3bc11178f))
+* restore display of selected layer in preview ([c3c72d1](https://github.com/terrestris/react-util/commit/c3c72d16e43a7a946acb07bd16a81d0d14a05e9f))
+* several styling and functional issues ([06e98d8](https://github.com/terrestris/react-util/commit/06e98d884f4c2fca68360f12b57804157b99a119))
+
+
+### Code Refactoring
+
+* remove ui components ([ad66adc](https://github.com/terrestris/react-util/commit/ad66adc562a2e459308e939ffb2524412e13aada))
+
 ## [4.0.0](https://github.com/terrestris/react-util/compare/v4.0.0-beta.4...v4.0.0) (2024-04-30)
 
 ## [4.0.0-beta.4](https://github.com/terrestris/react-util/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2024-04-04)
