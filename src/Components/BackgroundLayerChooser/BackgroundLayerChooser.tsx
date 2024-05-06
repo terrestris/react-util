@@ -184,7 +184,7 @@ export const BackgroundLayerChooser: React.FC<BackgroundLayerChooserProps> = ({
 
       return () => {
         map.removeControl(overViewControl);
-      }
+      };
     }
 
     return undefined;
@@ -193,57 +193,59 @@ export const BackgroundLayerChooser: React.FC<BackgroundLayerChooserProps> = ({
   const onLayerSelect = (layer: OlLayer) => {
     setLayerOptionsVisible(false);
     setSelectedLayer(layer);
+    setIsBackgroundImage(false);
   };
 
   return (
     <div className="bg-layer-chooser">
       {
-        selectedLayer && layerOptionsVisible &&
-        <div className="layer-cards">
-          {
-            layers.map(layer => (
-              <BackgroundLayerPreview
-                key={getUid(layer)}
-                activeLayer={selectedLayer}
-                onClick={l => onLayerSelect(l)}
-                layer={layer}
-                backgroundLayerFilter={backgroundLayerFilter}
-                zoom={zoom}
-                center={center}
-                LoadingMask={LoadingMask}
-              />
-            ))
-          }
-          {
-            allowEmptyBackground &&
-              <div
-                className={`no-background${selectedLayer ? '' : ' selected'}`}
-                onMouseOver={() => {
-                  selectedLayer?.setVisible(false);
-                }}
-                onMouseLeave={() => {
-                  selectedLayer?.setVisible(true);
-                }}
-                onClick={() => {
-                  selectedLayer?.setVisible(false);
-                  setSelectedLayer(undefined);
-                  setLayerOptionsVisible(false);
-                  setIsBackgroundImage(true);
-                }}
-              >
-                <img
-                  className='no-background-preview'
-                  src={NoBackgroundImage}
-                  alt="No background selected"
+        layerOptionsVisible && (
+          <div className="layer-cards">
+            {
+              layers.map(layer => (
+                <BackgroundLayerPreview
+                  key={getUid(layer)}
+                  activeLayer={selectedLayer}
+                  onClick={l => onLayerSelect(l)}
+                  layer={layer}
+                  backgroundLayerFilter={backgroundLayerFilter}
+                  zoom={zoom}
+                  center={center}
+                  LoadingMask={LoadingMask}
                 />
-                <span
-                  className="layer-title"
+              ))
+            }
+            {
+              allowEmptyBackground &&
+                <div
+                  className={`no-background${selectedLayer ? '' : ' selected'}`}
+                  onMouseOver={() => {
+                    selectedLayer?.setVisible(false);
+                  }}
+                  onMouseLeave={() => {
+                    selectedLayer?.setVisible(true);
+                  }}
+                  onClick={() => {
+                    selectedLayer?.setVisible(false);
+                    setSelectedLayer(undefined);
+                    setLayerOptionsVisible(false);
+                    setIsBackgroundImage(true);
+                  }}
                 >
-                  {noBackgroundTitle}
-                </span>
-              </div>
-          }
-        </div>
+                  <img
+                    className='no-background-preview'
+                    src={NoBackgroundImage}
+                    alt="No background selected"
+                  />
+                  <span
+                    className="layer-title"
+                  >
+                    {noBackgroundTitle}
+                  </span>
+                </div>
+            }
+          </div>
+        )
       }
       <Button
         layerOptionsVisible={layerOptionsVisible}
