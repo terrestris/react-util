@@ -12,7 +12,7 @@ import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { getUid } from 'ol/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import { isWmsLayer, WmsLayer } from '../../Util/typeUtils';
+import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '../../Util/typeUtils';
 import useMap from '../useMap/useMap';
 
 export type FeatureMap = {
@@ -43,8 +43,8 @@ export const useCoordinateInfo = ({
   featureCount = 1,
   fetchOpts = {},
   drillDown = false,
-  onError = () => {},
-  onSuccess = () => {}
+  onError = () => { },
+  onSuccess = () => { }
 }: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
   const map = useMap();
@@ -68,21 +68,25 @@ export const useCoordinateInfo = ({
     const coordinate = olEvt.coordinate;
 
     const olFeatures: OlFeature[] = [];
-    const mapLayers =
+    const wmsMapLayers =
       map.getAllLayers()
         .filter(layerFilter)
         .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l));
+
+    const wfsMapLayers =
+      map.getAllLayers()
+        .filter(l => isWfsLayer(l));
 
     setLoading(true);
     map.getTargetElement().style.cursor = 'wait';
 
     try {
-      for (const l of mapLayers) {
-        const layerSource = (l as WmsLayer).getSource();
-        if (!layerSource) {
+      for (const l of wmsMapLayers) {
+        const wmsLayerSource = (l as WmsLayer).getSource();
+        if (!wmsLayerSource) {
           continue;
         }
-        const featureInfoUrl = layerSource.getFeatureInfoUrl(
+        const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
           coordinate,
           viewResolution!,
           viewProjection,
@@ -99,13 +103,19 @@ export const useCoordinateInfo = ({
             opts = fetchOpts[getUid(l)];
           }
           const fetchedResult = await fetch(featureInfoUrl, opts).then(r => r.text());
-          const featureCollection = format.readFeatures(fetchedResult);
-          olFeatures.push(...featureCollection);
+          const wmsFeatureCollection = format.readFeatures(fetchedResult);
+          olFeatures.push(...wmsFeatureCollection);
         }
 
         if (!drillDown && olFeatures.length > 0) {
           return;
         }
+      }
+      for (const l of wfsMapLayers) {
+        const wfsLayerSource = (l as WfsLayer).getSource();
+
+        const wfsFeatures = wfsLayerSource.getFeaturesAtCoordinate(coordinate);
+        wfsFeatures.forEach(feature => olFeatures.push(feature));
       }
       const featureMap: { [index: string]: OlFeature[] } = _groupBy(olFeatures, (feature: OlFeature) => {
         const id = feature.getId();
