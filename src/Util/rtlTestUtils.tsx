@@ -1,13 +1,17 @@
-import { act, fireEvent, render } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render
+} from '@testing-library/react';
 import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import OlVectorSource from 'ol/source/Vector';
-import * as React from 'react';
-import { ReactElement } from 'react';
+import React, {
+  ReactElement
+} from 'react';
 
-import MapComponent from '../Components/MapComponent/MapComponent';
 import MapContext from '../Context/MapContext/MapContext';
 
 export async function actSetTimeout(time: number): Promise<void> {
@@ -75,10 +79,27 @@ export function doubleClickMap(map: OlMap, x: number, y: number) {
  */
 export function renderInMapContext(map: OlMap, element: ReactElement, size: [number, number] = [400, 400]): any {
   const assemble = (newElement: ReactElement) => {
-    return <MapContext.Provider value={map}>
-      <MapComponent map={map} />
-      {newElement}
-    </MapContext.Provider>;
+    const refCallback = (ref: HTMLDivElement) => {
+      if (!map) {
+        return;
+      }
+      if (ref === null) {
+        map.setTarget(undefined);
+      } else {
+        map.setTarget(ref);
+      }
+    };
+
+    return (
+      <MapContext.Provider value={map}>
+        <div
+          id="map"
+          className="map"
+          ref={refCallback}
+        />
+        {newElement}
+      </MapContext.Provider>
+    );
   };
 
   const { rerender, ...results } = render(assemble(element));
