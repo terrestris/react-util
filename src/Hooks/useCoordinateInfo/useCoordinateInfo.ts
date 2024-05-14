@@ -1,4 +1,5 @@
 import Logger from '@terrestris/base-util/dist/Logger';
+import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '@terrestris/ol-util';
 import _cloneDeep from 'lodash/cloneDeep';
 import _groupBy from 'lodash/groupBy';
 import _isNil from 'lodash/isNil';
@@ -12,7 +13,6 @@ import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { getUid } from 'ol/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '../../Util/typeUtils';
 import useMap from '../useMap/useMap';
 
 export type FeatureMap = {
