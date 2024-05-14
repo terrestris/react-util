@@ -1,5 +1,16 @@
 
 
+## [5.0.0](https://github.com/terrestris/react-util/compare/v5.0.0-beta.1...v5.0.0) (2024-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* removes the wms layer type utils. These live now in `ol-util`
+
+### Features
+
+* remove type utils and use the ones from `ol-util` ([bf62700](https://github.com/terrestris/react-util/commit/bf62700526f3ae0fc5bfd3cdd0062aecffefae29))
+
 ## [5.0.0-beta.1](https://github.com/terrestris/react-util/compare/v5.0.0-beta.0...v5.0.0-beta.1) (2024-05-06)
 
 
