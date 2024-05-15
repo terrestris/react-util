@@ -13,6 +13,7 @@ export type WfsQueryArgs = {
   baseUrl: string;
   minChars?: number;
   onFetchError?: (s: any) => void;
+  onFetchSuccess?: (features: OlFeature[]) => void;
   searchConfig?: SearchConfig;
   searchTerm?: string;
 };
@@ -26,7 +27,8 @@ export const useWfs = ({
   additionalFetchOptions = {},
   baseUrl,
   minChars = 3,
-  onFetchError = () => undefined,
+  onFetchError,
+  onFetchSuccess,
   searchTerm,
   searchConfig
 }: WfsQueryArgs): WfsResponse => {
@@ -47,15 +49,16 @@ export const useWfs = ({
     const requestBody = (new XMLSerializer()).serializeToString(request);
     if (!_isNil(request)) {
       setLoading(true);
-      const responseString = await fetch(`${baseUrl}`, {
+      const response = await fetch(`${baseUrl}`, {
         method: 'POST',
         credentials: additionalFetchOptions?.credentials ?? 'same-origin',
         body: requestBody,
         ...additionalFetchOptions
-      }).then(response => response.text());
+      });
+      const responseString = await response.text();
 
       let ff: OlFeature[];
-      if (searchConfig?.outputFormat?.indexOf('json')) {
+      if (searchConfig?.outputFormat?.includes('json')) {
         const json = JSON.parse(responseString);
         const format = new OlFormatGeoJSON({
           featureProjection: searchConfig?.srsName,
@@ -71,8 +74,9 @@ export const useWfs = ({
       }
       setLoading(false);
       setFeatures(ff);
+      onFetchSuccess?.(ff);
     } else {
-      onFetchError('Missing GetFeature request parameters');
+      onFetchError?.('Missing GetFeature request parameters');
       setLoading(false);
     }
   };
@@ -90,5 +94,4 @@ export const useWfs = ({
     loading,
     features
   };
-
 };
