@@ -1,5 +1,12 @@
 
 
+## [5.1.0](https://github.com/terrestris/react-util/compare/v5.0.0...v5.1.0) (2024-05-15)
+
+
+### Features
+
+* add onFetchSuccess callbacks to useWfs and useNominatim ([8f9bae4](https://github.com/terrestris/react-util/commit/8f9bae4caed6b4bfc3874697bced701bb5435ee2))
+
 ## [5.0.0](https://github.com/terrestris/react-util/compare/v5.0.0-beta.1...v5.0.0) (2024-05-14)
 
 
