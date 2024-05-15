@@ -82,6 +82,10 @@ export type UseNominatimArgs = {
    */
   onFetchError?: (error: any) => void;
   /**
+   * A callback function which gets called if data fetching has succeeded.
+   */
+  onFetchSuccess?: (places: NominatimPlace[]) => void;
+  /**
    * The minimal amount of characters in the input to start a search.
    */
   minChars?: number;
@@ -97,6 +101,7 @@ export const useNominatim = ({
   minChars = 3,
   nominatimBaseUrl = 'https://nominatim.openstreetmap.org/search?',
   onFetchError,
+  onFetchSuccess,
   polygonGeoJSON = 1,
   searchResultLanguage,
   searchTerm,
@@ -128,6 +133,7 @@ export const useNominatim = ({
       }
       const responseJson = await response.json();
       setNominatimResults(responseJson);
+      onFetchSuccess?.(responseJson);
     } catch (error) {
       onError(error);
     }
