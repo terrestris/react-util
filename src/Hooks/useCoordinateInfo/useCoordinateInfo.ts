@@ -7,6 +7,7 @@ import _isString from 'lodash/isString';
 import _uniqueId from 'lodash/uniqueId';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
+import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlFormatGML2 from 'ol/format/GML2';
 import OlBaseLayer from 'ol/layer/Base';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
@@ -25,8 +26,6 @@ export type CoordinateInfoResult = {
   loading: boolean;
 };
 
-const format = new OlFormatGML2();
-
 export type UseCoordinateInfoArgs = {
   drillDown?: boolean;
   featureCount?: number;
@@ -36,6 +35,17 @@ export type UseCoordinateInfoArgs = {
   onError?: (error: any) => void;
   onSuccess?: (result: CoordinateInfoResult) => void;
   queryLayers?: OlBaseLayer[];
+  infoFormat?: 'gml'|'json';
+};
+
+const getInfoFormat = (type: 'gml'|'json') => {
+  if (type === 'gml') {
+    return 'application/vnd.ogc.gml';
+  } else if (type === 'json') {
+    return 'application/json';
+  } else {
+    throw new Error('Unknown info format type');
+  }
 };
 
 export const useCoordinateInfo = ({
@@ -44,7 +54,8 @@ export const useCoordinateInfo = ({
   fetchOpts = {},
   drillDown = false,
   onError = () => { },
-  onSuccess = () => { }
+  onSuccess = () => { },
+  infoFormat = 'gml'
 }: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
   const map = useMap();
@@ -83,6 +94,9 @@ export const useCoordinateInfo = ({
 
     try {
       for (const l of wmsMapLayers) {
+        if (!drillDown && olFeatures.length > 0) {
+          break;
+        }
         const wmsLayerSource = (l as WmsLayer).getSource();
         if (!wmsLayerSource) {
           continue;
@@ -92,7 +106,7 @@ export const useCoordinateInfo = ({
           viewResolution!,
           viewProjection,
           {
-            INFO_FORMAT: 'application/vnd.ogc.gml',
+            INFO_FORMAT: getInfoFormat(infoFormat),
             FEATURE_COUNT: featureCount
           }
         );
@@ -103,16 +117,23 @@ export const useCoordinateInfo = ({
           } else {
             opts = fetchOpts[getUid(l)];
           }
-          const fetchedResult = await fetch(featureInfoUrl, opts).then(r => r.text());
-          const wmsFeatureCollection = format.readFeatures(fetchedResult);
-          olFeatures.push(...wmsFeatureCollection);
-        }
+          const response = await fetch(featureInfoUrl, opts);
+          let format: OlFormatGML2 | OlFormatGeoJSON;
 
-        if (!drillDown && olFeatures.length > 0) {
-          return;
+          if (infoFormat === 'gml') {
+            format = new OlFormatGML2();
+          } else if (infoFormat === 'json') {
+            format = new OlFormatGeoJSON();
+          }
+
+          const text = await response.text();
+          olFeatures.push(...format.readFeatures(text));
         }
       }
       for (const l of wfsMapLayers) {
+        if (!drillDown && olFeatures.length > 0) {
+          break;
+        }
         const wfsLayerSource = (l as WfsLayer).getSource();
 
         const wfsFeatures = wfsLayerSource.getFeaturesAtCoordinate(coordinate);
