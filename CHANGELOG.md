@@ -1,5 +1,12 @@
 
 
+## [5.2.0](https://github.com/terrestris/react-util/compare/v5.1.0...v5.2.0) (2024-05-22)
+
+
+### Features
+
+* allow CoordinateInfo to request Feature Info in json format ([8ddc8b9](https://github.com/terrestris/react-util/commit/8ddc8b91acfd1a8cf0cb36328df24177baa66f4f))
+
 ## [5.1.0](https://github.com/terrestris/react-util/compare/v5.0.0...v5.1.0) (2024-05-15)
 
 
