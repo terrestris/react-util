@@ -16,13 +16,14 @@
   },
   "license": "BSD-2-Clause",
   "author": "terrestris GmbH & Co. KG <info@terrestris.de>",
+  "type": "module",
   "main": "./dist/index.js",
   "files": [
     "src",
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean:dist && npm run build:dist && npm run build:declaration && copyfiles src/**/*.png src/**/*.svg src/**/*.less dist/ && mv ./dist/src/** ./dist && rimraf ./dist/test ./dist/src",
+    "build": "npm run clean:dist && npm run build:dist && npm run build:declaration && copyfiles -u 1 src/**/*.png src/**/*.svg src/**/*.less dist/",
     "build:declaration": "tsc --emitDeclarationOnly",
     "build:dist": "tsc -p tsconfig.json",
     "clean": "npm run clean:dist && npm run clean:coverage",
@@ -33,8 +34,8 @@
     "release": "release-it",
     "release-manual": "release-it --plugins.@release-it/conventional-changelog.ignoreRecommendedBump=true",
     "test": "npm run clean:coverage && jest --maxWorkers=4 --coverage",
-    "test-ci": "npm run clean:coverage && jest --ci --coverage",
-    "test-watch": "jest --watch",
+    "test-ci": "npm run clean:coverage && jest --ci --coverage -c jest.config.cjs",
+    "test-watch": "jest --watch -c jest.config.cjs",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "watch:buildto": "node watchBuild.js"
   },
