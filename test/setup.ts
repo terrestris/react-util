@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/jest-globals';
 
 global.URL.createObjectURL = jest.fn();
 
