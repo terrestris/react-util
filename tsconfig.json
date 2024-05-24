@@ -10,19 +10,20 @@
     "lib": [
       "es7",
       "dom",
-      "dom.iterable",
       "esnext"
     ],
     "module": "ES2022",
     "moduleResolution": "Bundler",
-    "noImplicitAny": false,
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": false,
     "target": "ES2022"
   },
   "include": [

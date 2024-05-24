@@ -5,7 +5,7 @@ import {
 
 import MapContext from '../../Context/MapContext/MapContext';
 
-export const useMap = (): (OlMap | undefined) => {
+export const useMap = (): (OlMap | null) => {
   return useContext(MapContext);
 };
 

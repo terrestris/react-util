@@ -2,7 +2,6 @@ import * as OlEventConditions from 'ol/events/condition';
 import OlFeature from 'ol/Feature';
 import OlInteractionDraw, { createBox, DrawEvent as OlDrawEvent, Options as OlDrawOptions } from 'ol/interaction/Draw';
 import OlVectorLayer from 'ol/layer/Vector';
-import OlVectorSource from 'ol/source/Vector';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';
 
 import { DigitizeUtil } from '../../Util/DigitizeUtil';
@@ -43,7 +42,7 @@ export interface UseDrawProps {
    * The vector layer which will be used for digitize features.
    * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
    */
-  digitizeLayer?: OlVectorLayer<OlVectorSource<OlFeature>>;
+  digitizeLayer?: OlVectorLayer<OlFeature>;
   /**
    * Additional configuration object to apply to the ol.interaction.Draw.
    * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Draw-Draw.html
@@ -105,21 +104,23 @@ export const useDraw = ({
     active
   );
 
-  useOlListener(
-    drawInteraction,
-    i => i.on('drawend', (evt) => {
-      onDrawEnd?.(evt);
-    }),
-    [drawInteraction, onDrawEnd]
-  );
+  if (drawInteraction) {
+    useOlListener(
+      drawInteraction,
+      i => i.on('drawend', (evt) => {
+        onDrawEnd?.(evt);
+      }),
+      [drawInteraction, onDrawEnd]
+    );
 
-  useOlListener(
-    drawInteraction,
-    i => i.on('drawstart', (evt) => {
-      onDrawStart?.(evt);
-    }),
-    [drawInteraction, onDrawStart]
-  );
+    useOlListener(
+      drawInteraction,
+      i => i.on('drawstart', (evt) => {
+        onDrawStart?.(evt);
+      }),
+      [drawInteraction, onDrawStart]
+    );
+  }
 };
 
 export default useDraw;

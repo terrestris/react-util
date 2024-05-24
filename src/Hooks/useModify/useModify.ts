@@ -4,7 +4,6 @@ import OlFeature from 'ol/Feature';
 import Modify, { ModifyEvent, Options as ModifyOptions } from 'ol/interaction/Modify';
 import Translate, { Options as TranslateOptions, TranslateEvent } from 'ol/interaction/Translate';
 import OlVectorLayer from 'ol/layer/Vector';
-import OlVectorSource from 'ol/source/Vector';
 import {useEffect, useMemo, useRef} from 'react';
 
 import { DigitizeUtil } from '../../Util/DigitizeUtil';
@@ -15,67 +14,67 @@ import {usePropOrDefault} from '../usePropOrDefault/usePropOrDefault';
 import {useSelectFeatures, UseSelectFeaturesProps} from '../useSelectFeatures/useSelectFeatures';
 
 interface OwnProps {
-    /**
-     * Active state of interactions
-     */
-    active: boolean;
-    /**
-     * Additional configuration object to apply to the ol.interaction.Modify.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-Modify.html
-     * for more information
-     *
-     * Note: The keys features, deleteCondition and style are handled internally
-     *       and shouldn't be overwritten without any specific cause.
-     */
-    modifyInteractionConfig?: Omit<ModifyOptions, 'features'|'source'|'deleteCondition'|'style'>;
-    /**
-     * Additional configuration object to apply to the ol.interaction.Translate.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-Translate.html
-     * for more information
-     *
-     * Note: The key feature is handled internally and shouldn't be overwritten
-     *       without any specific cause.
-     */
-    translateInteractionConfig?: Omit<TranslateOptions, 'features'|'layers'>;
-    /**
-     * The vector layer which will be used for digitize features.
-     * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
-     */
-    digitizeLayer?: OlVectorLayer<OlVectorSource<OlFeature>>;
-    /**
-     * Listener function for the 'modifystart' event of an ol.interaction.Modify.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-ModifyEvent.html
-     * for more information.
-     */
-    onModifyStart?: (event: ModifyEvent) => void;
-    /**
-     * Listener function for the 'modifyend' event of an ol.interaction.Modify.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-ModifyEvent.html
-     * for more information.
-     */
-    onModifyEnd?: (event: ModifyEvent) => void;
-    /**
-     * Listener function for the 'translatestart' event of an ol.interaction.Translate.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
-     * for more information.
-     */
-    onTranslateStart?: (event: TranslateEvent) => void;
-    /**
-     * Listener function for the 'translateend' event of an ol.interaction.Translate.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
-     * for more information.
-     */
-    onTranslateEnd?: (event: TranslateEvent) => void;
-    /**
-     * Listener function for the 'translating' event of an ol.interaction.Translate.
-     * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
-     * for more information.
-     */
-    onTranslating?: (event: TranslateEvent) => void;
+  /**
+   * Active state of interactions
+   */
+  active: boolean;
+  /**
+   * Additional configuration object to apply to the ol.interaction.Modify.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-Modify.html
+   * for more information
+   *
+   * Note: The keys features, deleteCondition and style are handled internally
+   *       and shouldn't be overwritten without any specific cause.
+   */
+  modifyInteractionConfig?: Omit<ModifyOptions, 'features'|'source'|'deleteCondition'|'style'>;
+  /**
+   * Additional configuration object to apply to the ol.interaction.Translate.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-Translate.html
+   * for more information
+   *
+   * Note: The key feature is handled internally and shouldn't be overwritten
+   *       without any specific cause.
+   */
+  translateInteractionConfig?: Omit<TranslateOptions, 'features'|'layers'>;
+  /**
+   * The vector layer which will be used for digitize features.
+   * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
+   */
+  digitizeLayer?: OlVectorLayer<OlFeature>;
+  /**
+   * Listener function for the 'modifystart' event of an ol.interaction.Modify.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-ModifyEvent.html
+   * for more information.
+   */
+  onModifyStart?: (event: ModifyEvent) => void;
+  /**
+   * Listener function for the 'modifyend' event of an ol.interaction.Modify.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-ModifyEvent.html
+   * for more information.
+   */
+  onModifyEnd?: (event: ModifyEvent) => void;
+  /**
+   * Listener function for the 'translatestart' event of an ol.interaction.Translate.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
+   * for more information.
+   */
+  onTranslateStart?: (event: TranslateEvent) => void;
+  /**
+   * Listener function for the 'translateend' event of an ol.interaction.Translate.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
+   * for more information.
+   */
+  onTranslateEnd?: (event: TranslateEvent) => void;
+  /**
+   * Listener function for the 'translating' event of an ol.interaction.Translate.
+   * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Translate-TranslateEvent.html
+   * for more information.
+   */
+  onTranslating?: (event: TranslateEvent) => void;
 }
 
 export type UseModifyProps = OwnProps & Omit<UseSelectFeaturesProps,
-    'layers'|'featuresCollection'|'clearAfterSelect'>;
+  'layers' | 'featuresCollection' | 'clearAfterSelect'>;
 
 export const useModify = ({
   active,
@@ -94,11 +93,11 @@ export const useModify = ({
 }: UseModifyProps) => {
   const map = useMap();
 
-  const layer = usePropOrDefault(
+  const layer = map ? usePropOrDefault(
     digitizeLayer,
     () => DigitizeUtil.getDigitizeLayer(map),
     [map]
-  );
+  ) : null;
 
   const featuresRef = useRef(new OlCollection<OlFeature>());
 
@@ -149,35 +148,39 @@ export const useModify = ({
     active
   );
 
-  useOlListener(
-    modifyInteraction,
-    i => i.on('modifystart', e => onModifyStart?.(e)),
-    [onModifyStart]
-  );
+  if (modifyInteraction) {
+    useOlListener(
+      modifyInteraction,
+      i => i.on('modifystart', e => onModifyStart?.(e)),
+      [onModifyStart]
+    );
 
-  useOlListener(
-    modifyInteraction,
-    i => i.on('modifyend', e => onModifyEnd?.(e)),
-    [onModifyEnd]
-  );
+    useOlListener(
+      modifyInteraction,
+      i => i.on('modifyend', e => onModifyEnd?.(e)),
+      [onModifyEnd]
+    );
+  }
 
-  useOlListener(
-    translateInteraction,
-    i => i.on('translatestart', e => onTranslateStart?.(e)),
-    [onTranslateStart]
-  );
+  if (translateInteraction) {
+    useOlListener(
+      translateInteraction,
+      i => i.on('translatestart', e => onTranslateStart?.(e)),
+      [onTranslateStart]
+    );
 
-  useOlListener(
-    translateInteraction,
-    i => i.on('translateend', e => onTranslateEnd?.(e)),
-    [onTranslateEnd]
-  );
+    useOlListener(
+      translateInteraction,
+      i => i.on('translateend', e => onTranslateEnd?.(e)),
+      [onTranslateEnd]
+    );
 
-  useOlListener(
-    translateInteraction,
-    i => i.on('translating', e => onTranslating?.(e)),
-    [onTranslating]
-  );
+    useOlListener(
+      translateInteraction,
+      i => i.on('translating', e => onTranslating?.(e)),
+      [onTranslating]
+    );
+  }
 };
 
 export default useModify;

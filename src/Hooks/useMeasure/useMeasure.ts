@@ -484,37 +484,41 @@ export const useMeasure = ({
     }
   }, [addMeasureStopTooltip, measureType, showMeasureInfoOnClickedPoints]);
 
-  useOlListener(
-    drawInteraction,
-    i => i.on('drawstart', (evt) => {
-      onDrawStart?.(evt);
-    }),
-    [drawInteraction, onDrawStart]
-  );
+  if (drawInteraction) {
+    useOlListener(
+      drawInteraction,
+      i => i.on('drawstart', (evt) => {
+        onDrawStart?.(evt);
+      }),
+      [drawInteraction, onDrawStart]
+    );
 
-  useOlListener(
-    drawInteraction,
-    i => i.on('drawend', (evt) => {
-      onDrawEnd?.(evt);
-    }),
-    [drawInteraction, onDrawEnd]
-  );
+    useOlListener(
+      drawInteraction,
+      i => i.on('drawend', (evt) => {
+        onDrawEnd?.(evt);
+      }),
+      [drawInteraction, onDrawEnd]
+    );
+  }
 
-  useOlListener(
-    map,
-    i => i.on('pointermove', (evt) => {
-      onMapPointerMove?.(evt);
-    }),
-    [map, onMapPointerMove]
-  );
+  if (map) {
+    useOlListener(
+      map,
+      i => i.on('pointermove', (evt) => {
+        onMapPointerMove?.(evt);
+      }),
+      [map, onMapPointerMove]
+    );
 
-  useOlListener(
-    map,
-    i => i.on('click', (evt) => {
-      onMapClick?.(evt);
-    }),
-    [map, onMapClick]
-  );
+    useOlListener(
+      map,
+      i => i.on('click', (evt) => {
+        onMapClick?.(evt);
+      }),
+      [map, onMapClick]
+    );
+  }
 
   useEffect(() => {
     createMeasureTooltip();
@@ -532,13 +536,15 @@ export const useMeasure = ({
     }
   }, [active, measureLayer, cleanupTooltips]);
 
-  useOlListener(
-    feature,
-    i => i.getGeometry().on('change', () => {
-      updateMeasureTooltip?.();
-    }),
-    [feature, updateMeasureTooltip]
-  );
+  if (feature) {
+    useOlListener(
+      feature,
+      i => i.getGeometry()?.on('change', () => {
+        updateMeasureTooltip?.();
+      }),
+      [feature, updateMeasureTooltip]
+    );
+  }
 
   return null;
 

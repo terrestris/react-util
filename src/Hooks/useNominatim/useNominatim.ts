@@ -1,8 +1,8 @@
 
 
 // See https://nominatim.org/release-docs/develop/api/Output/ for some more information
-import { UrlUtil } from '@terrestris/base-util';
 import Logger from '@terrestris/base-util/dist/Logger';
+import { UrlUtil } from '@terrestris/base-util/dist/UrlUtil/UrlUtil';
 import { GeoJSON } from 'geojson';
 import { useEffect, useState } from 'react';
 

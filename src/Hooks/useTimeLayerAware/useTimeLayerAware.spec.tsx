@@ -57,7 +57,7 @@ describe('useTimeLayerAware', () => {
 
       timeLayerAware(time);
 
-      expect(layer.getSource().getParams().TIME).toBe(time);
+      expect(layer.getSource()?.getParams().TIME).toBe(time);
     });
 
     it('changes WMS Time layer parameter TIME, start and end instants', () => {
@@ -74,7 +74,7 @@ describe('useTimeLayerAware', () => {
 
       timeLayerAware([start, end]);
 
-      expect(layer.getSource().getParams().TIME).toBe(`${start}/${end}`);
+      expect(layer.getSource()?.getParams().TIME).toBe(`${start}/${end}`);
     });
 
     it('updates the correct parameter, even when spelled funnily', () => {
@@ -90,7 +90,7 @@ describe('useTimeLayerAware', () => {
 
       timeLayerAware(time);
 
-      const params = layerWithFunnyTimeSpelling.getSource().getParams();
+      const params = layerWithFunnyTimeSpelling.getSource()?.getParams();
 
       expect(params.tImE).toBe(time); // right one overwriten
       expect('TIME' in params).toBe(false); // only right one overwritten

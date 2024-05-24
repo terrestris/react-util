@@ -45,9 +45,15 @@ export const useWfs = ({
       Logger.error('No search configuration given.');
       return;
     }
+
+    if (!searchTerm) {
+      return;
+    }
+
     const request = WfsFilterUtil.getCombinedRequests(searchConfig, searchTerm);
-    const requestBody = (new XMLSerializer()).serializeToString(request);
+
     if (!_isNil(request)) {
+      const requestBody = (new XMLSerializer()).serializeToString(request);
       setLoading(true);
       const response = await fetch(`${baseUrl}`, {
         method: 'POST',

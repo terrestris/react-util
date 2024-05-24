@@ -17,6 +17,10 @@ export const useDropTargetMap = () => {
    * @param event The drop event.
    */
   const onDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    if (!map) {
+      return;
+    }
+
     event.preventDefault();
     const files = event.dataTransfer?.files ?? [];
 
