@@ -1,5 +1,16 @@
 
 
+## [6.0.0](https://github.com/terrestris/react-util/compare/v5.2.0...v6.0.0) (2024-05-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* switch to es2022 build
+
+### Code Refactoring
+
+* switch to es2022 build ([0d892e1](https://github.com/terrestris/react-util/commit/0d892e1cd6809f8a045e36bbb37621d41a492b3c))
+
 ## [5.2.0](https://github.com/terrestris/react-util/compare/v5.1.0...v5.2.0) (2024-05-22)
 
 
