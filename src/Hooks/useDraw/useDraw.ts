@@ -104,23 +104,21 @@ export const useDraw = ({
     active
   );
 
-  if (drawInteraction) {
-    useOlListener(
-      drawInteraction,
-      i => i.on('drawend', (evt) => {
-        onDrawEnd?.(evt);
-      }),
-      [drawInteraction, onDrawEnd]
-    );
+  useOlListener(
+    drawInteraction,
+    i => i.on('drawend', (evt) => {
+      onDrawEnd?.(evt);
+    }),
+    [drawInteraction, onDrawEnd]
+  );
 
-    useOlListener(
-      drawInteraction,
-      i => i.on('drawstart', (evt) => {
-        onDrawStart?.(evt);
-      }),
-      [drawInteraction, onDrawStart]
-    );
-  }
+  useOlListener(
+    drawInteraction,
+    i => i.on('drawstart', (evt) => {
+      onDrawStart?.(evt);
+    }),
+    [drawInteraction, onDrawStart]
+  );
 };
 
 export default useDraw;

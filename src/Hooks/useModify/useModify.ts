@@ -148,39 +148,35 @@ export const useModify = ({
     active
   );
 
-  if (modifyInteraction) {
-    useOlListener(
-      modifyInteraction,
-      i => i.on('modifystart', e => onModifyStart?.(e)),
-      [onModifyStart]
-    );
+  useOlListener(
+    modifyInteraction,
+    i => i.on('modifystart', e => onModifyStart?.(e)),
+    [onModifyStart]
+  );
 
-    useOlListener(
-      modifyInteraction,
-      i => i.on('modifyend', e => onModifyEnd?.(e)),
-      [onModifyEnd]
-    );
-  }
+  useOlListener(
+    modifyInteraction,
+    i => i.on('modifyend', e => onModifyEnd?.(e)),
+    [onModifyEnd]
+  );
 
-  if (translateInteraction) {
-    useOlListener(
-      translateInteraction,
-      i => i.on('translatestart', e => onTranslateStart?.(e)),
-      [onTranslateStart]
-    );
+  useOlListener(
+    translateInteraction,
+    i => i.on('translatestart', e => onTranslateStart?.(e)),
+    [onTranslateStart]
+  );
 
-    useOlListener(
-      translateInteraction,
-      i => i.on('translateend', e => onTranslateEnd?.(e)),
-      [onTranslateEnd]
-    );
+  useOlListener(
+    translateInteraction,
+    i => i.on('translateend', e => onTranslateEnd?.(e)),
+    [onTranslateEnd]
+  );
 
-    useOlListener(
-      translateInteraction,
-      i => i.on('translating', e => onTranslating?.(e)),
-      [onTranslating]
-    );
-  }
+  useOlListener(
+    translateInteraction,
+    i => i.on('translating', e => onTranslating?.(e)),
+    [onTranslating]
+  );
 };
 
 export default useModify;

@@ -484,41 +484,37 @@ export const useMeasure = ({
     }
   }, [addMeasureStopTooltip, measureType, showMeasureInfoOnClickedPoints]);
 
-  if (drawInteraction) {
-    useOlListener(
-      drawInteraction,
-      i => i.on('drawstart', (evt) => {
-        onDrawStart?.(evt);
-      }),
-      [drawInteraction, onDrawStart]
-    );
+  useOlListener(
+    drawInteraction,
+    i => i.on('drawstart', (evt) => {
+      onDrawStart?.(evt);
+    }),
+    [drawInteraction, onDrawStart]
+  );
 
-    useOlListener(
-      drawInteraction,
-      i => i.on('drawend', (evt) => {
-        onDrawEnd?.(evt);
-      }),
-      [drawInteraction, onDrawEnd]
-    );
-  }
+  useOlListener(
+    drawInteraction,
+    i => i.on('drawend', (evt) => {
+      onDrawEnd?.(evt);
+    }),
+    [drawInteraction, onDrawEnd]
+  );
 
-  if (map) {
-    useOlListener(
-      map,
-      i => i.on('pointermove', (evt) => {
-        onMapPointerMove?.(evt);
-      }),
-      [map, onMapPointerMove]
-    );
+  useOlListener(
+    map,
+    i => i.on('pointermove', (evt) => {
+      onMapPointerMove?.(evt);
+    }),
+    [map, onMapPointerMove]
+  );
 
-    useOlListener(
-      map,
-      i => i.on('click', (evt) => {
-        onMapClick?.(evt);
-      }),
-      [map, onMapClick]
-    );
-  }
+  useOlListener(
+    map,
+    i => i.on('click', (evt) => {
+      onMapClick?.(evt);
+    }),
+    [map, onMapClick]
+  );
 
   useEffect(() => {
     createMeasureTooltip();
