@@ -52,7 +52,7 @@
     "@babel/preset-typescript": "^7.24.1",
     "@release-it/conventional-changelog": "^8.0.1",
     "@terrestris/eslint-config-typescript": "^5.0.0",
-    "@terrestris/ol-util": "^18.0.0",
+    "@terrestris/ol-util": "^19.0.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^15.0.5",
     "@types/jest": "^29.5.12",
