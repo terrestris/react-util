@@ -93,18 +93,16 @@ export const useSelectFeatures = ({
     active
   );
 
-  if (selectInteraction) {
-    useOlListener(
-      selectInteraction,
-      i => i.on('select', e => {
-        if (features && clearAfterSelect) {
-          features.clear();
-        }
-        onFeatureSelect?.(e);
-      }),
-      [features, clearAfterSelect, onFeatureSelect]
-    );
-  }
+  useOlListener(
+    selectInteraction,
+    i => i.on('select', e => {
+      if (features && clearAfterSelect) {
+        features.clear();
+      }
+      onFeatureSelect?.(e);
+    }),
+    [features, clearAfterSelect, onFeatureSelect]
+  );
 
   useEffect(() => {
     if (!active && features) {

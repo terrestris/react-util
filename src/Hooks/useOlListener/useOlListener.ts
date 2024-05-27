@@ -16,7 +16,7 @@ import {
  * This hook unregisters listeners if the dependency array changes
  */
 export const useOlListener = <ObservableType extends Observable>(
-  observable: ObservableType | ObservableType[],
+  observable: ObservableType | ObservableType[] | undefined | null,
   observe: (o: ObservableType) => EventsKey | EventsKey[] | undefined,
   dependencies: DependencyList,
   active?: boolean
