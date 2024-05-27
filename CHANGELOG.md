@@ -1,5 +1,12 @@
 
 
+## [6.0.1](https://github.com/terrestris/react-util/compare/v6.0.0...v6.0.1) (2024-05-27)
+
+
+### Bug Fixes
+
+* update dependencies ([300feaa](https://github.com/terrestris/react-util/commit/300feaa754b0e994f93b291d7562ed384b148f6b))
+
 ## [6.0.0](https://github.com/terrestris/react-util/compare/v5.2.0...v6.0.0) (2024-05-24)
 
 
