@@ -16,14 +16,15 @@ import { Dispatch, SetStateAction, useState } from 'react';
 export const useObjectState = <S extends object>(
   initial?: S | (() => S),
   allowPartialUpdates: boolean = false
-): [S, Dispatch<SetStateAction<Partial<S>>>] => {
+): [S | undefined, Dispatch<SetStateAction<Partial<S>>>] => {
 
   if (!isUndefined(initial) && !isObject(initial)) {
     Logger.error('"useObjectState" can only be used with objects');
   }
+
   const [state, updateState] = useState(initial);
 
-  const setState = (newStateValue) => {
+  const setState = (newStateValue: any) => {
     if (!isEqual(state, newStateValue)) {
       if (allowPartialUpdates) {
         updateState({

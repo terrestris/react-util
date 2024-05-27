@@ -16,8 +16,8 @@ import {
  * This hook unregisters listeners if the dependency array changes
  */
 export const useOlListener = <ObservableType extends Observable>(
-  observable: ObservableType|ObservableType[]|undefined,
-  observe: (o: ObservableType) => EventsKey|EventsKey[],
+  observable: ObservableType | ObservableType[],
+  observe: (o: ObservableType) => EventsKey | EventsKey[] | undefined,
   dependencies: DependencyList,
   active?: boolean
 ): void => {
@@ -26,10 +26,12 @@ export const useOlListener = <ObservableType extends Observable>(
       return undefined;
     }
     const observables = Array.isArray(observable) ? observable : [observable];
-    const keys: EventsKey[] = observables.flatMap(o => {
-      const k = observe(o);
-      return Array.isArray(k) ? k : [k];
-    });
+    const keys: EventsKey[] = observables
+      .flatMap(o => {
+        const k = observe(o);
+        return Array.isArray(k) ? k : [k];
+      })
+      .filter(k => k !== undefined) as EventsKey[];
     return () => {
       for (const key of keys) {
         unByKey(key);

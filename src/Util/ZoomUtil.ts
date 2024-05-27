@@ -1,3 +1,4 @@
+import OlMap from 'ol/Map';
 import { AnimationOptions as OlViewAnimationOptions } from 'ol/View';
 
 export interface MapState {
@@ -27,7 +28,7 @@ export interface MapState {
  * Currently, specifying the extent only is supported as well as specifying the zoom level and optionally the center.
  */
 export const zoomTo = (
-  map,
+  map: OlMap,
   options: MapState = {
     animate: false,
     animateOptions: {},
@@ -80,7 +81,7 @@ export const zoomTo = (
     } else if (center && zoom) {
       view.setCenter(center);
       view.setZoom(zoom);
-    } else {
+    } else if (zoom) {
       view.setZoom(zoom);
     }
   }

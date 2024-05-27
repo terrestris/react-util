@@ -5,7 +5,7 @@ export const usePropOrDefault = <T>(
   defaultFunc: () => T,
   dependencies: DependencyList
 ): T|undefined => {
-  const [value, setValue] = useState<T>(undefined);
+  const [value, setValue] = useState<T>();
   useEffect(() => {
     if (prop) {
       setValue(prop);

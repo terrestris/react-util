@@ -118,15 +118,18 @@ export const useCoordinateInfo = ({
             opts = fetchOpts[getUid(l)];
           }
           const response = await fetch(featureInfoUrl, opts);
-          let format: OlFormatGML2 | OlFormatGeoJSON;
+          let format: OlFormatGML2 | OlFormatGeoJSON | null = null;
 
           if (infoFormat === 'gml') {
             format = new OlFormatGML2();
           } else if (infoFormat === 'json') {
             format = new OlFormatGeoJSON();
+          } else {
+            return;
           }
 
           const text = await response.text();
+
           olFeatures.push(...format.readFeatures(text));
         }
       }
@@ -136,8 +139,8 @@ export const useCoordinateInfo = ({
         }
         const wfsLayerSource = (l as WfsLayer).getSource();
 
-        const wfsFeatures = wfsLayerSource.getFeaturesAtCoordinate(coordinate);
-        wfsFeatures.forEach(feature => olFeatures.push(feature));
+        const wfsFeatures = wfsLayerSource?.getFeaturesAtCoordinate(coordinate);
+        wfsFeatures?.forEach(feature => olFeatures.push(feature));
       }
       const featureMap: { [index: string]: OlFeature[] } = _groupBy(olFeatures, (feature: OlFeature) => {
         const id = feature.getId();

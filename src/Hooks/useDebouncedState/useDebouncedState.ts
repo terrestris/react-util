@@ -11,15 +11,17 @@ export type UseDebouncedStateArgs<T> = {
 export const useDebouncedState = <T>({ initialValue, time = 100 }: UseDebouncedStateArgs<T>): [T, (v: T) => void] => {
   const [state, setState] = useState<T>(initialValue);
 
-  let timeout;
+  let timeout: NodeJS.Timeout | null;
 
-  const setDelayedState = (value) => {
+  const setDelayedState = (value: any) => {
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
       setState(value);
-      clearTimeout(timeout);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       timeout = null;
     }, time);
   };

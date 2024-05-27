@@ -29,14 +29,14 @@ export type UseGeoLocationArgs = {
 };
 
 export type GeoLocation = {
-  accuracy: number;
+  accuracy?: number;
   heading: number;
   position: number[];
   speed: number;
 };
 
 export type GeoLocationType = {
-  actualPosition: GeoLocation;
+  actualPosition?: GeoLocation;
   trackedLine: OlGeomLineString;
 };
 

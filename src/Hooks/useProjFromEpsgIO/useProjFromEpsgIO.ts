@@ -1,4 +1,4 @@
-import { UrlUtil } from '@terrestris/base-util';
+import { UrlUtil } from '@terrestris/base-util/dist/UrlUtil/UrlUtil';
 import _groupBy from 'lodash/groupBy';
 import _isNil from 'lodash/isNil';
 import _mapValues from 'lodash/mapValues';
@@ -25,7 +25,7 @@ export const useProjFromEpsgIO = ({
   crsApiUrl = 'https://epsg.io/',
   searchValue,
   onFetchError = () => undefined
-}: UseProjFromEpsgIOArgs): Record<string, ProjectionDefinition> | undefined => {
+}: UseProjFromEpsgIOArgs) => {
 
   const [projectionDefinitions, setProjectionDefinitions] = useState<ProjectionDefinition[]>();
 

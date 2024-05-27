@@ -7,7 +7,6 @@ import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
-import OlVectorSource from 'ol/source/Vector';
 import React, {
   ReactElement
 } from 'react';
@@ -121,7 +120,7 @@ export function mockForEachFeatureAtPixel(
   map: OlMap,
   pixel: [number, number],
   feature: OlFeature<OlGeometry>,
-  layer?: OlVectorLayer<OlVectorSource<OlFeature>>
+  layer?: OlVectorLayer<OlFeature>
 ): jest.SpyInstance {
   return jest.spyOn(map, 'forEachFeatureAtPixel').mockImplementation((atPixel, callback) => {
     if (pixel[0] === atPixel[0] && pixel[1] === atPixel[1]) {
