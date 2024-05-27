@@ -1,5 +1,12 @@
 
 
+## [6.0.2](https://github.com/terrestris/react-util/compare/v6.0.1...v6.0.2) (2024-05-27)
+
+
+### Bug Fixes
+
+* remove conditional hook calls ([8c3c222](https://github.com/terrestris/react-util/commit/8c3c222f5d54e04986e84d8b0a4a91b5da1cf1a4))
+
 ## [6.0.1](https://github.com/terrestris/react-util/compare/v6.0.0...v6.0.1) (2024-05-27)
 
 
