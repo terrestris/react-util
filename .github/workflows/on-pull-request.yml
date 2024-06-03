@@ -23,7 +23,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.npm
-        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: "${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}"
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
@@ -33,6 +33,9 @@ jobs:
 
     - name: Lint code 💄
       run: npm run lint
+
+    - name: Typecheck code ✅
+      run: npm run typecheck
 
     - name: Test code ✅
       run: npm run test-ci
