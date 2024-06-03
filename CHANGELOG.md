@@ -1,5 +1,25 @@
 
 
+## [7.0.0](https://github.com/terrestris/react-util/compare/v6.0.2...v7.0.0) (2024-06-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* The `useWfs` and `useNominatim` hooks are removed. You can instead now use the `useSearch` hook with the needed search functions for example like this:
+
+```
+const [searchTerm, setSearchTerm] = useState<string>('');
+const searchFunction = useCallback(createNominatimSearchFunction({}), []);
+const {
+  featureCollection,
+  loading
+} = useSearch(searchFunction, searchTerm);
+```
+
+### Features
+
+* unify functionality of useWfs and useNominatim into on useSearch hook ([9d37d20](https://github.com/terrestris/react-util/commit/9d37d20939c44d4f2132aca603116bdc301b8497))
+
 ## [6.0.2](https://github.com/terrestris/react-util/compare/v6.0.1...v6.0.2) (2024-05-27)
 
 
