@@ -166,7 +166,7 @@ export const useCoordinateInfo = ({
     map.getTargetElement().style.cursor = '';
     setLoading(false);
 
-  }, [drillDown, featureCount, fetchOpts, layerFilter, map, onError]);
+  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, loading, map, onError, onSuccess]);
 
   useEffect(() => {
     map?.on('click', onMapClick);

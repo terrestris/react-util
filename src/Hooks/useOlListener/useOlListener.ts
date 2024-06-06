@@ -37,7 +37,7 @@ export const useOlListener = <ObservableType extends Observable>(
         unByKey(key);
       }
     };
-  }, [observable, active, ...dependencies]);
+  }, [observable, active, observe, ...dependencies]);
 };
 
 export default useOlListener;

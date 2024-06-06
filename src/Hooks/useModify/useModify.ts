@@ -93,11 +93,11 @@ export const useModify = ({
 }: UseModifyProps) => {
   const map = useMap();
 
-  const layer = map ? usePropOrDefault(
+  const layer = usePropOrDefault(
     digitizeLayer,
     () => DigitizeUtil.getDigitizeLayer(map),
     [map]
-  ) : null;
+  );
 
   const featuresRef = useRef(new OlCollection<OlFeature>());
 

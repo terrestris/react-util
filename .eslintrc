@@ -1,8 +1,9 @@
 {
   "extends": [
-    "@terrestris/eslint-config-typescript"
+    "@terrestris/eslint-config-typescript",
+    "plugin:react-hooks/recommended"
   ],
-    "plugins": ["simple-import-sort"],
+    "plugins": ["simple-import-sort", "react-hooks"],
     "rules": {
     "@typescript-eslint/member-ordering": "off",
       "no-underscore-dangle": "off",

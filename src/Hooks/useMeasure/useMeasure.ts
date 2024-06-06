@@ -532,15 +532,13 @@ export const useMeasure = ({
     }
   }, [active, measureLayer, cleanupTooltips]);
 
-  if (feature) {
-    useOlListener(
-      feature,
-      i => i.getGeometry()?.on('change', () => {
-        updateMeasureTooltip?.();
-      }),
-      [feature, updateMeasureTooltip]
-    );
-  }
+  useOlListener(
+    feature,
+    i => i.getGeometry()?.on('change', () => {
+      updateMeasureTooltip?.();
+    }),
+    [feature, updateMeasureTooltip]
+  );
 
   return null;
 

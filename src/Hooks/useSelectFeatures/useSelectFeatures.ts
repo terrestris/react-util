@@ -108,7 +108,7 @@ export const useSelectFeatures = ({
     if (!active && features) {
       features.clear();
     }
-  }, []);
+  }, [active, features]);
 };
 
 export default useSelectFeatures;

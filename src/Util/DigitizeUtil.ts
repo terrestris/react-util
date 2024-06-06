@@ -94,7 +94,10 @@ export class DigitizeUtil {
    *
    * @param map
    */
-  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlFeature> {
+  static getDigitizeLayer(map: OlMap | null): OlVectorLayer<OlFeature> | null {
+    if (!map) {
+      return null;
+    }
     let digitizeLayer = MapUtil.getLayerByName(map, DigitizeUtil.DIGITIZE_LAYER_NAME) as OlVectorLayer<OlFeature>;
 
     if (!digitizeLayer) {

@@ -63,7 +63,7 @@ export const useSearch = <
 
       return undefined;
     }
-  }, [searchFunction, searchTerm]);
+  }, [debounceTime, minChars, onFetchError, onFetchSuccess, searchFunction, searchTerm]);
 
   return {
     loading,
