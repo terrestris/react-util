@@ -12,7 +12,7 @@ export const usePropOrDefault = <T>(
     } else {
       setValue(defaultFunc());
     }
-  }, [prop, ...dependencies]);
+  }, [prop, defaultFunc, ...dependencies]);
 
   return value;
 };

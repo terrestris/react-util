@@ -45,7 +45,7 @@ export const useOlInteraction = <InteractionType extends Interaction> (
       map.removeInteraction(newInteraction);
       setInteraction(undefined);
     };
-  }, [...dependencies, map]);
+  }, [...dependencies, map, constructor]);
 
   useEffect(() => {
     if (!interaction || isNil(active)) {
