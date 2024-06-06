@@ -1,5 +1,26 @@
 
 
+## [8.0.0](https://github.com/terrestris/react-util/compare/v7.0.0...v8.0.0) (2024-06-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* The features result of the useCoordinateInfo hook is no longer grouped by featureType but returns an object for each feature that contains the feature, the layer and the feature type.
+
+If you need the grouping, you can do the following
+```
+import {groupBy, mapValues} from 'lodash';
+
+const { features } = useCoordinateInfo();
+
+const grouped = groupBy(features, 'featureType');
+const groupedAndMapped = mapValues(grouped, results => results.map(r => r.feature));
+```
+
+### Features
+
+* include layer in coordinate info result ([11a4c70](https://github.com/terrestris/react-util/commit/11a4c70e099aae6914d3248b4c7130e6791e6e85))
+
 ## [7.0.0](https://github.com/terrestris/react-util/compare/v6.0.2...v7.0.0) (2024-06-03)
 
 
