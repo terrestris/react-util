@@ -1,10 +1,8 @@
 import Logger from '@terrestris/base-util/dist/Logger';
 import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '@terrestris/ol-util';
+import { isString, uniqueId } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
-import _groupBy from 'lodash/groupBy';
 import _isNil from 'lodash/isNil';
-import _isString from 'lodash/isString';
-import _uniqueId from 'lodash/uniqueId';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
@@ -16,13 +14,15 @@ import { useCallback, useEffect, useState } from 'react';
 
 import useMap from '../useMap/useMap';
 
-export type FeatureMap = {
-  [featureTypeName: string]: OlFeature[];
+export type FeatureLayerResult = {
+  feature: OlFeature;
+  layer: WmsLayer|WfsLayer;
+  featureType: string;
 };
 
 export type CoordinateInfoResult = {
   clickCoordinate: OlCoordinate | null;
-  features: FeatureMap;
+  features: FeatureLayerResult[];
   loading: boolean;
 };
 
@@ -48,6 +48,11 @@ const getInfoFormat = (type: 'gml'|'json') => {
   }
 };
 
+const getFeatureType = (feature: OlFeature) => {
+  const id = feature.getId();
+  return isString(id) ? id.split('.')[0] : id?.toString() ?? uniqueId('UNKNOWN');
+};
+
 export const useCoordinateInfo = ({
   queryLayers = [],
   featureCount = 1,
@@ -61,7 +66,7 @@ export const useCoordinateInfo = ({
   const map = useMap();
 
   const [clickCoordinate, setClickCoordinate] = useState<any>();
-  const [features, setFeatures] = useState<FeatureMap>({});
+  const [featureResults, setFeatureResults] = useState<FeatureLayerResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const layerFilter = useCallback((layerCandidate: OlBaseLayer): boolean => {
@@ -78,26 +83,27 @@ export const useCoordinateInfo = ({
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
 
-    const olFeatures: OlFeature[] = [];
     const wmsMapLayers =
       map.getAllLayers()
         .filter(layerFilter)
-        .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l));
+        .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l)) as WmsLayer[];
 
     const wfsMapLayers =
       map.getAllLayers()
         .filter(layerFilter)
-        .filter(l => isWfsLayer(l));
+        .filter(l => isWfsLayer(l)) as WfsLayer[];
 
     setLoading(true);
     map.getTargetElement().style.cursor = 'wait';
 
     try {
-      for (const l of wmsMapLayers) {
-        if (!drillDown && olFeatures.length > 0) {
+      const results: FeatureLayerResult[] = [];
+
+      for (const layer of wmsMapLayers) {
+        if (!drillDown && results.length > 0) {
           break;
         }
-        const wmsLayerSource = (l as WmsLayer).getSource();
+        const wmsLayerSource = layer.getSource();
         if (!wmsLayerSource) {
           continue;
         }
@@ -113,9 +119,9 @@ export const useCoordinateInfo = ({
         if (featureInfoUrl) {
           let opts;
           if (fetchOpts instanceof Function) {
-            opts = fetchOpts(l as WmsLayer);
+            opts = fetchOpts(layer as WmsLayer);
           } else {
-            opts = fetchOpts[getUid(l)];
+            opts = fetchOpts[getUid(layer)];
           }
           const response = await fetch(featureInfoUrl, opts);
           let format: OlFormatGML2 | OlFormatGeoJSON | null = null;
@@ -130,23 +136,30 @@ export const useCoordinateInfo = ({
 
           const text = await response.text();
 
-          olFeatures.push(...format.readFeatures(text));
+          results.push(...format.readFeatures(text).map(f => ({
+            feature: f,
+            layer,
+            featureType: getFeatureType(f)
+          })));
         }
       }
-      for (const l of wfsMapLayers) {
-        if (!drillDown && olFeatures.length > 0) {
+      for (const layer of wfsMapLayers) {
+        if (!drillDown && results.length > 0) {
           break;
         }
-        const wfsLayerSource = (l as WfsLayer).getSource();
+        const wfsLayerSource = layer.getSource();
 
-        const wfsFeatures = wfsLayerSource?.getFeaturesAtCoordinate(coordinate);
-        wfsFeatures?.forEach(feature => olFeatures.push(feature));
+        if (!wfsLayerSource) {
+          continue;
+        }
+
+        results.push(...wfsLayerSource.getFeaturesAtCoordinate(coordinate).map(f => ({
+          feature: f,
+          layer,
+          featureType: getFeatureType(f)
+        })));
       }
-      const featureMap: { [index: string]: OlFeature[] } = _groupBy(olFeatures, (feature: OlFeature) => {
-        const id = feature.getId();
-        return _isString(id) ? id.split('.')[0] : id?.toString() ?? _uniqueId('UNKNOWN');
-      });
-      setFeatures(featureMap);
+      setFeatureResults(results);
       setClickCoordinate(coordinate);
 
       // We're cloning the click coordinate and features to
@@ -156,7 +169,7 @@ export const useCoordinateInfo = ({
       onSuccess({
         clickCoordinate: _cloneDeep(coordinate),
         loading,
-        features: _cloneDeep(featureMap)
+        features: _cloneDeep(results)
       });
 
     } catch (error: any) {
@@ -179,7 +192,7 @@ export const useCoordinateInfo = ({
   return {
     clickCoordinate: _cloneDeep(clickCoordinate),
     loading,
-    features: _cloneDeep(features)
+    features: _cloneDeep(featureResults)
   };
 };
 
