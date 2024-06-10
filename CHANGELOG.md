@@ -1,5 +1,14 @@
 
 
+## [8.0.1](https://github.com/terrestris/react-util/compare/v8.0.0...v8.0.1) (2024-06-10)
+
+
+### Bug Fixes
+
+* add eslint react linting and fix warnings about dependency lists ([89e70e2](https://github.com/terrestris/react-util/commit/89e70e2e51a3efbbbffe1935d42c6493735ca8f1))
+* add react hooks eslint plugin & fix dependencies ([1d521c3](https://github.com/terrestris/react-util/commit/1d521c39f86fb57967005ec55bfcd9a618db66be))
+* remove defaultFunc from dependencies of usePropOrDefault ([f10b2b2](https://github.com/terrestris/react-util/commit/f10b2b244fdf3e57be5c7f3cdf57a3aaf923e596))
+
 ## [8.0.0](https://github.com/terrestris/react-util/compare/v7.0.0...v8.0.0) (2024-06-06)
 
 
