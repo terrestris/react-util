@@ -1,5 +1,12 @@
 
 
+## [8.0.2](https://github.com/terrestris/react-util/compare/v8.0.1...v8.0.2) (2024-06-10)
+
+
+### Bug Fixes
+
+* remove functions from dependency lists that normally change on every render ([30d8e5b](https://github.com/terrestris/react-util/commit/30d8e5b1bec1400093093b484f2a62e28e9f8e03))
+
 ## [8.0.1](https://github.com/terrestris/react-util/compare/v8.0.0...v8.0.1) (2024-06-10)
 
 
