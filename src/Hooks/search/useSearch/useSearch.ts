@@ -30,8 +30,8 @@ export const useSearch = <
     {
       minChars = 3,
       debounceTime = 100,
-      onFetchError = () => {},
-      onFetchSuccess = () => {}
+      onFetchError,
+      onFetchSuccess
     }: SearchOptions<G, T, C>
   ) => {
   const [featureCollection, setFeatureCollection] = useState<C>();
@@ -45,9 +45,9 @@ export const useSearch = <
         try {
           const collection = await searchFunction(searchTerm);
           setFeatureCollection(collection);
-          onFetchSuccess(collection);
+          onFetchSuccess?.(collection);
         } catch (error) {
-          onFetchError(error);
+          onFetchError?.(error);
         } finally {
           setLoading(false);
         }
@@ -63,7 +63,8 @@ export const useSearch = <
 
       return undefined;
     }
-  }, [debounceTime, minChars, onFetchError, onFetchSuccess, searchFunction, searchTerm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounceTime, minChars, searchFunction, searchTerm]);
 
   return {
     loading,

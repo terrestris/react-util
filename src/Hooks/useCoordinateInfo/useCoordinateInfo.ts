@@ -58,8 +58,8 @@ export const useCoordinateInfo = ({
   featureCount = 1,
   fetchOpts = {},
   drillDown = false,
-  onError = () => { },
-  onSuccess = () => { },
+  onError,
+  onSuccess,
   infoFormat = 'gml'
 }: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
@@ -166,7 +166,7 @@ export const useCoordinateInfo = ({
       // not pass the internal state reference to the parent component.
       // Also note that we explicitly don't use feature.clone() to
       // keep all feature properties (in particular the id) intact.
-      onSuccess({
+      onSuccess?.({
         clickCoordinate: _cloneDeep(coordinate),
         loading,
         features: _cloneDeep(results)
@@ -174,12 +174,13 @@ export const useCoordinateInfo = ({
 
     } catch (error: any) {
       Logger.error(error);
-      onError(error);
+      onError?.(error);
     }
     map.getTargetElement().style.cursor = '';
     setLoading(false);
 
-  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, loading, map, onError, onSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, loading, map]);
 
   useEffect(() => {
     map?.on('click', onMapClick);

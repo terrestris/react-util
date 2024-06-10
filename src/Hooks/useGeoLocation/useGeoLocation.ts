@@ -7,6 +7,7 @@ import OlGeometry from 'ol/geom/Geometry';
 import OlGeomLineString from 'ol/geom/LineString';
 import OlGeomPoint from 'ol/geom/Point';
 import OlLayerVector from 'ol/layer/Vector';
+import { unByKey } from 'ol/Observable';
 import RenderFeature from 'ol/render/Feature';
 import OlSourceVector from 'ol/source/Vector';
 import OlStyleIcon from 'ol/style/Icon';
@@ -47,8 +48,8 @@ export const useGeoLocation = ({
   active,
   enableTracking = false,
   follow = false,
-  onError = () => {},
-  onGeoLocationChange = () => {},
+  onError,
+  onGeoLocationChange,
   showMarker = false,
   trackingOptions = {
     enableHighAccuracy: true,
@@ -123,8 +124,8 @@ export const useGeoLocation = ({
       speed
     };
     setActualPosition(actualGeoLocation);
-    onGeoLocationChange(actualGeoLocation);
-  }, [onGeoLocationChange, trackedLine]);
+    onGeoLocationChange?.(actualGeoLocation);
+  }, [trackedLine]);
 
   // Geolocation Control
   const olGeoLocation = useMemo(() => active ? new OlGeolocation({
@@ -144,14 +145,28 @@ export const useGeoLocation = ({
   }, [map]);
 
   useEffect(() => {
-    olGeoLocation?.on('change', onLocationChanged);
-    olGeoLocation?.on('error', onError);
+    if (!onError || !olGeoLocation) {
+      return;
+    }
+
+    const key = olGeoLocation.on('error', onError);
 
     return () => {
-      olGeoLocation?.un('change', onLocationChanged);
-      olGeoLocation?.un('error', onError);
+      unByKey(key);
     };
-  }, [olGeoLocation, onError, onLocationChanged]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [olGeoLocation]);
+
+  useEffect(() => {
+    if (!olGeoLocation) {
+      return;
+    }
+    const key = olGeoLocation.on('change', onLocationChanged);
+
+    return () => {
+      unByKey(key);
+    };
+  }, [olGeoLocation, onLocationChanged]);
 
   useEffect(() => {
     olGeoLocation?.setTracking(enableTracking);

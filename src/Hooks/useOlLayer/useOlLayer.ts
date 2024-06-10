@@ -44,7 +44,7 @@ export const useOlLayer = <LayerType extends BaseLayer>(
       setLayer(undefined);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, constructor, ...dependencies]);
+  }, [map, ...dependencies]);
 
   useEffect(() => {
     if (!layer || isNil(visible)) {
