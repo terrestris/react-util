@@ -43,6 +43,7 @@ export const useOlLayer = <LayerType extends BaseLayer>(
       map.removeLayer(newLayer);
       setLayer(undefined);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, constructor, ...dependencies]);
 
   useEffect(() => {

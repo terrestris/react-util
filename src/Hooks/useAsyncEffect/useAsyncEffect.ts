@@ -43,6 +43,7 @@ export const useAsyncEffect = (effect: AsyncEffect, dependencies?: DependencyLis
         });
 
       return cleanup;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, dependencies);
   });
 };
