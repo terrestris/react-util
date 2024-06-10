@@ -103,7 +103,7 @@ export function renderInMapContext(map: OlMap, element: ReactElement, size: [num
 
   const { rerender, ...results } = render(assemble(element));
 
-  map.setSize([400, 400]);
+  map.setSize(size);
   map.renderSync();
 
   const rerenderInMapContext = (newElement: ReactElement) => {
