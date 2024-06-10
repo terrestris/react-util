@@ -45,7 +45,8 @@ export const useOlInteraction = <InteractionType extends Interaction> (
       map.removeInteraction(newInteraction);
       setInteraction(undefined);
     };
-  }, [...dependencies, map]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [...dependencies, map, constructor]);
 
   useEffect(() => {
     if (!interaction || isNil(active)) {

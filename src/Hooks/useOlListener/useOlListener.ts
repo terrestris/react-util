@@ -37,7 +37,8 @@ export const useOlListener = <ObservableType extends Observable>(
         unByKey(key);
       }
     };
-  }, [observable, active, ...dependencies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [observable, active, observe, ...dependencies]);
 };
 
 export default useOlListener;

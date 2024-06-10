@@ -1,6 +1,7 @@
 {
   "extends": [
-    "@terrestris/eslint-config-typescript"
+    "@terrestris/eslint-config-typescript-react",
+    "plugin:react-hooks/recommended"
   ],
     "plugins": ["simple-import-sort"],
     "rules": {

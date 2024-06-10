@@ -12,6 +12,7 @@ export const usePropOrDefault = <T>(
     } else {
       setValue(defaultFunc());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prop, ...dependencies]);
 
   return value;

@@ -1,5 +1,4 @@
 import MeasureUtil from '@terrestris/ol-util/dist/MeasureUtil/MeasureUtil';
-import _isNil from 'lodash/isNil';
 import OlCollection from 'ol/Collection';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
@@ -532,15 +531,13 @@ export const useMeasure = ({
     }
   }, [active, measureLayer, cleanupTooltips]);
 
-  if (feature) {
-    useOlListener(
-      feature,
-      i => i.getGeometry()?.on('change', () => {
-        updateMeasureTooltip?.();
-      }),
-      [feature, updateMeasureTooltip]
-    );
-  }
+  useOlListener(
+    feature,
+    i => i.getGeometry()?.on('change', () => {
+      updateMeasureTooltip?.();
+    }),
+    [feature, updateMeasureTooltip]
+  );
 
   return null;
 

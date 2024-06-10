@@ -13,6 +13,7 @@ type AsyncEffect = (options: AsyncEffectOptions) => Promise<void>;
  */
 export const useAsyncEffect = (effect: AsyncEffect, dependencies?: DependencyList): Promise<void> => {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       let mounted = true;
       const cancelHandlers: (() => void)[] = [];
@@ -42,6 +43,7 @@ export const useAsyncEffect = (effect: AsyncEffect, dependencies?: DependencyLis
         });
 
       return cleanup;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, dependencies);
   });
 };

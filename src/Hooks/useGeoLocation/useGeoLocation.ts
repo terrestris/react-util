@@ -11,7 +11,7 @@ import RenderFeature from 'ol/render/Feature';
 import OlSourceVector from 'ol/source/Vector';
 import OlStyleIcon from 'ol/style/Icon';
 import OlStyleStyle from 'ol/style/Style';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 
 import useMap from '../useMap/useMap';
 import {useOlLayer} from '../useOlLayer/useOlLayer';
@@ -88,7 +88,7 @@ export const useGeoLocation = ({
   /**
    * Callback of the interactions on change event.
    */
-  const onLocationChanged = (geoLocationEvent: BaseEvent) => {
+  const onLocationChanged = useCallback((geoLocationEvent: BaseEvent) => {
     const ac = geoLocationEvent.target as OlGeolocation;
 
     const position = ac.getPosition() ?? [0, 0];
@@ -124,7 +124,7 @@ export const useGeoLocation = ({
     };
     setActualPosition(actualGeoLocation);
     onGeoLocationChange(actualGeoLocation);
-  };
+  }, [onGeoLocationChange, trackedLine]);
 
   // Geolocation Control
   const olGeoLocation = useMemo(() => active ? new OlGeolocation({
@@ -133,7 +133,7 @@ export const useGeoLocation = ({
 
   // re-centers the view by putting the given coordinates at 3/4 from the top or
   // the screen
-  const getCenterWithHeading = (position: [number, number], rotation: number, resolution: number) => {
+  const getCenterWithHeading = useCallback((position: [number, number], rotation: number, resolution: number) => {
     const size = map?.getSize() ?? [0, 0];
     const height = size[1];
 
@@ -141,7 +141,7 @@ export const useGeoLocation = ({
       position[0] - Math.sin(rotation) * height * resolution / 4,
       position[1] + Math.cos(rotation) * height * resolution / 4
     ];
-  };
+  }, [map]);
 
   useEffect(() => {
     olGeoLocation?.on('change', onLocationChanged);
@@ -151,15 +151,15 @@ export const useGeoLocation = ({
       olGeoLocation?.un('change', onLocationChanged);
       olGeoLocation?.un('error', onError);
     };
-  }, [olGeoLocation, onError]);
+  }, [olGeoLocation, onError, onLocationChanged]);
 
   useEffect(() => {
     olGeoLocation?.setTracking(enableTracking);
-  }, [enableTracking]);
+  }, [enableTracking, olGeoLocation]);
 
   useEffect(() => {
     olGeoLocation?.setTrackingOptions(trackingOptions);
-  }, [trackingOptions]);
+  }, [olGeoLocation, trackingOptions]);
 
   useEffect(() => {
     const deltaMean = 500; // the geolocation sampling period mean in ms
@@ -179,7 +179,7 @@ export const useGeoLocation = ({
         markerFeature.setGeometry(pointGeometry);
       }
     }
-  }, [actualPosition, showMarker, follow, map]);
+  }, [actualPosition, showMarker, follow, map, trackedLine, getCenterWithHeading, markerFeature]);
 
   return {
     actualPosition,
