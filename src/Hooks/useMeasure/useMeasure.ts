@@ -17,7 +17,7 @@ import OlStyleCircle from 'ol/style/Circle';
 import OlStyleFill from 'ol/style/Fill';
 import OlStyleStroke from 'ol/style/Stroke';
 import OlStyleStyle from 'ol/style/Style';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CSS_PREFIX } from '../../constants';
 import useMap from '../useMap/useMap';
@@ -134,9 +134,10 @@ export const useMeasure = ({
 }: UseMeasureProps) => {
 
   const [feature, setFeature] = useState<OlFeature<OlGeometry>>();
-  const [measureTooltip, setMeasureTooltip] = useState<OlOverlay>();
-  const [helpTooltip, setHelpTooltip] = useState<OlOverlay>();
-  const [stepMeasureTooltips, setStepMeasureTooltips] = useState<OlOverlay[]>([]);
+
+  const measureTooltip = useRef<OlOverlay>();
+  const helpTooltip = useRef<OlOverlay>();
+  const stepMeasureTooltips = useRef<OlOverlay[]>([]);
 
   const map = useMap();
 
@@ -214,93 +215,79 @@ export const useMeasure = ({
   }, [measureType, measureLayer, fillColor, strokeColor, fillColor], active);
 
   const removeMeasureTooltip = useCallback(() => {
-    if (!map) {
-      return;
+    if (map && measureTooltip.current) {
+      map.removeOverlay(measureTooltip.current);
+      measureTooltip.current = undefined
     }
-
-    if (measureTooltip) {
-      map.removeOverlay(measureTooltip);
-    }
-
-    setMeasureTooltip(undefined);
-  }, [measureTooltip, map]);
+  }, [map]);
 
   const removeStepMeasureTooltips = useCallback(() => {
-    if (!map) {
-      return;
-    }
-
-    if (stepMeasureTooltips.length > 0) {
-      stepMeasureTooltips.forEach(overlay => {
+    if (map && stepMeasureTooltips.current.length > 0) {
+      for (const overlay of stepMeasureTooltips.current) {
         map.removeOverlay(overlay);
-      });
+      }
 
-      setStepMeasureTooltips([]);
+      stepMeasureTooltips.current = [];
     }
-  }, [stepMeasureTooltips, map]);
+  }, [map]);
 
   const removeHelpTooltip = useCallback(() => {
-    if (!map) {
-      return;
+    if (map && helpTooltip.current) {
+      map.removeOverlay(helpTooltip.current);
+      helpTooltip.current = undefined;
     }
+  }, [map]);
 
-    if (helpTooltip) {
-      map.removeOverlay(helpTooltip);
-    }
-
-    setHelpTooltip(undefined);
-  }, [map, helpTooltip]);
-
-  const cleanupTooltips = useCallback(() => {
+  const cleanup = useCallback(() => {
     removeMeasureTooltip();
-
     removeStepMeasureTooltips();
-
     removeHelpTooltip();
-  }, [removeMeasureTooltip, removeStepMeasureTooltips, removeHelpTooltip]);
+    measureLayer?.getSource()?.clear();
+  }, [measureLayer, removeMeasureTooltip, removeStepMeasureTooltips, removeHelpTooltip]);
+
+  useEffect(() => {
+    if (active) {
+      return () => {
+        cleanup();
+      };
+    }
+    return undefined;
+  }, [active, cleanup]);
 
   const createHelpTooltip = useCallback(() => {
-    if (!map || helpTooltip) {
+    if (!map || helpTooltip.current) {
       return;
     }
 
-    const tooltip = document.createElement('div');
-    tooltip.className = measureTooltipCssClasses?.tooltip ?? '';
-
-    const overlay = new OlOverlay({
-      element: tooltip,
+    helpTooltip.current = new OlOverlay({
+      element: document.createElement('div'),
       offset: [15, 0],
-      positioning: 'center-left'
+      positioning: 'center-left',
+      className: measureTooltipCssClasses?.tooltip ?? ''
     });
 
-    setHelpTooltip(overlay);
-
-    map.addOverlay(overlay);
-  }, [map, helpTooltip, measureTooltipCssClasses?.tooltip]);
+    map.addOverlay(helpTooltip.current);
+  }, [map, measureTooltipCssClasses?.tooltip]);
 
   const createMeasureTooltip = useCallback(() => {
-    if (!map || measureTooltip?.getElement()) {
+    if (!map || measureTooltip.current) {
       return;
     }
 
-    const element = document.createElement('div');
-    if (measureTooltipCssClasses) {
-      element.className = `${measureTooltipCssClasses.tooltip} ${measureTooltipCssClasses.tooltipDynamic}`;
-    }
-
-    const overlay = new OlOverlay({
-      element: element,
+    measureTooltip.current = new OlOverlay({
+      element: document.createElement('div'),
       offset: [0, -15],
-      positioning: 'bottom-center'
+      positioning: 'bottom-center',
+      className: measureTooltipCssClasses
+        ? `${measureTooltipCssClasses.tooltip} ${measureTooltipCssClasses.tooltipDynamic}`
+        : ''
     });
 
-    setMeasureTooltip(overlay);
-
-    map.addOverlay(overlay);
+    map.addOverlay(measureTooltip.current);
   }, [map, measureTooltip, measureTooltipCssClasses]);
 
   const updateMeasureTooltip = useCallback(() => {
-    if (!measureTooltip || !feature || !map) {
+    if (!measureTooltip.current || !feature || !map) {
       return;
     }
 
@@ -344,31 +331,25 @@ export const useMeasure = ({
       return;
     }
 
-    const el = measureTooltip.getElement();
+    const el = measureTooltip.current.getElement();
     if (output && el) {
       el.innerHTML = output;
     }
 
-    measureTooltip.setPosition(measureTooltipCoord);
-  }, [decimalPlacesInTooltips, feature, geodesic, map, measureTooltip, measureType, measureRadius]);
+    measureTooltip.current.setPosition(measureTooltipCoord);
+  }, [decimalPlacesInTooltips, feature, geodesic, map, measureType, measureRadius]);
 
   const onDrawStart = useCallback((evt: OlDrawEvent) => {
-    if (!measureLayer || !map) {
+    if (!map) {
       return;
     }
 
-    const source = measureLayer.getSource();
+    if (!multipleDrawing) {
+      cleanup();
+    }
 
     setFeature(evt.feature);
-
-    const features = source?.getFeatures();
-
-    if (!multipleDrawing && features && features.length > 0) {
-      cleanupTooltips();
-
-      source?.clear();
-    }
-  }, [cleanupTooltips, map, measureLayer, multipleDrawing]);
+  }, [cleanup, map, multipleDrawing]);
 
   const addMeasureStopTooltip = useCallback((coordinate: OlCoordinate) => {
     if (!feature || !map) {
@@ -404,10 +385,9 @@ export const useMeasure = ({
 
       tooltip.setPosition(coordinate);
 
-      setStepMeasureTooltips([...stepMeasureTooltips, tooltip]);
+      stepMeasureTooltips.current.push(tooltip);
     }
-  }, [stepMeasureTooltips, decimalPlacesInTooltips, feature,
-    geodesic, map, measureTooltipCssClasses, measureType]);
+  }, [decimalPlacesInTooltips, feature, geodesic, map, measureTooltipCssClasses, measureType]);
 
   const onDrawEnd = useCallback((evt: OlDrawEvent) => {
     if (multipleDrawing) {
@@ -423,11 +403,11 @@ export const useMeasure = ({
     ) {
       removeMeasureTooltip();
     } else {
-      const el = measureTooltip?.getElement();
+      const el = measureTooltip.current?.getElement();
       if (el && measureTooltipCssClasses) {
         el.className = `${measureTooltipCssClasses.tooltip} ${measureTooltipCssClasses.tooltipStatic}`;
       }
-      measureTooltip?.setOffset([0, -7]);
+      measureTooltip.current?.setOffset([0, -7]);
     }
 
     updateMeasureTooltip();
@@ -440,18 +420,18 @@ export const useMeasure = ({
       (multipleDrawing || showMeasureInfoOnClickedPoints) &&
       (measureType === 'line' || measureType === 'polygon')
     ) {
-      measureTooltip?.setElement(undefined);
+      measureTooltip.current = undefined;
       createMeasureTooltip();
     }
-  }, [addMeasureStopTooltip, createMeasureTooltip, measureTooltip, measureTooltipCssClasses,
+  }, [addMeasureStopTooltip, createMeasureTooltip, measureTooltipCssClasses,
     measureType, multipleDrawing, removeMeasureTooltip, showMeasureInfoOnClickedPoints, updateMeasureTooltip]);
 
   const updateHelpTooltip = useCallback((coordinate: OlCoordinate) => {
-    if (!helpTooltip) {
+    if (!helpTooltip.current) {
       return;
     }
 
-    const helpTooltipElement = helpTooltip?.getElement();
+    const helpTooltipElement = helpTooltip.current?.getElement();
 
     if (!helpTooltipElement) {
       return;
@@ -468,7 +448,7 @@ export const useMeasure = ({
     }
 
     helpTooltipElement.innerHTML = msg ?? '';
-    helpTooltip.setPosition(coordinate);
+    helpTooltip.current.setPosition(coordinate);
   }, [clickToDrawText, continueAngleMsg, continueLineMsg, continuePolygonMsg, helpTooltip, measureType]);
 
   const onMapPointerMove = useCallback((evt: any) => {
@@ -522,14 +502,6 @@ export const useMeasure = ({
       createHelpTooltip();
     }
   }, [createHelpTooltip, createMeasureTooltip, showHelpTooltip]);
-
-  useEffect(() => {
-    if (!active) {
-      measureLayer?.getSource()?.clear();
-
-      cleanupTooltips();
-    }
-  }, [active, measureLayer, cleanupTooltips]);
 
   useOlListener(
     feature,
