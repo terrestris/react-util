@@ -1,4 +1,10 @@
+## [8.0.3](https://github.com/terrestris/react-util/compare/v8.0.2...v8.0.3) (2024-06-12)
 
+
+### Bug Fixes
+
+* cleanup tooltips also when the containing component gets removed ([0aa866b](https://github.com/terrestris/react-util/commit/0aa866bc6da060b5b933b8f57512fed692cfbcf5))
+* missing semicolon ([6e5da12](https://github.com/terrestris/react-util/commit/6e5da12671318bce9ccf9e896c809e5e36c1bdda))
 
 ## [8.0.2](https://github.com/terrestris/react-util/compare/v8.0.1...v8.0.2) (2024-06-10)
 
