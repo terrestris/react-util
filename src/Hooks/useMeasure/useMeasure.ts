@@ -217,7 +217,7 @@ export const useMeasure = ({
   const removeMeasureTooltip = useCallback(() => {
     if (map && measureTooltip.current) {
       map.removeOverlay(measureTooltip.current);
-      measureTooltip.current = undefined
+      measureTooltip.current = undefined;
     }
   }, [map]);
 
