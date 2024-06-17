@@ -73,6 +73,16 @@ export const useCoordinateInfo = ({
     return queryLayers.includes(layerCandidate);
   }, [queryLayers]);
 
+  useEffect(() => {
+    if (map && loading) {
+      map.getTargetElement().style.cursor = 'wait';
+      return () => {
+        map.getTargetElement().style.cursor = 'auto';
+      };
+    }
+    return undefined;
+  }, [loading, map]);
+
   const onMapClick = useCallback(async (olEvt: OlMapBrowserEvent<MouseEvent>) => {
     if (_isNil(map)) {
       return;
@@ -94,7 +104,6 @@ export const useCoordinateInfo = ({
         .filter(l => isWfsLayer(l)) as WfsLayer[];
 
     setLoading(true);
-    map.getTargetElement().style.cursor = 'wait';
 
     try {
       const results: FeatureLayerResult[] = [];
@@ -168,7 +177,7 @@ export const useCoordinateInfo = ({
       // keep all feature properties (in particular the id) intact.
       onSuccess?.({
         clickCoordinate: _cloneDeep(coordinate),
-        loading,
+        loading: false,
         features: _cloneDeep(results)
       });
 
@@ -176,11 +185,10 @@ export const useCoordinateInfo = ({
       Logger.error(error);
       onError?.(error);
     }
-    map.getTargetElement().style.cursor = '';
     setLoading(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, loading, map]);
+  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, map]);
 
   useEffect(() => {
     map?.on('click', onMapClick);
