@@ -1,3 +1,10 @@
+## [8.0.4](https://github.com/terrestris/react-util/compare/v8.0.3...v8.0.4) (2024-06-17)
+
+
+### Bug Fixes
+
+* **useCoordinateInfo:** do not use loading state in hook where it is used ([685bcd5](https://github.com/terrestris/react-util/commit/685bcd5120690dca31c2dd2efe9d668ac361815d))
+
 ## [8.0.3](https://github.com/terrestris/react-util/compare/v8.0.2...v8.0.3) (2024-06-12)
 
 
