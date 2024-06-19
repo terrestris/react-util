@@ -1,3 +1,12 @@
+## [8.0.5](https://github.com/terrestris/react-util/compare/v8.0.4...v8.0.5) (2024-06-19)
+
+
+### Bug Fixes
+
+* **useCoordinateInfo:** clone before setting state ([766dfe6](https://github.com/terrestris/react-util/commit/766dfe6a3c8475181d253074d1cc115b771e8fea))
+* **useCoordinateInfo:** propagate state ([85fb3d8](https://github.com/terrestris/react-util/commit/85fb3d8518b30a8f4bf1d81f3710ca45a39acf7e))
+* **useCoordinateInfo:** remove return and use continue ([0cd2bc7](https://github.com/terrestris/react-util/commit/0cd2bc76bad79b813cd4c419fe0b72ec3b5b6059))
+
 ## [8.0.4](https://github.com/terrestris/react-util/compare/v8.0.3...v8.0.4) (2024-06-17)
 
 
