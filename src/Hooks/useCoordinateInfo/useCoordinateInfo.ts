@@ -139,7 +139,7 @@ export const useCoordinateInfo = ({
           } else if (infoFormat === 'json') {
             format = new OlFormatGeoJSON();
           } else {
-            return;
+            continue;
           }
 
           const text = await response.text();
