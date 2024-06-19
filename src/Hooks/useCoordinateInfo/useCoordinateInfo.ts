@@ -1,7 +1,6 @@
 import Logger from '@terrestris/base-util/dist/Logger';
 import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '@terrestris/ol-util';
 import { isString, uniqueId } from 'lodash';
-import _cloneDeep from 'lodash/cloneDeep';
 import _isNil from 'lodash/isNil';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
@@ -171,14 +170,12 @@ export const useCoordinateInfo = ({
       setFeatureResults(results);
       setClickCoordinate(coordinate);
 
-      // We're cloning the click coordinate and features to
-      // not pass the internal state reference to the parent component.
-      // Also note that we explicitly don't use feature.clone() to
-      // keep all feature properties (in particular the id) intact.
+      // We can actually propagate the state variable here. It should
+      // not be altered in another component.
       onSuccess?.({
-        clickCoordinate: _cloneDeep(coordinate),
+        clickCoordinate: coordinate,
         loading: false,
-        features: _cloneDeep(results)
+        features: results
       });
 
     } catch (error: any) {
@@ -198,10 +195,12 @@ export const useCoordinateInfo = ({
     };
   }, [map, onMapClick]);
 
+  // We want to propagate the state here so the variables do
+  // not change on every render cycle.
   return {
-    clickCoordinate: _cloneDeep(clickCoordinate),
+    clickCoordinate,
     loading,
-    features: _cloneDeep(featureResults)
+    features: featureResults
   };
 };
 
