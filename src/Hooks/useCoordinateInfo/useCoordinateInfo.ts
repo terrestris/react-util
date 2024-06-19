@@ -1,7 +1,6 @@
 import Logger from '@terrestris/base-util/dist/Logger';
 import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '@terrestris/ol-util';
-import { isString, uniqueId } from 'lodash';
-import _cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep, isString, uniqueId } from 'lodash';
 import _isNil from 'lodash/isNil';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
@@ -140,7 +139,7 @@ export const useCoordinateInfo = ({
           } else if (infoFormat === 'json') {
             format = new OlFormatGeoJSON();
           } else {
-            return;
+            continue;
           }
 
           const text = await response.text();
@@ -168,17 +167,20 @@ export const useCoordinateInfo = ({
           featureType: getFeatureType(f)
         })));
       }
-      setFeatureResults(results);
-      setClickCoordinate(coordinate);
 
-      // We're cloning the click coordinate and features to
-      // not pass the internal state reference to the parent component.
+      // We're cloning the click coordinate and features to be able
+      // to alter the features without affecting the original ones
       // Also note that we explicitly don't use feature.clone() to
       // keep all feature properties (in particular the id) intact.
+      const clonedResults = cloneDeep(results);
+      const clonedCoordinate = cloneDeep(coordinate);
+      setFeatureResults(clonedResults);
+      setClickCoordinate(clonedCoordinate);
+
       onSuccess?.({
-        clickCoordinate: _cloneDeep(coordinate),
+        clickCoordinate: clonedCoordinate,
         loading: false,
-        features: _cloneDeep(results)
+        features: clonedResults
       });
 
     } catch (error: any) {
@@ -198,10 +200,12 @@ export const useCoordinateInfo = ({
     };
   }, [map, onMapClick]);
 
+  // We want to propagate the state here so the variables do
+  // not change on every render cycle.
   return {
-    clickCoordinate: _cloneDeep(clickCoordinate),
+    clickCoordinate,
     loading,
-    features: _cloneDeep(featureResults)
+    features: featureResults
   };
 };
 
