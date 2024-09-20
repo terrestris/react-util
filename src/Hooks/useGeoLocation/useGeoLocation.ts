@@ -125,7 +125,7 @@ export const useGeoLocation = ({
     };
     setActualPosition(actualGeoLocation);
     onGeoLocationChange?.(actualGeoLocation);
-  }, [trackedLine]);
+  }, [trackedLine, onGeoLocationChange]);
 
   // Geolocation Control
   const olGeoLocation = useMemo(() => active ? new OlGeolocation({
