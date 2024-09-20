@@ -1,3 +1,15 @@
+# [9.0.0](https://github.com/terrestris/react-util/compare/v8.0.5...v9.0.0) (2024-09-20)
+
+
+### chore
+
+* update to latest ol ([3ed364a](https://github.com/terrestris/react-util/commit/3ed364aeeac2ca72e2d8777218dca15661ec4e53))
+
+
+### BREAKING CHANGES
+
+* required peer dependency for ol is >= 10 now
+
 ## [8.0.5](https://github.com/terrestris/react-util/compare/v8.0.4...v8.0.5) (2024-06-19)
 
 
