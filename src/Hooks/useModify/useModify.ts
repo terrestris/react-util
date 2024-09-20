@@ -4,6 +4,7 @@ import OlFeature from 'ol/Feature';
 import Modify, { ModifyEvent, Options as ModifyOptions } from 'ol/interaction/Modify';
 import Translate, { Options as TranslateOptions, TranslateEvent } from 'ol/interaction/Translate';
 import OlVectorLayer from 'ol/layer/Vector';
+import OlSourceVector from 'ol/source/Vector';
 import {useEffect, useMemo, useRef} from 'react';
 
 import { DigitizeUtil } from '../../Util/DigitizeUtil';
@@ -40,7 +41,7 @@ interface OwnProps {
    * The vector layer which will be used for digitize features.
    * The standard digitizeLayer can be retrieved via `DigitizeUtil.getDigitizeLayer(map)`.
    */
-  digitizeLayer?: OlVectorLayer<OlFeature>;
+  digitizeLayer?: OlVectorLayer<OlSourceVector>;
   /**
    * Listener function for the 'modifystart' event of an ol.interaction.Modify.
    * See https://openlayers.org/en/latest/apidoc/module-ol_interaction_Modify-ModifyEvent.html

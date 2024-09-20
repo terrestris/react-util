@@ -4,6 +4,7 @@ import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
 import OlInteractionSelect, {Options as OlSelectOptions, SelectEvent as OlSelectEvent} from 'ol/interaction/Select';
 import OlVectorLayer from 'ol/layer/Vector';
+import OlSourceVector from 'ol/source/Vector';
 import {StyleLike as OlStyleLike} from 'ol/style/Style';
 import {useEffect} from 'react';
 
@@ -39,7 +40,7 @@ export interface UseSelectFeaturesProps {
   /**
    * Array of layers the SelectFeaturesButton should operate on.
    */
-  layers: OlVectorLayer<OlFeature>[];
+  layers: OlVectorLayer<OlSourceVector>[];
   /**
    * Hit tolerance of the select action. Default: 5
    */
