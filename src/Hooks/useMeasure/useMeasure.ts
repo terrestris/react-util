@@ -1,5 +1,9 @@
-import MeasureUtil from '@terrestris/ol-util/dist/MeasureUtil/MeasureUtil';
+import {
+  useCallback, useEffect, useRef, useState
+} from 'react';
+
 import OlCollection from 'ol/Collection';
+
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
 import OlGeomCircle from 'ol/geom/Circle';
@@ -17,7 +21,8 @@ import OlStyleCircle from 'ol/style/Circle';
 import OlStyleFill from 'ol/style/Fill';
 import OlStyleStroke from 'ol/style/Stroke';
 import OlStyleStyle from 'ol/style/Style';
-import { useCallback, useEffect, useRef, useState } from 'react';
+
+import MeasureUtil from '@terrestris/ol-util/dist/MeasureUtil/MeasureUtil';
 
 import { CSS_PREFIX } from '../../constants';
 import useMap from '../useMap/useMap';

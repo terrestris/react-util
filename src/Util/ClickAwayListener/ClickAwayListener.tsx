@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  useCallback, useEffect, useRef
+} from 'react';
 
 interface ClickAwayProps {
   onClickAway: VoidFunction;

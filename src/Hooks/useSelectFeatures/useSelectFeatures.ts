@@ -1,12 +1,15 @@
+import {useEffect} from 'react';
+
 import OlCollection from 'ol/Collection';
 import * as OlEventConditions from 'ol/events/condition';
 import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
-import OlInteractionSelect, {Options as OlSelectOptions, SelectEvent as OlSelectEvent} from 'ol/interaction/Select';
+import OlInteractionSelect, {
+  Options as OlSelectOptions, SelectEvent as OlSelectEvent
+} from 'ol/interaction/Select';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlSourceVector from 'ol/source/Vector';
 import {StyleLike as OlStyleLike} from 'ol/style/Style';
-import {useEffect} from 'react';
 
 import {DigitizeUtil} from '../../Util/DigitizeUtil';
 import {useOlInteraction} from '../useOlInteraction/useOlInteraction';
@@ -63,7 +66,7 @@ export const useSelectFeatures = ({
   hitTolerance = 5,
   layers,
   clearAfterSelect = false,
-  featuresCollection,
+  featuresCollection
 }: UseSelectFeaturesProps) => {
   const features = usePropOrDefault(
     featuresCollection,

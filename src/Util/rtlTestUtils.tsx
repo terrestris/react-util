@@ -1,21 +1,17 @@
+import React, {ReactElement} from 'react';
+
 import {
-  act,
-  fireEvent,
-  render
+  act, fireEvent, render
 } from '@testing-library/react';
 import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import OlSourceVector from 'ol/source/Vector';
-import React, {
-  ReactElement
-} from 'react';
 
 import MapContext from '../Context/MapContext/MapContext';
 
 export async function actSetTimeout(time: number): Promise<void> {
-  // @ts-ignore
   return act(async () => {
     return new Promise(resolve => setTimeout(resolve, time));
   });
@@ -30,7 +26,7 @@ function fireClickEvents(map: OlMap, x: number, y: number) {
     button: 0
   });
 
-  // @ts-ignore
+  // @ts-expect-error append pointer id for test
   evt1.pointerId = pointerId;
 
   fireEvent(map.getViewport(), evt1);
@@ -41,7 +37,7 @@ function fireClickEvents(map: OlMap, x: number, y: number) {
     button: 0
   });
 
-  // @ts-ignore
+  // @ts-expect-error append pointer id for test
   evt2.pointerId = pointerId;
 
   fireEvent(document, evt2);
@@ -102,7 +98,9 @@ export function renderInMapContext(map: OlMap, element: ReactElement, size: [num
     );
   };
 
-  const { rerender, ...results } = render(assemble(element));
+  const {
+    rerender, ...results
+  } = render(assemble(element));
 
   map.setSize(size);
   map.renderSync();

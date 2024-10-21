@@ -18,13 +18,12 @@ const config = {
     '^.+\\.tsx?$': 'babel-jest'
   },
   moduleNameMapper: {
-    // eslint-disable-next-line max-len
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/test/__mocks__/fileMock.js',
     '\\.(css|less|scss)$': '<rootDir>/test/__mocks__/styleMock.js'
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-*[a-z]*|@camptocamp|@terrestris|' +
-    'd3-*[a-z]*|query-string|decode-uri-component|split-on-first|filter-obj|shpjs))'
+    'd3-*[a-z]*|query-string|decode-uri-component|split-on-first|filter-obj|shpjs|geostyler-openlayers-parser|geostyler-style))'
   ],
   moduleFileExtensions: [
     'ts',

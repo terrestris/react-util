@@ -2,11 +2,11 @@ import OlLayer from 'ol/layer/Layer';
 import OlImageWMS from 'ol/source/ImageWMS';
 import OlTileWMS from 'ol/source/TileWMS';
 
-export type TimeLayerAwareConfig = {
+export interface TimeLayerAwareConfig {
   isWmsTime?: boolean;
   layer: OlLayer<OlImageWMS | OlTileWMS, any>;
   customHandler?: (values: any) => void;
-};
+}
 
 /**
  * HOC that updates layers based on the wrapped components time instant or

@@ -1,8 +1,11 @@
-import WfsFilterUtil, { SearchConfig } from '@terrestris/ol-util/dist/WfsFilterUtil/WfsFilterUtil';
-import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import {
+  FeatureCollection, GeoJsonProperties, Geometry
+} from 'geojson';
 import _isNil from 'lodash/isNil';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlFormatGml3 from 'ol/format/GML3';
+
+import WfsFilterUtil, { SearchConfig } from '@terrestris/ol-util/dist/WfsFilterUtil/WfsFilterUtil';
 
 import { SearchFunction } from './useSearch/useSearch';
 

@@ -1,5 +1,6 @@
-import FileUtil from '@terrestris/ol-util/dist/FileUtil/FileUtil';
 import * as React from 'react';
+
+import FileUtil from '@terrestris/ol-util/dist/FileUtil/FileUtil';
 
 import useMap from '../useMap/useMap';
 
@@ -11,7 +12,7 @@ export const useDropTargetMap = () => {
   const map = useMap();
 
   /**
-   * Calls an appropriate addLayer method depending on the fileending.
+   * Calls an appropriate addLayer method depending on the file ending.
    * Currently expects shapefiles for '*.zip' and geojson for all other
    * endings.
    * @param event The drop event.
@@ -25,8 +26,7 @@ export const useDropTargetMap = () => {
     const files = event.dataTransfer?.files ?? [];
 
     if (files.length > 0) {
-      for (let i = 0; i < files.length; ++i) {
-        const file = files[i];
+      for (const file of files) {
         if (file.name.match(/\.zip$/g)) {
           FileUtil.addShpLayerFromFile(file, map);
         } else {

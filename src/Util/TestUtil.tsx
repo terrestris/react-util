@@ -85,7 +85,7 @@ export class TestUtil {
   /**
    * Removes the map.
    */
-  static removeMap =  (map: OlMap) => {
+  static removeMap = (map: OlMap) => {
     if (map instanceof OlMap) {
       map.dispose();
     }
@@ -103,7 +103,9 @@ export class TestUtil {
    * @param [optShiftKey] Shift key is pressed
    * @param [dragging] Whether the map is being dragged or not.
    */
-  static simulatePointerEvent = ({map, type, x, y, optShiftKey, dragging}:
+  static simulatePointerEvent = ({
+    map, type, x, y, optShiftKey, dragging
+  }:
   {map: OlMap; type: string; x: number; y: number; optShiftKey?: boolean; dragging?: boolean}) => {
     const viewport = map.getViewport();
     // Calculated in case body has top < 0 (test runner with small window).

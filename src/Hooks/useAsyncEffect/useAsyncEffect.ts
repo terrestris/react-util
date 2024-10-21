@@ -1,10 +1,12 @@
-import { DependencyList, useEffect } from 'react';
+import {
+  DependencyList, useEffect
+} from 'react';
 
-type AsyncEffectOptions = {
+interface AsyncEffectOptions {
   isUnmounted: () => boolean;
   onUnmount: (handler: () => void) => void;
   signal: AbortSignal;
-};
+}
 
 type AsyncEffect = (options: AsyncEffectOptions) => Promise<void>;
 

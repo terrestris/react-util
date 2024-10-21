@@ -3,10 +3,13 @@ import {
   getJobStatus,
   queuePrint
 } from '@camptocamp/inkmap';
+
+import { jsPDF } from 'jspdf';
+
+import OlMap from 'ol/Map';
+
 import Logger from '@terrestris/base-util/dist/Logger';
 import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
-import { jsPDF } from 'jspdf';
-import OlMap from 'ol/Map';
 
 import {
   InkmapPrintSpec

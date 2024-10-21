@@ -1,19 +1,22 @@
 // See https://nominatim.org/release-docs/develop/api/Output/ for some more information
-import { UrlUtil } from '@terrestris/base-util';
-import { Feature, Geometry } from 'geojson';
+import {
+  Feature, Geometry
+} from 'geojson';
 import { Extent } from 'ol/extent';
+
+import { UrlUtil } from '@terrestris/base-util';
 
 import { SearchFunction } from './useSearch/useSearch';
 
-export type NominatimPlace = {
-  // eslint-disable-next-line camelcase
+export interface NominatimPlace {
+
   place_id: number;
-  // eslint-disable-next-line camelcase
+
   osm_type: string;
-  // eslint-disable-next-line camelcase
+
   osm_id: number;
   boundingbox: string[];
-  // eslint-disable-next-line camelcase
+
   display_name: string;
   category: string;
   type: string;
@@ -24,9 +27,9 @@ export type NominatimPlace = {
   namedetails?: any;
   geojson: Geometry;
   licence: string;
-};
+}
 
-export type NominatimArgs = {
+export interface NominatimArgs {
   /**
    * The Nominatim Base URL. See https://wiki.openstreetmap.org/wiki/Nominatim
    */
@@ -63,7 +66,7 @@ export type NominatimArgs = {
    * accept-language string or a simple comma-separated list of language codes.
    */
   searchResultLanguage?: string;
-};
+}
 
 export const createNominatimSearchFunction = ({
   addressDetails = 1,

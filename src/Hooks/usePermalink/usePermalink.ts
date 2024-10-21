@@ -1,9 +1,10 @@
-import OlInteractionLink from 'ol/interaction/Link';
-import OlMap from 'ol/Map';
 import {
   useEffect,
   useRef
 } from 'react';
+
+import OlInteractionLink from 'ol/interaction/Link';
+import OlMap from 'ol/Map';
 
 export const usePermalink = (map: OlMap|undefined) => {
   const linkInteractionRef = useRef<OlInteractionLink>();

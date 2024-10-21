@@ -1,21 +1,20 @@
 /**
  * This is a partial of GeolocationPosition which is assignable to PositionMock
  */
-type PositionMock = {
+interface PositionMock {
   coords: Partial<GeolocationCoordinates>;
-};
+}
 
 const initialGeolocation = global.navigator.geolocation;
 
 let currentPosition: PositionMock;
-const listeners: Array<(p: PositionMock) => void> = [];
-
+const listeners: ((p: PositionMock) => void)[] = [];
 
 /**
  * This enables the geolocation mock
  */
 export function enableGeolocationMock() {
-  // @ts-ignore
+  // @ts-expect-error geolocation is readonly normally
   global.navigator.geolocation = {
     getCurrentPosition: jest.fn()
       .mockImplementation(() => currentPosition),
@@ -26,15 +25,13 @@ export function enableGeolocationMock() {
   };
 }
 
-
 /**
  * This disables the geolocation mock
  */
 export function disableGeolocationMock() {
-  // @ts-ignore
+  // @ts-expect-error geolocation is readonly normally
   global.navigator.geolocation = initialGeolocation;
 }
-
 
 /**
  * Please note that openlayers seems to do some postprocessing on the heading value so it is not really possible to test
