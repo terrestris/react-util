@@ -1,3 +1,15 @@
+# [10.0.0](https://github.com/terrestris/react-util/compare/v9.0.0...v10.0.0) (2024-10-21)
+
+
+### chore
+
+* upgrade eslint to v9 ([823fe25](https://github.com/terrestris/react-util/commit/823fe25eb44d70d3b9ed21f99e97eb275e46cdf4))
+
+
+### BREAKING CHANGES
+
+* upgrade eslint to v9
+
 # [9.0.0](https://github.com/terrestris/react-util/compare/v8.0.5...v9.0.0) (2024-09-20)
 
 
