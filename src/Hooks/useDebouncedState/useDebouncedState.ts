@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
-export type UseDebouncedStateArgs<T> = {
+export interface UseDebouncedStateArgs<T> {
   time?: number;
   initialValue: T;
-};
+}
 
 /**
  * This hook allows to debounce a setState.
  */
-export const useDebouncedState = <T>({ initialValue, time = 100 }: UseDebouncedStateArgs<T>): [T, (v: T) => void] => {
+export const useDebouncedState = <T>({
+  initialValue, time = 100
+}: UseDebouncedStateArgs<T>): [T, (v: T) => void] => {
   const [state, setState] = useState<T>(initialValue);
 
   let timeout: NodeJS.Timeout | null;

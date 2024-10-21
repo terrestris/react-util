@@ -1,7 +1,8 @@
-import OlMap from 'ol/Map';
 import {
   useContext
 } from 'react';
+
+import OlMap from 'ol/Map';
 
 import MapContext from '../../Context/MapContext/MapContext';
 

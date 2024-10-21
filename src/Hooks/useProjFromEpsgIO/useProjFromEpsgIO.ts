@@ -1,25 +1,28 @@
-import { UrlUtil } from '@terrestris/base-util/dist/UrlUtil/UrlUtil';
+import { useState } from 'react';
+
 import _groupBy from 'lodash/groupBy';
+
 import _isNil from 'lodash/isNil';
 import _mapValues from 'lodash/mapValues';
-import { useState } from 'react';
+
+import { UrlUtil } from '@terrestris/base-util/dist/UrlUtil/UrlUtil';
 
 import { useAsyncEffect } from '../../index';
 
-export type ProjectionDefinition = {
+export interface ProjectionDefinition {
   code: string;
   description: string;
   name: string;
   proj4: string;
   unit: string;
   bbox: number[] | [number, number, number, number];
-};
+}
 
-export type UseProjFromEpsgIOArgs = {
+export interface UseProjFromEpsgIOArgs {
   crsApiUrl?: string;
   searchValue?: string;
   onFetchError?: (error: any) => void;
-};
+}
 
 export const useProjFromEpsgIO = ({
   crsApiUrl = 'https://epsg.io/',

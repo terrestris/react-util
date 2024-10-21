@@ -1,8 +1,6 @@
-import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 import OlCollection from 'ol/Collection';
 import OlFeature from 'ol/Feature';
 import OlGeometry from 'ol/geom/Geometry';
-import OlVectorLayer from 'ol/layer/Vector';
 import OlLayerVector from 'ol/layer/Vector';
 import OlMap from 'ol/Map';
 import RenderFeature from 'ol/render/Feature';
@@ -11,8 +9,9 @@ import OlStyleCircle from 'ol/style/Circle';
 import OlStyleFill from 'ol/style/Fill';
 import OlStyleStroke from 'ol/style/Stroke';
 import OlStyleStyle, { StyleLike as OlStyleLike } from 'ol/style/Style';
-import OlStyle from 'ol/style/Style';
 import OlStyleText from 'ol/style/Text';
+
+import MapUtil from '@terrestris/ol-util/dist/MapUtil/MapUtil';
 
 export class DigitizeUtil {
   /**
@@ -94,8 +93,8 @@ export class DigitizeUtil {
    *
    * @param map
    */
-  static getDigitizeLayer(map: OlMap): OlVectorLayer<OlSourceVector> {
-    let digitizeLayer = MapUtil.getLayerByName(map, DigitizeUtil.DIGITIZE_LAYER_NAME) as OlVectorLayer<OlSourceVector>;
+  static getDigitizeLayer(map: OlMap): OlLayerVector<OlSourceVector> {
+    let digitizeLayer = MapUtil.getLayerByName(map, DigitizeUtil.DIGITIZE_LAYER_NAME) as OlLayerVector<OlSourceVector>;
 
     if (!digitizeLayer) {
       digitizeLayer = new OlLayerVector({
@@ -120,7 +119,7 @@ export class DigitizeUtil {
    * @param feature The feature which is being styled.
    * @return The style to use.
    */
-  static defaultDigitizeStyleFunction(feature: OlFeature<OlGeometry>|RenderFeature): OlStyle | undefined {
+  static defaultDigitizeStyleFunction(feature: OlFeature<OlGeometry>|RenderFeature): OlStyleStyle | undefined {
     const geom = feature.getGeometry();
 
     if (!geom) {
@@ -193,7 +192,7 @@ export class DigitizeUtil {
    * @param selectFillColor
    * @param selectStrokeColor
    */
-  static selectStyleFunction (selectFillColor: string, selectStrokeColor: string): OlStyleLike {
+  static selectStyleFunction(selectFillColor: string, selectStrokeColor: string): OlStyleLike {
     return (feature: OlFeature<OlGeometry>|RenderFeature) => {
       const text = feature.get('label') ?? '';
 

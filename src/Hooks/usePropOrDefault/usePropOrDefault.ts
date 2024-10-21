@@ -1,4 +1,6 @@
-import {DependencyList, useEffect, useState} from 'react';
+import {
+  DependencyList, useEffect, useState
+} from 'react';
 
 export const usePropOrDefault = <T>(
   prop: T|undefined,

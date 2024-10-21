@@ -1,6 +1,11 @@
-import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import {
+  useEffect, useState
+} from 'react';
+
+import {
+  FeatureCollection, GeoJsonProperties, Geometry
+} from 'geojson';
 import _isNil from 'lodash/isNil';
-import { useEffect, useState } from 'react';
 
 export type SearchFunction<
   G extends Geometry = Geometry,
@@ -9,16 +14,16 @@ export type SearchFunction<
 > =
   (searchTerm: string) => Promise<C|undefined>;
 
-export type SearchOptions<
+export interface SearchOptions<
   G extends Geometry = Geometry,
   T extends NonNullable<GeoJsonProperties> = Record<string, any>,
   C extends FeatureCollection<G, T> = FeatureCollection<G, T>
-> = {
+> {
   minChars?: number;
   debounceTime?: number;
   onFetchError?: (error: any) => void;
   onFetchSuccess?: (featureCollection: C|undefined) => void;
-};
+}
 
 export const useSearch = <
   G extends Geometry = Geometry,

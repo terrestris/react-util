@@ -15,4 +15,7 @@ window.ResizeObserver = window.ResizeObserver ||
     unobserve: jest.fn()
   }));
 
-Object.assign(global, { TextDecoder, TextEncoder });
+Object.assign(global, {
+  TextDecoder,
+  TextEncoder
+});

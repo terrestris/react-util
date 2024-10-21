@@ -5,7 +5,9 @@ export {
   createNominatimSearchFunction
 } from './Hooks/search/createNominatimSearchFunction';
 export { createWfsSearchFunction } from './Hooks/search/createWfsSearchFunction';
-export { SearchFunction, SearchOptions,useSearch } from './Hooks/search/useSearch/useSearch';
+export {
+  SearchFunction, SearchOptions, useSearch
+} from './Hooks/search/useSearch/useSearch';
 export { default as useAsyncEffect } from './Hooks/useAsyncEffect/useAsyncEffect';
 export { default as useDebouncedState } from './Hooks/useDebouncedState/useDebouncedState';
 export { default as useDraw } from './Hooks/useDraw/useDraw';

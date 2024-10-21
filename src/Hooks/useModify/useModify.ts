@@ -1,18 +1,27 @@
+import {
+  useEffect, useMemo, useRef
+} from 'react';
+
 import OlCollection from 'ol/Collection';
 import { singleClick } from 'ol/events/condition';
 import OlFeature from 'ol/Feature';
-import Modify, { ModifyEvent, Options as ModifyOptions } from 'ol/interaction/Modify';
-import Translate, { Options as TranslateOptions, TranslateEvent } from 'ol/interaction/Translate';
+import Modify, {
+  ModifyEvent, Options as ModifyOptions
+} from 'ol/interaction/Modify';
+import Translate, {
+  Options as TranslateOptions, TranslateEvent
+} from 'ol/interaction/Translate';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlSourceVector from 'ol/source/Vector';
-import {useEffect, useMemo, useRef} from 'react';
 
 import { DigitizeUtil } from '../../Util/DigitizeUtil';
 import useMap from '../useMap/useMap';
 import {useOlInteraction} from '../useOlInteraction/useOlInteraction';
 import {useOlListener} from '../useOlListener/useOlListener';
 import {usePropOrDefault} from '../usePropOrDefault/usePropOrDefault';
-import {useSelectFeatures, UseSelectFeaturesProps} from '../useSelectFeatures/useSelectFeatures';
+import {
+  useSelectFeatures, UseSelectFeaturesProps
+} from '../useSelectFeatures/useSelectFeatures';
 
 interface OwnProps {
   /**

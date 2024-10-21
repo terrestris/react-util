@@ -1,6 +1,11 @@
-import Logger from '@terrestris/base-util/dist/Logger';
-import { isWfsLayer, isWmsLayer, WfsLayer, WmsLayer } from '@terrestris/ol-util';
-import { cloneDeep, isString, uniqueId } from 'lodash';
+import {
+  useCallback, useEffect, useState
+} from 'react';
+
+import {
+  cloneDeep, isString, uniqueId
+} from 'lodash';
+
 import _isNil from 'lodash/isNil';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import OlFeature from 'ol/Feature';
@@ -9,33 +14,35 @@ import OlFormatGML2 from 'ol/format/GML2';
 import OlBaseLayer from 'ol/layer/Base';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { getUid } from 'ol/util';
-import { useCallback, useEffect, useState } from 'react';
+
+import Logger from '@terrestris/base-util/dist/Logger';
+import {
+  isWfsLayer, isWmsLayer, WfsLayer, WmsLayer
+} from '@terrestris/ol-util';
 
 import useMap from '../useMap/useMap';
 
-export type FeatureLayerResult = {
+export interface FeatureLayerResult {
   feature: OlFeature;
   layer: WmsLayer|WfsLayer;
   featureType: string;
-};
+}
 
-export type CoordinateInfoResult = {
+export interface CoordinateInfoResult {
   clickCoordinate: OlCoordinate | null;
   features: FeatureLayerResult[];
   loading: boolean;
-};
+}
 
-export type UseCoordinateInfoArgs = {
+export interface UseCoordinateInfoArgs {
   drillDown?: boolean;
   featureCount?: number;
-  fetchOpts?: {
-    [uid: string]: RequestInit;
-  } | ((layer: WmsLayer) => RequestInit);
+  fetchOpts?: Record<string, RequestInit> | ((layer: WmsLayer) => RequestInit);
   onError?: (error: any) => void;
   onSuccess?: (result: CoordinateInfoResult) => void;
   queryLayers?: OlBaseLayer[];
   infoFormat?: 'gml'|'json';
-};
+}
 
 const getInfoFormat = (type: 'gml'|'json') => {
   if (type === 'gml') {

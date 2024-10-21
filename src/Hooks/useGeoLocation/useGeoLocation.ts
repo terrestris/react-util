@@ -1,5 +1,9 @@
-import MathUtil from '@terrestris/base-util/dist/MathUtil/MathUtil';
+import {
+  useCallback, useEffect, useMemo, useState
+} from 'react';
+
 import _isNil from 'lodash/isNil';
+
 import BaseEvent from 'ol/events/Event';
 import OlFeature from 'ol/Feature';
 import OlGeolocation from 'ol/Geolocation';
@@ -12,14 +16,16 @@ import RenderFeature from 'ol/render/Feature';
 import OlSourceVector from 'ol/source/Vector';
 import OlStyleIcon from 'ol/style/Icon';
 import OlStyleStyle from 'ol/style/Style';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+
+import MathUtil from '@terrestris/base-util/dist/MathUtil/MathUtil';
 
 import useMap from '../useMap/useMap';
 import {useOlLayer} from '../useOlLayer/useOlLayer';
-import mapMarker from './geolocation-marker.png';
-import mapMarkerHeading from './geolocation-marker-heading.png';
 
-export type UseGeoLocationArgs = {
+import mapMarkerHeading from './geolocation-marker-heading.png';
+import mapMarker from './geolocation-marker.png';
+
+export interface UseGeoLocationArgs {
   active: boolean;
   enableTracking?: boolean;
   follow?: boolean;
@@ -27,19 +33,19 @@ export type UseGeoLocationArgs = {
   onGeoLocationChange?: (actualGeoLocation: GeoLocation) => void;
   showMarker?: boolean;
   trackingOptions?: PositionOptions;
-};
+}
 
-export type GeoLocation = {
+export interface GeoLocation {
   accuracy?: number;
   heading: number;
   position: number[];
   speed: number;
-};
+}
 
-export type GeoLocationType = {
+export interface GeoLocationType {
   actualPosition?: GeoLocation;
   trackedLine: OlGeomLineString;
-};
+}
 
 /**
  * This hook allows to debounce a setState.
@@ -67,7 +73,7 @@ export const useGeoLocation = ({
 
   useOlLayer(() => new OlLayerVector({
     properties: {
-      name: 'react-geo_geolocationlayer',
+      name: 'react-geo_geolocationlayer'
     },
     source: new OlSourceVector<OlFeature<OlGeomPoint>>({
       features: [markerFeature]

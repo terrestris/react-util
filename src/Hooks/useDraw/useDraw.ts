@@ -1,5 +1,7 @@
 import * as OlEventConditions from 'ol/events/condition';
-import OlInteractionDraw, { createBox, DrawEvent as OlDrawEvent, Options as OlDrawOptions } from 'ol/interaction/Draw';
+import OlInteractionDraw, {
+  createBox, DrawEvent as OlDrawEvent, Options as OlDrawOptions
+} from 'ol/interaction/Draw';
 import OlVectorLayer from 'ol/layer/Vector';
 import OlSourceVector from 'ol/source/Vector';
 import { StyleLike as OlStyleLike } from 'ol/style/Style';

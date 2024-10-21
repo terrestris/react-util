@@ -1,7 +1,13 @@
 // Code inspired by https://github.com/RehmatFalcon/UseObjectState
+import {
+  Dispatch, SetStateAction, useState
+} from 'react';
+
+import {
+  isEqual, isObject, isUndefined
+} from 'lodash';
+
 import { Logger } from '@terrestris/base-util';
-import { isEqual, isObject, isUndefined } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
 
 /**
  * This hook should be used if the state stores and object value.
@@ -15,7 +21,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
  */
 export const useObjectState = <S extends object>(
   initial?: S | (() => S),
-  allowPartialUpdates: boolean = false
+  allowPartialUpdates = false
 ): [S | undefined, Dispatch<SetStateAction<Partial<S>>>] => {
 
   if (!isUndefined(initial) && !isObject(initial)) {
