@@ -37,7 +37,7 @@
     "test-ci": "npm run clean:coverage && jest --ci --coverage -c jest.config.cjs",
     "test-watch": "jest --watch -c jest.config.cjs",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "watch:buildto": "node watchBuild.js"
+    "watch:buildto": "node watchBuild.cjs"
   },
   "dependencies": {
     "@camptocamp/inkmap": "^1.4.0",
