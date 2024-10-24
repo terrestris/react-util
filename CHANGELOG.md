@@ -1,3 +1,10 @@
+## [10.0.1](https://github.com/terrestris/react-util/compare/v10.0.0...v10.0.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* rename to cjs file since project is defined as module ([1af2036](https://github.com/terrestris/react-util/commit/1af203636fef5ec74d1933988a962789b7ddf08b))
+
 # [10.0.0](https://github.com/terrestris/react-util/compare/v9.0.0...v10.0.0) (2024-10-21)
 
 
