@@ -1,3 +1,10 @@
+# [10.1.0](https://github.com/terrestris/react-util/compare/v10.0.1...v10.1.0) (2025-02-28)
+
+
+### Features
+
+* add configurable GML version selection and fallback ([bd36fe8](https://github.com/terrestris/react-util/commit/bd36fe886691eb99f7dc67dbecae68bef79f49a9))
+
 ## [10.0.1](https://github.com/terrestris/react-util/compare/v10.0.0...v10.0.1) (2024-10-24)
 
 
