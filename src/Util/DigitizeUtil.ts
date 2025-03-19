@@ -180,6 +180,8 @@ export class DigitizeUtil {
           })
         });
       }
+      case "LinearRing": { throw new Error('Not implemented yet: "LinearRing" case') }
+      case "GeometryCollection": { throw new Error('Not implemented yet: "GeometryCollection" case') }
       default:
         return undefined;
     }
