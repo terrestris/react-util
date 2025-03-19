@@ -1,3 +1,12 @@
+## [10.1.1](https://github.com/terrestris/react-util/compare/v10.1.0...v10.1.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* adds quickselect to transformIgnorePatterns ([49bfdfd](https://github.com/terrestris/react-util/commit/49bfdfdb9ed893ca7ae583b8edd5b99ca2cb0027))
+* linting error exhaustive check for switch ([14b51b6](https://github.com/terrestris/react-util/commit/14b51b6ff6d5389122140caadb12e9c30e933721))
+* linting issues ([79602de](https://github.com/terrestris/react-util/commit/79602de6e30830f91eea4019fb767a01efb48e25))
+
 # [10.1.0](https://github.com/terrestris/react-util/compare/v10.0.1...v10.1.0) (2025-02-28)
 
 
