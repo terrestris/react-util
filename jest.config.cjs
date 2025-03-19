@@ -22,7 +22,7 @@ const config = {
     '\\.(css|less|scss)$': '<rootDir>/test/__mocks__/styleMock.js'
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-*[a-z]*|@camptocamp|@terrestris|' +
+    '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-*[a-z]*|@camptocamp|@terrestris|quickselect|' +
     'd3-*[a-z]*|query-string|decode-uri-component|split-on-first|filter-obj|shpjs|geostyler-openlayers-parser|geostyler-style))'
   ],
   moduleFileExtensions: [
