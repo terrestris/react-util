@@ -14,6 +14,7 @@ import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlFormatGML2 from 'ol/format/GML2';
 import OlFormatGml3 from 'ol/format/GML3';
 import OlFormatGml32 from 'ol/format/GML32';
+import OlFormatWMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import OlLayer from 'ol/layer/Layer';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { Pixel as OlPixel } from 'ol/pixel';
@@ -157,10 +158,13 @@ export const useCoordinateInfo = ({
               opts = fetchOpts[getUid(layer)];
             }
             const response = await fetch(featureInfoUrl, opts);
-            let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 | OlFormatGeoJSON | null = null;
+            let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 |
+              OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | null = null;
 
             let isJson = false;
             if (infoFormat === 'application/vnd.ogc.gml') {
+              format = new OlFormatWMSGetFeatureInfo();
+            } else if (infoFormat.indexOf('gml/2') > -1) {
               format = new OlFormatGML2();
             } else if (infoFormat === 'application/vnd.ogc.gml/3.1.1' || infoFormat === 'text/xml; subtype=gml/3.1.1') {
               format = new OlFormatGml3();
