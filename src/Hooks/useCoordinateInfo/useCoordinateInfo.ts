@@ -36,6 +36,7 @@ export interface FeatureLayerResult {
 
 export interface CoordinateInfoResult {
   clickCoordinate: OlCoordinate | null;
+  pixelCoordinate: [number, number] | null;
   features: FeatureLayerResult[];
   loading: boolean;
 }
@@ -76,6 +77,7 @@ export const useCoordinateInfo = ({
   const map = useMap();
 
   const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | null>(null);
+  const [pixelCoordinate, setPixelCoordinate] = useState<[number, number] | null>(null);
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -113,6 +115,7 @@ export const useCoordinateInfo = ({
     const viewProjection = mapView.getProjection();
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
+    const evtPixelCoordinate: [number, number] = [olEvt.originalEvent.x, olEvt.originalEvent.y];
 
     const wmsMapLayers =
       map.getAllLayers()
@@ -212,11 +215,14 @@ export const useCoordinateInfo = ({
       // keep all feature properties (in particular the id) intact.
       const clonedResults = cloneDeep(results);
       const clonedCoordinate = cloneDeep(coordinate);
+      const clonedPixelCoordinate = cloneDeep(evtPixelCoordinate);
       setFeatureResults(clonedResults);
       setClickCoordinate(clonedCoordinate);
+      setPixelCoordinate(clonedPixelCoordinate);
 
       onSuccess?.({
         clickCoordinate: clonedCoordinate,
+        pixelCoordinate: clonedPixelCoordinate,
         loading: false,
         features: clonedResults
       });
@@ -270,8 +276,9 @@ export const useCoordinateInfo = ({
   // not change on every render cycle.
   return {
     clickCoordinate,
+    features: featureResults,
     loading,
-    features: featureResults
+    pixelCoordinate
   };
 };
 
