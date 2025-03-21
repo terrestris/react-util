@@ -43,6 +43,7 @@ export interface CoordinateInfoResult {
 
 export interface UseCoordinateInfoArgs {
   active: boolean;
+  clickEvent?: 'click' | 'dblclick';
   drillDown?: boolean;
   featureCount?: number;
   fetchOpts?: Record<string, RequestInit> | ((layer: WmsLayer) => RequestInit);
@@ -62,6 +63,7 @@ const getFeatureType = (feature: OlFeature) => {
 
 export const useCoordinateInfo = ({
   active,
+  clickEvent = 'click',
   drillDown = false,
   featureCount = 1,
   fetchOpts = {},
@@ -240,8 +242,8 @@ export const useCoordinateInfo = ({
     let keyRest: EventsKey | undefined;
     let keyClick: EventsKey | undefined;
     if (active) {
-      if (registerOnClick) {
-        keyClick = map?.on('click', handleMapEvent);
+      if (registerOnClick && clickEvent) {
+        keyClick = map?.on(clickEvent, handleMapEvent);
       }
 
       if (registerOnPointerMove) {
@@ -255,8 +257,8 @@ export const useCoordinateInfo = ({
     }
 
     return () => {
-      if (keyClick) {
-        map?.un('click', keyClick.listener);
+      if (keyClick && clickEvent) {
+        map?.un(clickEvent, keyClick.listener);
       }
 
       if (keyMove) {
@@ -269,7 +271,8 @@ export const useCoordinateInfo = ({
       }
     };
   }, [
-    active, map, onPointerMove, handleMapEvent, registerOnClick, registerOnPointerMove, registerOnPointerRest
+    active, map, onPointerMove, handleMapEvent, registerOnClick,
+    registerOnPointerMove, registerOnPointerRest, clickEvent
   ]);
 
   // We want to propagate the state here so the variables do
