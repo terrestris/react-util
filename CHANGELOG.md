@@ -1,3 +1,25 @@
+# [11.0.0](https://github.com/terrestris/react-util/compare/v10.1.1...v11.0.0) (2025-03-21)
+
+
+### Bug Fixes
+
+* adds id property as fallback ([8d467a8](https://github.com/terrestris/react-util/commit/8d467a8b98fd78999561aaa8e4f5d8381c16294f))
+* prevent map zoom on double click ([0568f1c](https://github.com/terrestris/react-util/commit/0568f1cfeaec862ccb6d2b58523d7f206ae298c2))
+* return pixel coordinate as well ([018b66a](https://github.com/terrestris/react-util/commit/018b66aa222862a77693b42b8d0977e671e0d128))
+
+
+### Features
+
+* adds possibility to define click event ([5dfd664](https://github.com/terrestris/react-util/commit/5dfd664492e0edd6cbe2049a3427faa8cb8fefab))
+* **coodinateInfo:** adds pointerrest and functions for layerfilter and infoFormat ([9c3ff7b](https://github.com/terrestris/react-util/commit/9c3ff7b67aa6c540527156ec0b471d4f6a4becc2))
+* support WMSGetFeatureInfo format as well (e.g. msGMLOutput) ([8009ad0](https://github.com/terrestris/react-util/commit/8009ad0038b4649a29f6bb28a187ee7594e64eae))
+
+
+### BREAKING CHANGES
+
+* **coodinateInfo:** queryLayers is replaced by layerFilter and fix info
+format by function
+
 ## [10.1.1](https://github.com/terrestris/react-util/compare/v10.1.0...v10.1.1) (2025-03-19)
 
 
