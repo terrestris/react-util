@@ -112,6 +112,12 @@ export const useCoordinateInfo = ({
     if (_isNil(map)) {
       return;
     }
+
+    if (clickEvent === 'dblclick') {
+      // prevent map zoom on double click
+      olEvt.stopPropagation();
+    }
+
     const mapView = map.getView();
     const viewResolution = mapView.getResolution();
     const viewProjection = mapView.getProjection();
@@ -235,7 +241,7 @@ export const useCoordinateInfo = ({
     }
     setLoading(false);
 
-  }, [drillDown, featureCount, fetchOpts, getInfoFormat, layerFilter, map, onError, onSuccess]);
+  }, [clickEvent, drillDown, featureCount, fetchOpts, getInfoFormat, layerFilter, map, onError, onSuccess]);
 
   useEffect(() => {
     let keyMove: EventsKey | undefined;
