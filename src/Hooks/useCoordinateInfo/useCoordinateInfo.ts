@@ -8,11 +8,17 @@ import {
 
 import _isNil from 'lodash/isNil';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
+import { EventsKey } from 'ol/events';
 import OlFeature from 'ol/Feature';
 import OlFormatGeoJSON from 'ol/format/GeoJSON';
 import OlFormatGML2 from 'ol/format/GML2';
-import OlBaseLayer from 'ol/layer/Base';
+import OlFormatGml3 from 'ol/format/GML3';
+import OlFormatGml32 from 'ol/format/GML32';
+import OlFormatWMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
+import OlLayer from 'ol/layer/Layer';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
+import { Pixel as OlPixel } from 'ol/pixel';
+import OlSource from 'ol/source/Source';
 import { getUid } from 'ol/util';
 
 import Logger from '@terrestris/base-util/dist/Logger';
@@ -30,54 +36,52 @@ export interface FeatureLayerResult {
 
 export interface CoordinateInfoResult {
   clickCoordinate: OlCoordinate | null;
+  pixelCoordinate: [number, number] | null;
   features: FeatureLayerResult[];
   loading: boolean;
 }
 
 export interface UseCoordinateInfoArgs {
+  active: boolean;
+  clickEvent?: 'click' | 'dblclick';
   drillDown?: boolean;
   featureCount?: number;
   fetchOpts?: Record<string, RequestInit> | ((layer: WmsLayer) => RequestInit);
+  getInfoFormat?: (layer: WmsLayer) => string | Promise<string>;
+  layerFilter?: (layerCandidate: OlLayer<OlSource>) => boolean;
   onError?: (error: any) => void;
   onSuccess?: (result: CoordinateInfoResult) => void;
-  queryLayers?: OlBaseLayer[];
-  infoFormat?: 'gml'|'json';
+  registerOnClick?: boolean;
+  registerOnPointerMove?: boolean;
+  registerOnPointerRest?: boolean;
 }
 
-const getInfoFormat = (type: 'gml'|'json') => {
-  if (type === 'gml') {
-    return 'application/vnd.ogc.gml';
-  } else if (type === 'json') {
-    return 'application/json';
-  } else {
-    throw new Error('Unknown info format type');
-  }
-};
-
 const getFeatureType = (feature: OlFeature) => {
-  const id = feature.getId();
+  const id = feature.getId() ?? feature.get('id');
   return isString(id) ? id.split('.')[0] : id?.toString() ?? uniqueId('UNKNOWN');
 };
 
 export const useCoordinateInfo = ({
-  queryLayers = [],
+  active,
+  clickEvent = 'click',
+  drillDown = false,
   featureCount = 1,
   fetchOpts = {},
-  drillDown = false,
-  onError,
-  onSuccess,
-  infoFormat = 'gml'
+  getInfoFormat = () => 'application/json',
+  layerFilter = () => true,
+  onError = () => undefined,
+  onSuccess = () => undefined,
+  registerOnClick = true,
+  registerOnPointerMove = false,
+  registerOnPointerRest = false
 }: UseCoordinateInfoArgs): CoordinateInfoResult => {
 
   const map = useMap();
 
-  const [clickCoordinate, setClickCoordinate] = useState<any>();
+  const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | null>(null);
+  const [pixelCoordinate, setPixelCoordinate] = useState<[number, number] | null>(null);
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const layerFilter = useCallback((layerCandidate: OlBaseLayer): boolean => {
-    return queryLayers.includes(layerCandidate);
-  }, [queryLayers]);
 
   useEffect(() => {
     if (map && loading) {
@@ -89,23 +93,47 @@ export const useCoordinateInfo = ({
     return undefined;
   }, [loading, map]);
 
-  const onMapClick = useCallback(async (olEvt: OlMapBrowserEvent<MouseEvent>) => {
+  const onPointerMove = useCallback((olEvt: OlMapBrowserEvent<MouseEvent>) => {
+    if (olEvt.dragging || _isNil(map)) {
+      return;
+    }
+
+    const pixel: OlPixel = map.getEventPixel(olEvt.originalEvent);
+    const hits = map.getAllLayers()
+      .filter(l => layerFilter(l))
+      .filter(l => {
+        const pixelData: any = l.getData(pixel);
+        return pixelData && pixelData[3] > 0;
+      });
+    map.getTargetElement().style.cursor = hits?.length > 0 ? 'pointer' : '';
+  }, [layerFilter, map]);
+
+  const handleMapEvent = useCallback(async (olEvt: OlMapBrowserEvent<MouseEvent>) => {
     if (_isNil(map)) {
       return;
     }
+
+    if (clickEvent === 'dblclick') {
+      // prevent map zoom on double click
+      olEvt.stopPropagation();
+    }
+
     const mapView = map.getView();
     const viewResolution = mapView.getResolution();
     const viewProjection = mapView.getProjection();
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
+    const evtPixelCoordinate: [number, number] = [olEvt.originalEvent.x, olEvt.originalEvent.y];
 
     const wmsMapLayers =
       map.getAllLayers()
+        .reverse()
         .filter(layerFilter)
         .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l)) as WmsLayer[];
 
     const wfsMapLayers =
       map.getAllLayers()
+        .reverse()
         .filter(layerFilter)
         .filter(l => isWfsLayer(l)) as WfsLayer[];
 
@@ -115,47 +143,61 @@ export const useCoordinateInfo = ({
       const results: FeatureLayerResult[] = [];
 
       for (const layer of wmsMapLayers) {
-        if (!drillDown && results.length > 0) {
-          break;
-        }
-        const wmsLayerSource = layer.getSource();
-        if (!wmsLayerSource) {
-          continue;
-        }
-        const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
-          coordinate,
+        try {
+          if (!drillDown && results.length > 0) {
+            break;
+          }
+          const wmsLayerSource = layer.getSource();
+          if (!wmsLayerSource) {
+            continue;
+          }
+          const infoFormat = await getInfoFormat(layer);
+          const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
+            coordinate,
           viewResolution!,
           viewProjection,
           {
-            INFO_FORMAT: getInfoFormat(infoFormat),
+            INFO_FORMAT: infoFormat,
             FEATURE_COUNT: featureCount
           }
-        );
-        if (featureInfoUrl) {
-          let opts;
-          if (fetchOpts instanceof Function) {
-            opts = fetchOpts(layer as WmsLayer);
-          } else {
-            opts = fetchOpts[getUid(layer)];
+          );
+          if (featureInfoUrl) {
+            let opts;
+            if (fetchOpts instanceof Function) {
+              opts = fetchOpts(layer as WmsLayer);
+            } else {
+              opts = fetchOpts[getUid(layer)];
+            }
+            const response = await fetch(featureInfoUrl, opts);
+            let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 |
+              OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | null = null;
+
+            let isJson = false;
+            if (infoFormat === 'application/vnd.ogc.gml') {
+              format = new OlFormatWMSGetFeatureInfo();
+            } else if (infoFormat.indexOf('gml/2') > -1) {
+              format = new OlFormatGML2();
+            } else if (infoFormat === 'application/vnd.ogc.gml/3.1.1' || infoFormat === 'text/xml; subtype=gml/3.1.1') {
+              format = new OlFormatGml3();
+            } else if (infoFormat === 'application/vnd.ogc.gml/3.2' || infoFormat === 'text/xml; subtype=gml/3.2') {
+              format = new OlFormatGml32();
+            } else if (infoFormat === 'application/json' || infoFormat.indexOf('json') > -1) {
+              format = new OlFormatGeoJSON();
+              isJson = true;
+            } else {
+              continue;
+            }
+
+            const text = isJson ? await response.json() : await response.text();
+
+            results.push(...format.readFeatures(text).map(f => ({
+              feature: f,
+              layer,
+              featureType: getFeatureType(f)
+            })));
           }
-          const response = await fetch(featureInfoUrl, opts);
-          let format: OlFormatGML2 | OlFormatGeoJSON | null = null;
-
-          if (infoFormat === 'gml') {
-            format = new OlFormatGML2();
-          } else if (infoFormat === 'json') {
-            format = new OlFormatGeoJSON();
-          } else {
-            continue;
-          }
-
-          const text = await response.text();
-
-          results.push(...format.readFeatures(text).map(f => ({
-            feature: f,
-            layer,
-            featureType: getFeatureType(f)
-          })));
+        } catch (error: any) {
+          Logger.error(error);
         }
       }
       for (const layer of wfsMapLayers) {
@@ -181,11 +223,14 @@ export const useCoordinateInfo = ({
       // keep all feature properties (in particular the id) intact.
       const clonedResults = cloneDeep(results);
       const clonedCoordinate = cloneDeep(coordinate);
+      const clonedPixelCoordinate = cloneDeep(evtPixelCoordinate);
       setFeatureResults(clonedResults);
       setClickCoordinate(clonedCoordinate);
+      setPixelCoordinate(clonedPixelCoordinate);
 
       onSuccess?.({
         clickCoordinate: clonedCoordinate,
+        pixelCoordinate: clonedPixelCoordinate,
         loading: false,
         features: clonedResults
       });
@@ -196,23 +241,53 @@ export const useCoordinateInfo = ({
     }
     setLoading(false);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drillDown, featureCount, fetchOpts, infoFormat, layerFilter, map]);
+  }, [clickEvent, drillDown, featureCount, fetchOpts, getInfoFormat, layerFilter, map, onError, onSuccess]);
 
   useEffect(() => {
-    map?.on('click', onMapClick);
+    let keyMove: EventsKey | undefined;
+    let keyRest: EventsKey | undefined;
+    let keyClick: EventsKey | undefined;
+    if (active) {
+      if (registerOnClick && clickEvent) {
+        keyClick = map?.on(clickEvent, handleMapEvent);
+      }
+
+      if (registerOnPointerMove) {
+        keyMove = map?.on('pointermove', onPointerMove);
+      }
+
+      if (registerOnPointerRest) {
+        // @ts-expect-error pointerrest is no default event
+        keyRest = map?.on('pointerrest', handleMapEvent);
+      }
+    }
 
     return () => {
-      map?.un('click', onMapClick);
+      if (keyClick && clickEvent) {
+        map?.un(clickEvent, keyClick.listener);
+      }
+
+      if (keyMove) {
+        map?.un('pointermove', keyMove.listener);
+      }
+
+      if (keyRest) {
+        // @ts-expect-error pointerrest is no default event
+        map?.un('pointerrest', keyRest.listener);
+      }
     };
-  }, [map, onMapClick]);
+  }, [
+    active, map, onPointerMove, handleMapEvent, registerOnClick,
+    registerOnPointerMove, registerOnPointerRest, clickEvent
+  ]);
 
   // We want to propagate the state here so the variables do
   // not change on every render cycle.
   return {
     clickCoordinate,
+    features: featureResults,
     loading,
-    features: featureResults
+    pixelCoordinate
   };
 };
 

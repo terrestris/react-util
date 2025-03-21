@@ -8,7 +8,12 @@ export { createWfsSearchFunction } from './Hooks/search/createWfsSearchFunction'
 export {
   SearchFunction, SearchOptions, useSearch
 } from './Hooks/search/useSearch/useSearch';
+export { InkmapPrintSpec } from './Util/InkmapTypes';
+export { default as ClickAwayListener } from './Util/ClickAwayListener/ClickAwayListener';
+export { default as DigitizeUtil } from './Util/DigitizeUtil';
+export { default as PrintUtil } from './Util/PrintUtil';
 export { default as useAsyncEffect } from './Hooks/useAsyncEffect/useAsyncEffect';
+export { default as useCoordinateInfo } from './Hooks/useCoordinateInfo/useCoordinateInfo';
 export { default as useDebouncedState } from './Hooks/useDebouncedState/useDebouncedState';
 export { default as useDraw } from './Hooks/useDraw/useDraw';
 export { default as useDropTargetMap } from './Hooks/useDropTargetMap/useDropTargetMap';
@@ -23,8 +28,4 @@ export { default as usePermalink } from './Hooks/usePermalink/usePermalink';
 export { default as usePropOrDefault } from './Hooks/usePropOrDefault/usePropOrDefault';
 export { default as useSelectFeatures } from './Hooks/useSelectFeatures/useSelectFeatures';
 export { default as useTimeLayerAware } from './Hooks/useTimeLayerAware/useTimeLayerAware';
-export { default as ClickAwayListener } from './Util/ClickAwayListener/ClickAwayListener';
-export { default as DigitizeUtil } from './Util/DigitizeUtil';
-export { InkmapPrintSpec } from './Util/InkmapTypes';
-export { default as PrintUtil } from './Util/PrintUtil';
 export { zoomTo } from './Util/ZoomUtil';

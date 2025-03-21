@@ -2,8 +2,10 @@ import { useCoordinateInfo } from './useCoordinateInfo';
 
 jest.mock('react');
 
-describe('basic test', () => {
+describe('useCoordinateInfo', () => {
+
   it('is defined', () => {
     expect(useCoordinateInfo).toBeDefined();
   });
+
 });
