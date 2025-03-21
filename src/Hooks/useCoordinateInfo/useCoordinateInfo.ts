@@ -57,7 +57,7 @@ export interface UseCoordinateInfoArgs {
 }
 
 const getFeatureType = (feature: OlFeature) => {
-  const id = feature.getId();
+  const id = feature.getId() ?? feature.get('id');
   return isString(id) ? id.split('.')[0] : id?.toString() ?? uniqueId('UNKNOWN');
 };
 
