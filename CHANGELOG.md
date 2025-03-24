@@ -1,3 +1,10 @@
+## [11.0.1](https://github.com/terrestris/react-util/compare/v11.0.0...v11.0.1) (2025-03-24)
+
+
+### Bug Fixes
+
+* **deps:** bump OpenLayers to version 10.4.0 ([5113794](https://github.com/terrestris/react-util/commit/5113794f7616eff322d39ac87aaf07bb3f648964))
+
 # [11.0.0](https://github.com/terrestris/react-util/compare/v10.1.1...v11.0.0) (2025-03-21)
 
 
