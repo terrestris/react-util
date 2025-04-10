@@ -1,3 +1,21 @@
+# [12.0.0](https://github.com/terrestris/react-util/compare/v11.0.1...v12.0.0) (2025-04-10)
+
+
+### Bug Fixes
+
+* typings changed in OpenLayers 10.5.0 ([9cfdc91](https://github.com/terrestris/react-util/commit/9cfdc91124ef9c2a5b9fe530cde85152f6ab924d))
+
+
+### Features
+
+* **inkmap:** introduce extent property for constrained prints ([20c57a2](https://github.com/terrestris/react-util/commit/20c57a2a8d5ffdbec3767cc2f5493f585bb73a54))
+
+
+### BREAKING CHANGES
+
+* **inkmap:** Numerous properties of print functions have been moved
+to a new type PrintSpec
+
 ## [11.0.1](https://github.com/terrestris/react-util/compare/v11.0.0...v11.0.1) (2025-03-24)
 
 
