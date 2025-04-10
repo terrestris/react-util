@@ -462,7 +462,7 @@ export const useMeasure = ({
     }
   }, [updateHelpTooltip, active]);
 
-  const onMapClick = useCallback((evt: OlMapBrowserEvent<MouseEvent>) => {
+  const onMapClick = useCallback((evt: OlMapBrowserEvent) => {
     if (showMeasureInfoOnClickedPoints && measureType === 'line') {
       addMeasureStopTooltip(evt.coordinate);
     }
@@ -494,7 +494,7 @@ export const useMeasure = ({
 
   useOlListener(
     map,
-    i => i.on('click', (evt) => {
+    i => i.on('click', (evt: OlMapBrowserEvent) => {
       onMapClick?.(evt);
     }),
     [map, onMapClick]

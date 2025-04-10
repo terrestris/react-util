@@ -93,7 +93,7 @@ export const useCoordinateInfo = ({
     return undefined;
   }, [loading, map]);
 
-  const onPointerMove = useCallback((olEvt: OlMapBrowserEvent<MouseEvent>) => {
+  const onPointerMove = useCallback((olEvt: OlMapBrowserEvent) => {
     if (olEvt.dragging || _isNil(map)) {
       return;
     }
@@ -108,7 +108,7 @@ export const useCoordinateInfo = ({
     map.getTargetElement().style.cursor = hits?.length > 0 ? 'pointer' : '';
   }, [layerFilter, map]);
 
-  const handleMapEvent = useCallback(async (olEvt: OlMapBrowserEvent<MouseEvent>) => {
+  const handleMapEvent = useCallback(async (olEvt: OlMapBrowserEvent) => {
     if (_isNil(map)) {
       return;
     }
@@ -123,7 +123,10 @@ export const useCoordinateInfo = ({
     const viewProjection = mapView.getProjection();
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
-    const evtPixelCoordinate: [number, number] = [olEvt.originalEvent.x, olEvt.originalEvent.y];
+    let evtPixelCoordinate: [number, number] = [0, 0];
+    if (olEvt.originalEvent instanceof PointerEvent) {
+      evtPixelCoordinate = [olEvt.originalEvent.x, olEvt.originalEvent.y];
+    }
 
     const wmsMapLayers =
       map.getAllLayers()

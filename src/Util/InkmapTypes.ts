@@ -1,64 +1,64 @@
 export interface WmsLayer {
-  type: 'WMS';
-  url: string;
-  opacity?: number;
   attribution?: string;
   layer: string;
-  tiled?: boolean;
-  legendUrl?: string;
   layerName?: string;
+  legendUrl?: string;
+  opacity?: number;
+  tiled?: boolean;
+  type: 'WMS';
+  url: string;
 }
 
 export interface WmtsLayer {
+  attribution?: string;
+  format?: string;
+  layer?: string;
+  layerName?: string;
+  legendUrl?: string;
+  matrixSet?: string;
+  opacity?: number;
+  projection?: string;
+  requestEncoding?: string;
+  tileGrid?: any;
   type: 'WMTS';
   url: string;
-  opacity?: number;
-  attribution?: string;
-  layer?: string;
-  projection?: string;
-  matrixSet?: string;
-  tileGrid?: any;
-  format?: string;
-  requestEncoding?: string;
-  legendUrl?: string;
-  layerName?: string;
 }
 
 export interface GeoJsonLayer {
-  type: 'GeoJSON';
   attribution?: string;
-  style: any;
   geojson: any;
-  legendUrl?: string;
   layerName?: string;
+  legendUrl?: string;
+  style: any;
+  type: 'GeoJSON';
 }
 
 export interface WfsLayer {
-  type: 'WFS';
-  url: string;
   attribution?: string;
   layer?: string;
-  projection?: string;
-  legendUrl?: string;
   layerName?: string;
+  legendUrl?: string;
+  projection?: string;
+  type: 'WFS';
+  url: string;
 }
 
 export interface OsmLayer {
+  attribution?: string;
+  format?: string;
+  geojson?: any;
+  layer?: string;
+  layerName?: string;
+  legendUrl?: string;
+  matrixSet?: string;
+  opacity?: number;
+  projection?: string;
+  requestEncoding?: string;
+  style?: any;
+  tileGrid?: any;
+  tiled?: boolean;
   type: 'XYZ';
   url: string;
-  opacity?: number;
-  attribution?: string;
-  layer?: string;
-  tiled?: boolean;
-  projection?: string;
-  matrixSet?: string;
-  tileGrid?: any;
-  style?: any;
-  format?: string;
-  requestEncoding?: string;
-  geojson?: any;
-  legendUrl?: string;
-  layerName?: string;
 }
 
 export type InkmapLayer = WmsLayer | WmtsLayer | GeoJsonLayer | WfsLayer | OsmLayer;
@@ -69,20 +69,20 @@ export interface ScaleBarSpec {
 }
 
 export interface InkmapProjectionDefinition {
-  name: string;
   bbox: [number, number, number, number];
+  name: string;
   proj4: string;
 }
 
 export interface InkmapPrintSpec {
-  layers: InkmapLayer[];
-  size: [number, number] | [number, number, string];
+  attributions: boolean | 'top-left' | 'bottom-left' | 'bottom-right' | 'top-right';
   center: [number, number];
   dpi: number;
-  scale: number;
-  scaleBar: boolean | ScaleBarSpec;
+  layers: InkmapLayer[];
   northArrow: boolean | string;
   projection: string;
   projectionDefinitions?: InkmapProjectionDefinition[];
-  attributions: boolean | 'top-left' | 'bottom-left' | 'bottom-right' | 'top-right';
+  scale: number;
+  scaleBar: boolean | ScaleBarSpec;
+  size: [number, number] | [number, number, string];
 }
