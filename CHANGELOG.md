@@ -1,3 +1,10 @@
+# [12.1.0](https://github.com/terrestris/react-util/compare/v12.0.0...v12.1.0) (2025-04-14)
+
+
+### Features
+
+* added useDrawCut hook ([77da592](https://github.com/terrestris/react-util/commit/77da592556c96696dd1cbcfaa6b4f0a786c6efe3))
+
 # [12.0.0](https://github.com/terrestris/react-util/compare/v11.0.1...v12.0.0) (2025-04-10)
 
 
