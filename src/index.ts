@@ -16,6 +16,7 @@ export { default as useAsyncEffect } from './Hooks/useAsyncEffect/useAsyncEffect
 export { default as useCoordinateInfo } from './Hooks/useCoordinateInfo/useCoordinateInfo';
 export { default as useDebouncedState } from './Hooks/useDebouncedState/useDebouncedState';
 export { default as useDraw } from './Hooks/useDraw/useDraw';
+export { default as useDrawCut } from './Hooks/useDrawCut/useDrawCut';
 export { default as useDropTargetMap } from './Hooks/useDropTargetMap/useDropTargetMap';
 export { default as useGeoLocation } from './Hooks/useGeoLocation/useGeoLocation';
 export { default as useMap } from './Hooks/useMap/useMap';

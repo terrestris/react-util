@@ -23,7 +23,7 @@ const config = {
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!(ol|color-space|color-rgba|color-name|color-*[a-z]*|@camptocamp|@terrestris|quickselect|' +
-    'd3-*[a-z]*|query-string|decode-uri-component|split-on-first|filter-obj|shpjs|geostyler-openlayers-parser|geostyler-style))'
+    'd3-*[a-z]*|query-string|decode-uri-component|split-on-first|filter-obj|shpjs|geostyler-openlayers-parser|geostyler-style|jsts))'
   ],
   moduleFileExtensions: [
     'ts',
