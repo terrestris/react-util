@@ -1,3 +1,10 @@
+## [12.1.1](https://github.com/terrestris/react-util/compare/v12.1.0...v12.1.1) (2025-05-21)
+
+
+### Bug Fixes
+
+* use non-barrel imports for geometry classes from ol ([f7c90ac](https://github.com/terrestris/react-util/commit/f7c90ac36627e89b9da5b39d1bfc092bc9d45d4e))
+
 # [12.1.0](https://github.com/terrestris/react-util/compare/v12.0.0...v12.1.0) (2025-04-14)
 
 
