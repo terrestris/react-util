@@ -10,17 +10,14 @@ import ValidOp from 'jsts/org/locationtech/jts/operation/valid/IsValidOp';
 
 import * as OlEventConditions from 'ol/events/condition';
 import OlFeature from 'ol/Feature';
-import {
-  GeometryCollection,
-  LinearRing,
-  LineString,
-  MultiLineString,
-  MultiPoint,
-  MultiPolygon,
-  Point,
-  Polygon
-} from 'ol/geom';
-
+import GeometryCollection from 'ol/geom/GeometryCollection';
+import LinearRing from 'ol/geom/LinearRing';
+import LineString from 'ol/geom/LineString';
+import MultiLineString from 'ol/geom/MultiLineString';
+import MultiPoint from 'ol/geom/MultiPoint';
+import MultiPolygon from 'ol/geom/MultiPolygon';
+import Point from 'ol/geom/Point';
+import Polygon from 'ol/geom/Polygon';
 import OlGeometry from 'ol/geom/Geometry';
 import OlInteractionDraw, {DrawEvent as OlDrawEvent} from 'ol/interaction/Draw';
 import OlVectorLayer from 'ol/layer/Vector';
@@ -34,7 +31,7 @@ import useOlInteraction from '../useOlInteraction/useOlInteraction';
 import useOlListener from '../useOlListener/useOlListener';
 import usePropOrDefault from '../usePropOrDefault/usePropOrDefault';
 
-interface UseDrawCutProps {
+export interface UseDrawCutProps {
   /**
    * Active state of interaction
    */
