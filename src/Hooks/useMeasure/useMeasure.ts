@@ -262,7 +262,7 @@ export const useMeasure = ({
       const tooltip = stepMeasureTooltips.current.pop()!;
       map.removeOverlay(tooltip);
     }
-  }, [map])
+  }, [map]);
 
   const removeSegmentMeasureTooltips = useCallback(() => {
     if (map && segmentMeasureTooltips.current.length > 0) {
@@ -296,7 +296,9 @@ export const useMeasure = ({
     removeSegmentDrawingMeasureTooltip();
     removeHelpTooltip();
     measureLayer?.getSource()?.clear();
-  }, [measureLayer, removeMeasureTooltip, removeStepMeasureTooltips, removeSegmentMeasureTooltips, removeHelpTooltip]);
+  }, [measureLayer, removeMeasureTooltip, removeStepMeasureTooltips, removeSegmentMeasureTooltips,
+    removeHelpTooltip, removeSegmentDrawingMeasureTooltip
+  ]);
 
   useEffect(() => {
     if (active) {
@@ -339,9 +341,9 @@ export const useMeasure = ({
     }
 
     let value;
-    let geom = simplifyFeatureGeom(feature);
+    const geom = simplifyFeatureGeom(feature);
 
-    let measureTooltipCoord: OlCoordinate | undefined = undefined
+    let measureTooltipCoord: OlCoordinate | undefined = undefined;
 
     if (geom instanceof OlGeomCircle) {
       if (!measureRadius) {
@@ -390,7 +392,7 @@ export const useMeasure = ({
     }
 
     tooltip.setPosition(measureTooltipCoord);
-  }, [decimalPlacesInTooltips, feature, geodesic, map, measureType, measureRadius]);
+  }, [decimalPlacesInTooltips, feature, geodesic, map, measureType, measureRadius, createTooltip, removeMeasureTooltip]);
 
   const onDrawStart = useCallback((evt: OlDrawEvent) => {
     if (!map) {
@@ -409,7 +411,7 @@ export const useMeasure = ({
       return;
     }
 
-    let geom = simplifyFeatureGeom(feature);
+    const geom = simplifyFeatureGeom(feature);
 
     const value = measureType === 'line' ?
       MeasureUtil.formatLength(geom as OlGeomLineString, map, decimalPlacesInTooltips, geodesic) :
@@ -432,7 +434,7 @@ export const useMeasure = ({
       return;
     }
 
-    let geom = simplifyFeatureGeom(feature);
+    const geom = simplifyFeatureGeom(feature);
 
     let coordinates: OlCoordinate[] = [];
 
@@ -483,7 +485,7 @@ export const useMeasure = ({
       return;
     }
 
-    let geom = simplifyFeatureGeom(feature);
+    const geom = simplifyFeatureGeom(feature);
 
     let coordinates: OlCoordinate[] = [];
 
@@ -520,7 +522,7 @@ export const useMeasure = ({
 
       tooltip.setPosition(coordinate);
     }
-  }, [decimalPlacesInTooltips, feature, geodesic, map, createTooltip])
+  }, [decimalPlacesInTooltips, feature, geodesic, map, createTooltip]);
 
   const onDrawEnd = useCallback((evt: OlDrawEvent) => {
     if (!map) {
@@ -563,7 +565,7 @@ export const useMeasure = ({
     }
   }, [addMeasureStopTooltip, measureTooltipCssClasses, map,
     measureType, multipleDrawing, removeMeasureTooltip, showMeasureInfoOnClickedPoints, updateMeasureTooltip,
-    showSegmentLengths, addSegmentTooltip, removeLastStepMeasureTooltip
+    showSegmentLengths, addSegmentTooltip, removeLastStepMeasureTooltip, removeSegmentDrawingMeasureTooltip
   ]);
 
   const updateHelpTooltip = useCallback((coordinate: OlCoordinate) => {
@@ -607,7 +609,9 @@ export const useMeasure = ({
     if (active && showSegmentLengths && (measureType === 'line' || measureType === 'polygon')) {
       addSegmentTooltip();
     }
-  }, [addMeasureStopTooltip, addSegmentTooltip, measureType, showMeasureInfoOnClickedPoints, showSegmentLengths, active]);
+  }, [addMeasureStopTooltip, addSegmentTooltip, measureType, showMeasureInfoOnClickedPoints, showSegmentLengths,
+    active
+  ]);
 
   useOlListener(
     drawInteraction,
