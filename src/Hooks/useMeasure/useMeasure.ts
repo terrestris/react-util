@@ -56,6 +56,11 @@ export interface UseMeasureProps {
    */
   showMeasureInfoOnClickedPoints?: boolean;
   /**
+   * Determines if a marker with a line length should be added to each drawn
+   * segment of a line or polygon while measuring a distance. Default is false.
+   */
+  showSegmentLengths?: boolean;
+  /**
    * Determines if a tooltip with helpful information is shown next to the mouse
    * position. Default is true.
    */
@@ -121,6 +126,7 @@ export const useMeasure = ({
   fillColor = 'rgba(255, 0, 0, 0.5)',
   strokeColor = 'rgba(255, 0, 0, 0.8)',
   showMeasureInfoOnClickedPoints = false,
+  showSegmentLengths = false,
   showHelpTooltip = true,
   decimalPlacesInTooltips = 2,
   multipleDrawing = false,
@@ -143,6 +149,7 @@ export const useMeasure = ({
   const measureTooltip = useRef<OlOverlay>();
   const helpTooltip = useRef<OlOverlay>();
   const stepMeasureTooltips = useRef<OlOverlay[]>([]);
+  const segmentMeasureTooltips = useRef<OlOverlay[]>([]);
 
   const map = useMap();
 
@@ -236,6 +243,16 @@ export const useMeasure = ({
     }
   }, [map]);
 
+  const removeSegementMeasureTooltips = useCallback(() => {
+    if (map && segmentMeasureTooltips.current.length > 0) {
+      for (const overlay of segmentMeasureTooltips.current) {
+        map.removeOverlay(overlay);
+      }
+
+      segmentMeasureTooltips.current = [];
+    }
+  }, [map]);
+
   const removeHelpTooltip = useCallback(() => {
     if (map && helpTooltip.current) {
       map.removeOverlay(helpTooltip.current);
@@ -246,9 +263,10 @@ export const useMeasure = ({
   const cleanup = useCallback(() => {
     removeMeasureTooltip();
     removeStepMeasureTooltips();
+    removeSegementMeasureTooltips();
     removeHelpTooltip();
     measureLayer?.getSource()?.clear();
-  }, [measureLayer, removeMeasureTooltip, removeStepMeasureTooltips, removeHelpTooltip]);
+  }, [measureLayer, removeMeasureTooltip, removeStepMeasureTooltips, removeSegementMeasureTooltips, removeHelpTooltip]);
 
   useEffect(() => {
     if (active) {
@@ -274,12 +292,8 @@ export const useMeasure = ({
     map.addOverlay(helpTooltip.current);
   }, [map, measureTooltipCssClasses?.tooltip]);
 
-  const createMeasureTooltip = useCallback(() => {
-    if (!map || measureTooltip.current) {
-      return;
-    }
-
-    measureTooltip.current = new OlOverlay({
+  const createTooltip = useCallback(() => {
+    return new OlOverlay({
       element: document.createElement('div'),
       offset: [0, -15],
       positioning: 'bottom-center',
@@ -287,9 +301,17 @@ export const useMeasure = ({
         ? `${measureTooltipCssClasses.tooltip} ${measureTooltipCssClasses.tooltipDynamic}`
         : ''
     });
+  }, [measureTooltipCssClasses]);
+
+  const createMeasureTooltip = useCallback(() => {
+    if (!map || measureTooltip.current) {
+      return;
+    }
+
+    measureTooltip.current = createTooltip();
 
     map.addOverlay(measureTooltip.current);
-  }, [map, measureTooltip, measureTooltipCssClasses]);
+  }, [map, measureTooltip, createTooltip]);
 
   const updateMeasureTooltip = useCallback(() => {
     if (!measureTooltip.current || !feature || !map) {
@@ -376,23 +398,75 @@ export const useMeasure = ({
       MeasureUtil.formatArea(geom as OlGeomPolygon, map, decimalPlacesInTooltips, geodesic);
 
     if (parseInt(value, 10) > 0) {
-      const div = document.createElement('div');
-      if (measureTooltipCssClasses) {
-        div.className = `${measureTooltipCssClasses.tooltip} ${measureTooltipCssClasses.tooltipStatic}`;
-      }
+      const tooltip= createTooltip();
+      const div = tooltip.getElement()!;
       div.innerHTML = value;
-      const tooltip = new OlOverlay({
-        element: div,
-        offset: [0, -15],
-        positioning: 'bottom-center'
-      });
       map.addOverlay(tooltip);
 
       tooltip.setPosition(coordinate);
 
       stepMeasureTooltips.current.push(tooltip);
     }
-  }, [decimalPlacesInTooltips, feature, geodesic, map, measureTooltipCssClasses, measureType]);
+  }, [decimalPlacesInTooltips, feature, geodesic, map, createTooltip, measureType]);
+
+  const addSegmentTooltip = useCallback((showLastSegment = false) => {
+    if (!feature || !map) {
+      return;
+    }
+
+    let geom = feature.getGeometry();
+
+    if (geom instanceof OlGeomMultiPolygon) {
+      geom = geom.getPolygons()[0] as OlGeomPolygon;
+    }
+
+    if (geom instanceof OlGeomMultiLineString) {
+      geom = geom.getLineStrings()[0];
+    }
+
+    let coordinates: OlCoordinate[] = [];
+
+    if (showLastSegment) {
+      if (!(geom instanceof OlGeomPolygon)) {
+        return;
+      }
+      coordinates = geom.getCoordinates()[0].slice(-2);
+    } else {
+      if (geom instanceof OlGeomPolygon) {
+        // the last coordinate is the starting coordinate for a polygon
+        coordinates = geom.getCoordinates()[0].slice(0, -1);
+      }
+
+      if (geom instanceof OlGeomLineString) {
+        coordinates = geom.getCoordinates();
+      }
+
+      if (coordinates.length < 3) {
+        return;
+      }
+
+      // the last coordinate is one where the pointer is, so we take the ones before
+      coordinates = coordinates.slice(-3, -1);
+    }
+
+    const segment = new OlGeomLineString(coordinates);
+
+    const value = MeasureUtil.formatLength(segment, map, decimalPlacesInTooltips, geodesic);
+
+    if (parseInt(value, 10) > 0) {
+      const tooltip= createTooltip();
+      const div = tooltip.getElement()!;
+      div.innerHTML = value;
+
+      map.addOverlay(tooltip);
+
+      const coordinate = segment.getCoordinateAt(0.5);
+
+      tooltip.setPosition(coordinate);
+
+      segmentMeasureTooltips.current.push(tooltip);
+    }
+  }, [decimalPlacesInTooltips, feature, geodesic, map, createTooltip]);
 
   const onDrawEnd = useCallback((evt: OlDrawEvent) => {
     if (multipleDrawing) {
@@ -428,8 +502,14 @@ export const useMeasure = ({
       measureTooltip.current = undefined;
       createMeasureTooltip();
     }
+
+    if (showSegmentLengths && measureType === 'polygon') {
+      addSegmentTooltip(true);
+    }
   }, [addMeasureStopTooltip, createMeasureTooltip, measureTooltipCssClasses,
-    measureType, multipleDrawing, removeMeasureTooltip, showMeasureInfoOnClickedPoints, updateMeasureTooltip]);
+    measureType, multipleDrawing, removeMeasureTooltip, showMeasureInfoOnClickedPoints, updateMeasureTooltip,
+    showSegmentLengths, addSegmentTooltip
+  ]);
 
   const updateHelpTooltip = useCallback((coordinate: OlCoordinate) => {
     if (!helpTooltip.current) {
@@ -466,7 +546,10 @@ export const useMeasure = ({
     if (showMeasureInfoOnClickedPoints && measureType === 'line') {
       addMeasureStopTooltip(evt.coordinate);
     }
-  }, [addMeasureStopTooltip, measureType, showMeasureInfoOnClickedPoints]);
+    if (showSegmentLengths && (measureType === 'line' || measureType === 'polygon')) {
+      addSegmentTooltip();
+    }
+  }, [addMeasureStopTooltip, addSegmentTooltip, measureType, showMeasureInfoOnClickedPoints, showSegmentLengths]);
 
   useOlListener(
     drawInteraction,
