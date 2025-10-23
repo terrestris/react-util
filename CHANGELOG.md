@@ -1,3 +1,10 @@
+# [12.2.0](https://github.com/terrestris/react-util/compare/v12.1.1...v12.2.0) (2025-10-23)
+
+
+### Features
+
+* **useMeasure:** add option to show lengths of segments ([c937e30](https://github.com/terrestris/react-util/commit/c937e30a98d413683d66c41429f6cdd53c3fa69c))
+
 ## [12.1.1](https://github.com/terrestris/react-util/compare/v12.1.0...v12.1.1) (2025-05-21)
 
 
