@@ -133,10 +133,22 @@ export const useGeoLocation = ({
     onGeoLocationChange?.(actualGeoLocation);
   }, [trackedLine, onGeoLocationChange]);
 
-  // Geolocation Control
-  const olGeoLocation = useMemo(() => active ? new OlGeolocation({
-    projection: map?.getView().getProjection()
-  }) : undefined, [active, map]);
+  const olGeoLocation = useMemo(() => {
+    if (!active || !map) {
+      return undefined;
+    }
+
+    const geoLocation = new OlGeolocation({
+      projection: map.getView().getProjection(),
+      trackingOptions: trackingOptions
+    });
+
+    if (enableTracking) {
+      geoLocation.setTracking(true);
+    }
+
+    return geoLocation;
+  }, [active, map, trackingOptions, enableTracking]);
 
   // re-centers the view by putting the given coordinates at 3/4 from the top or
   // the screen
@@ -155,13 +167,16 @@ export const useGeoLocation = ({
       return;
     }
 
-    const key = olGeoLocation.on('error', onError);
+    const handleError = () => {
+      onError();
+    };
+
+    const key = olGeoLocation.on('error', handleError);
 
     return () => {
       unByKey(key);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [olGeoLocation]);
+  }, [olGeoLocation, onError]);
 
   useEffect(() => {
     if (!olGeoLocation) {
@@ -175,11 +190,23 @@ export const useGeoLocation = ({
   }, [olGeoLocation, onLocationChanged]);
 
   useEffect(() => {
-    olGeoLocation?.setTracking(enableTracking);
+    if (!olGeoLocation) {
+      return;
+    }
+
+    olGeoLocation.setTracking(enableTracking);
+
+    return () => {
+      olGeoLocation.setTracking(false);
+    };
   }, [enableTracking, olGeoLocation]);
 
   useEffect(() => {
-    olGeoLocation?.setTrackingOptions(trackingOptions);
+    if (!olGeoLocation) {
+      return;
+    }
+
+    olGeoLocation.setTrackingOptions(trackingOptions);
   }, [olGeoLocation, trackingOptions]);
 
   useEffect(() => {
