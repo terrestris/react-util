@@ -1,3 +1,10 @@
+## [12.3.1](https://github.com/terrestris/react-util/compare/v12.3.0...v12.3.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* improve geolocation handling and error management ([1422bc1](https://github.com/terrestris/react-util/commit/1422bc1b2576a1e77908659e2c15346541bb753f))
+
 # [12.3.0](https://github.com/terrestris/react-util/compare/v12.2.0...v12.3.0) (2025-10-23)
 
 
