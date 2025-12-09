@@ -1,3 +1,29 @@
+## [12.3.1](https://github.com/terrestris/react-util/compare/v12.3.0...v12.3.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* improve geolocation handling and error management ([1422bc1](https://github.com/terrestris/react-util/commit/1422bc1b2576a1e77908659e2c15346541bb753f))
+
+# [12.3.0](https://github.com/terrestris/react-util/compare/v12.2.0...v12.3.0) (2025-10-23)
+
+
+### Bug Fixes
+
+* linting ([80015b4](https://github.com/terrestris/react-util/commit/80015b469d77d13fcc1eb22e168ea0bbde4bc77d))
+
+
+### Features
+
+* **useMeasure:** add segment length to currently drawn line ([074e77c](https://github.com/terrestris/react-util/commit/074e77cbf7dc1b62a2b4c76c1aadea4ae1cb99bf))
+
+# [12.2.0](https://github.com/terrestris/react-util/compare/v12.1.1...v12.2.0) (2025-10-23)
+
+
+### Features
+
+* **useMeasure:** add option to show lengths of segments ([c937e30](https://github.com/terrestris/react-util/commit/c937e30a98d413683d66c41429f6cdd53c3fa69c))
+
 ## [12.1.1](https://github.com/terrestris/react-util/compare/v12.1.0...v12.1.1) (2025-05-21)
 
 
