@@ -1,32 +1,32 @@
 import {
-  useCallback, useEffect, useState
+  useCallback, useEffect, useMemo, useRef, useState
 } from 'react';
 
 import {
-  cloneDeep, isString, uniqueId
+  cloneDeep //, isString, uniqueId
 } from 'lodash';
 
 import _isNil from 'lodash/isNil';
 import { Coordinate as OlCoordinate } from 'ol/coordinate';
 import { EventsKey } from 'ol/events';
 import OlFeature from 'ol/Feature';
-import OlFormatGeoJSON from 'ol/format/GeoJSON';
-import OlFormatGML2 from 'ol/format/GML2';
-import OlFormatGml3 from 'ol/format/GML3';
-import OlFormatGml32 from 'ol/format/GML32';
-import OlFormatWMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
+// import OlFormatGeoJSON from 'ol/format/GeoJSON';
+// import OlFormatGML2 from 'ol/format/GML2';
+// import OlFormatGml3 from 'ol/format/GML3';
+// import OlFormatGml32 from 'ol/format/GML32';
+// import OlFormatWMSGetFeatureInfo from 'ol/format/WMSGetFeatureInfo';
 import OlLayer from 'ol/layer/Layer';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { Pixel as OlPixel } from 'ol/pixel';
 import OlSource from 'ol/source/Source';
-import { getUid } from 'ol/util';
-
-import Logger from '@terrestris/base-util/dist/Logger';
 import {
-  isWfsLayer, isWmsLayer, WfsLayer, WmsLayer
+  isWfsLayer,
+  isWmsLayer,
+  WfsLayer, WmsLayer
 } from '@terrestris/ol-util';
 
 import useMap from '../useMap/useMap';
+import { getUid } from 'ol';
 
 export interface FeatureLayerResult {
   feature: OlFeature;
@@ -50,27 +50,25 @@ export interface UseCoordinateInfoArgs {
   getInfoFormat?: (layer: WmsLayer) => string | Promise<string>;
   layerFilter?: (layerCandidate: OlLayer<OlSource>) => boolean;
   onError?: (error: any) => void;
-  onSuccess?: (result: CoordinateInfoResult) => void;
   registerOnClick?: boolean;
   registerOnPointerMove?: boolean;
   registerOnPointerRest?: boolean;
 }
 
-const getFeatureType = (feature: OlFeature) => {
-  const id = feature.getId() ?? feature.get('id');
-  return isString(id) ? id.split('.')[0] : id?.toString() ?? uniqueId('UNKNOWN');
-};
+// const getFeatureType = (feature: OlFeature) => {
+//   const id = feature.getId() ?? feature.get('id');
+//   return isString(id) ? id.split('.')[0] : id?.toString() ?? uniqueId('UNKNOWN');
+// };
 
 export const useCoordinateInfo = ({
   active,
   clickEvent = 'click',
-  drillDown = false,
-  featureCount = 1,
-  fetchOpts = {},
-  getInfoFormat = () => 'application/json',
+  // drillDown = false,
+  // featureCount = 1,
+  // fetchOpts = {},
+  // getInfoFormat = () => 'application/json',
   layerFilter = () => true,
-  onError = () => undefined,
-  onSuccess = () => undefined,
+  // onError = () => undefined,
   registerOnClick = true,
   registerOnPointerMove = false,
   registerOnPointerRest = false
@@ -79,19 +77,35 @@ export const useCoordinateInfo = ({
   const map = useMap();
 
   const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | null>(null);
-  const [pixelCoordinate, setPixelCoordinate] = useState<[number, number] | null>(null);
-  const [featureResults, setFeatureResults] = useState<FeatureLayerResult[]>([]);
+  const [pixelCoordinate, setPixelCoordinate] = useState<OlPixel | null>(null);
+  const [featureResults, ] = useState<FeatureLayerResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (map && loading) {
-      map.getTargetElement().style.cursor = 'wait';
-      return () => {
-        map.getTargetElement().style.cursor = 'auto';
-      };
+  const abortControllers = useRef<Map<string, AbortController>>(new Map());
+
+  const mapView = useMemo(() => map?.getView(), [map]);
+  const viewResolution = useMemo(() => mapView?.getResolution(), [mapView]);
+  const viewProjection = useMemo(() => mapView?.getProjection(), [mapView]);
+
+  const wmsMapLayers = useMemo(() => {
+    if (_isNil(map) || _isNil(pixelCoordinate)) {
+      return [];
     }
-    return undefined;
-  }, [loading, map]);
+    return map.getAllLayers()
+      .reverse()
+      .filter(layerFilter)
+      .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l)) as WmsLayer[];
+  }, [layerFilter, map, pixelCoordinate]);
+
+  const wfsMapLayers = useMemo(() => {
+    if (_isNil(map) || _isNil(pixelCoordinate)) {
+      return [];
+    }
+    return map.getAllLayers()
+      .reverse()
+      .filter(layerFilter)
+      .filter(l => isWfsLayer(l)) as WfsLayer[];
+  }, [layerFilter, map, pixelCoordinate]);
 
   const onPointerMove = useCallback((olEvt: OlMapBrowserEvent) => {
     if (olEvt.dragging || _isNil(map)) {
@@ -109,7 +123,7 @@ export const useCoordinateInfo = ({
   }, [layerFilter, map]);
 
   const handleMapEvent = useCallback(async (olEvt: OlMapBrowserEvent) => {
-    if (_isNil(map)) {
+    if (_isNil(map) || _isNil(viewResolution) || _isNil(viewProjection)) {
       return;
     }
 
@@ -118,9 +132,6 @@ export const useCoordinateInfo = ({
       olEvt.stopPropagation();
     }
 
-    const mapView = map.getView();
-    const viewResolution = mapView.getResolution();
-    const viewProjection = mapView.getProjection();
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
     let evtPixelCoordinate: [number, number] = [0, 0];
@@ -128,123 +139,120 @@ export const useCoordinateInfo = ({
       evtPixelCoordinate = [olEvt.originalEvent.x, olEvt.originalEvent.y];
     }
 
-    const wmsMapLayers =
-      map.getAllLayers()
-        .reverse()
-        .filter(layerFilter)
-        .filter(l => l.getData && l.getData(pixel) && isWmsLayer(l)) as WmsLayer[];
+    abortControllers.current.forEach(controller => controller.abort());
+    abortControllers.current.clear();
 
-    const wfsMapLayers =
-      map.getAllLayers()
-        .reverse()
-        .filter(layerFilter)
-        .filter(l => isWfsLayer(l)) as WfsLayer[];
+    for (const layer of map.getAllLayers()) {
+      const layerId = getUid(layer);
+      const abortController = new AbortController();
+      abortControllers.current.set(layerId, abortController);
+    }
 
     setLoading(true);
 
-    try {
-      const results: FeatureLayerResult[] = [];
+    // try {
+    //   const results: FeatureLayerResult[] = [];
+    //
+    //   for (const layer of wmsMapLayers) {
+    //     try {
+    //       if (!drillDown && results.length > 0) {
+    //         break;
+    //       }
 
-      for (const layer of wmsMapLayers) {
-        try {
-          if (!drillDown && results.length > 0) {
-            break;
-          }
-          const wmsLayerSource = layer.getSource();
-          if (!wmsLayerSource) {
-            continue;
-          }
-          const infoFormat = await getInfoFormat(layer);
-          const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
-            coordinate,
-          viewResolution!,
-          viewProjection,
-          {
-            INFO_FORMAT: infoFormat,
-            FEATURE_COUNT: featureCount
-          }
-          );
-          if (featureInfoUrl) {
-            let opts;
-            if (fetchOpts instanceof Function) {
-              opts = fetchOpts(layer as WmsLayer);
-            } else {
-              opts = fetchOpts[getUid(layer)];
-            }
-            const response = await fetch(featureInfoUrl, opts);
-            let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 |
-              OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | null = null;
-
-            let isJson = false;
-            if (infoFormat === 'application/vnd.ogc.gml') {
-              format = new OlFormatWMSGetFeatureInfo();
-            } else if (infoFormat.indexOf('gml/2') > -1) {
-              format = new OlFormatGML2();
-            } else if (infoFormat === 'application/vnd.ogc.gml/3.1.1' || infoFormat === 'text/xml; subtype=gml/3.1.1') {
-              format = new OlFormatGml3();
-            } else if (infoFormat === 'application/vnd.ogc.gml/3.2' || infoFormat === 'text/xml; subtype=gml/3.2') {
-              format = new OlFormatGml32();
-            } else if (infoFormat === 'application/json' || infoFormat.indexOf('json') > -1) {
-              format = new OlFormatGeoJSON();
-              isJson = true;
-            } else {
-              continue;
-            }
-
-            const text = isJson ? await response.json() : await response.text();
-
-            results.push(...format.readFeatures(text).map(f => ({
-              feature: f,
-              layer,
-              featureType: getFeatureType(f)
-            })));
-          }
-        } catch (error: any) {
-          Logger.error(error);
-        }
-      }
-      for (const layer of wfsMapLayers) {
-        if (!drillDown && results.length > 0) {
-          break;
-        }
-        const wfsLayerSource = layer.getSource();
-
-        if (!wfsLayerSource) {
-          continue;
-        }
-
-        results.push(...wfsLayerSource.getFeaturesAtCoordinate(coordinate).map(f => ({
-          feature: f,
-          layer,
-          featureType: getFeatureType(f)
-        })));
-      }
-
-      // We're cloning the click coordinate and features to be able
-      // to alter the features without affecting the original ones
-      // Also note that we explicitly don't use feature.clone() to
-      // keep all feature properties (in particular the id) intact.
-      const clonedResults = cloneDeep(results);
+    //       const wmsLayerSource = layer.getSource();
+    //       if (!wmsLayerSource) {
+    //         continue;
+    //       }
+    //       const infoFormat = await getInfoFormat(layer);
+    //       const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
+    //         coordinate,
+    //         viewResolution,
+    //         viewProjection,
+    //         {
+    //           INFO_FORMAT: infoFormat,
+    //           FEATURE_COUNT: featureCount
+    //         }
+    //       );
+    //       if (featureInfoUrl) {
+    //         let opts;
+    //         if (fetchOpts instanceof Function) {
+    //           opts = fetchOpts(layer as WmsLayer);
+    //         } else {
+    //           opts = fetchOpts[getUid(layer)];
+    //         }
+    //         const response = await fetch(featureInfoUrl, {
+    //           ...opts,
+    //           signal: abortController.signal
+    //         });
+    //
+    //         let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 |
+    //           OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | null = null;
+    //
+    //         let isJson = false;
+    //         if (infoFormat === 'application/vnd.ogc.gml') {
+    //           format = new OlFormatWMSGetFeatureInfo();
+    //         } else if (infoFormat.indexOf('gml/2') > -1) {
+    //           format = new OlFormatGML2();
+    //         } else if (infoFormat === 'application/vnd.ogc.gml/3.1.1' || infoFormat === 'text/xml; subtype=gml/3.1.1') {
+    //           format = new OlFormatGml3();
+    //         } else if (infoFormat === 'application/vnd.ogc.gml/3.2' || infoFormat === 'text/xml; subtype=gml/3.2') {
+    //           format = new OlFormatGml32();
+    //         } else if (infoFormat === 'application/json' || infoFormat.indexOf('json') > -1) {
+    //           format = new OlFormatGeoJSON();
+    //           isJson = true;
+    //         } else {
+    //           continue;
+    //         }
+    //
+    //         const text = isJson ? await response.json() : await response.text();
+    //
+    //         results.push(...format.readFeatures(text).map(f => ({
+    //           feature: f,
+    //           layer,
+    //           featureType: getFeatureType(f)
+    //         })));
+    //       }
+    //     } catch (error: any) {
+    //       if (error.name !== 'AbortError') {
+    //         Logger.error(error);
+    //       }
+    //     }
+    //   }
+    //   for (const layer of wfsMapLayers) {
+    //     if (!drillDown && results.length > 0) {
+    //       break;
+    //     }
+    //     const wfsLayerSource = layer.getSource();
+    //
+    //     if (!wfsLayerSource) {
+    //       continue;
+    //     }
+    //
+    //     results.push(...wfsLayerSource.getFeaturesAtCoordinate(coordinate).map(f => ({
+    //       feature: f,
+    //       layer,
+    //       featureType: getFeatureType(f)
+    //     })));
+    //   }
+    //
+    //   // We're cloning the click coordinate and features to be able
+    //   // to alter the features without affecting the original ones
+    //   // Also note that we explicitly don't use feature.clone() to
+    //   // keep all feature properties (in particular the id) intact.
+    //   const clonedResults = cloneDeep(results);
       const clonedCoordinate = cloneDeep(coordinate);
-      const clonedPixelCoordinate = cloneDeep(evtPixelCoordinate);
-      setFeatureResults(clonedResults);
+      const clonedPixelCoordinate = cloneDeep(evtPixelCoordinate ?? pixel);
+    //   setFeatureResults(clonedResults);
       setClickCoordinate(clonedCoordinate);
       setPixelCoordinate(clonedPixelCoordinate);
-
-      onSuccess?.({
-        clickCoordinate: clonedCoordinate,
-        pixelCoordinate: clonedPixelCoordinate,
-        loading: false,
-        features: clonedResults
-      });
-
-    } catch (error: any) {
-      Logger.error(error);
-      onError?.(error);
-    }
-    setLoading(false);
-
-  }, [clickEvent, drillDown, featureCount, fetchOpts, getInfoFormat, layerFilter, map, onError, onSuccess]);
+    // } catch (error: any) {
+    //   if (error.name !== 'AbortError') {
+    //     Logger.error(error);
+    //     onError?.(error);
+    //   }
+    // }
+    // setLoading(false);
+  }, [clickEvent, map, viewProjection, viewResolution]);
 
   useEffect(() => {
     let keyMove: EventsKey | undefined;
@@ -283,6 +291,27 @@ export const useCoordinateInfo = ({
     active, map, onPointerMove, handleMapEvent, registerOnClick,
     registerOnPointerMove, registerOnPointerRest, clickEvent
   ]);
+
+  useEffect(() => {
+    if (map && loading) {
+      debugger
+      map.getTargetElement().style.cursor = 'wait';
+      return () => {
+        map.getTargetElement().style.cursor = 'auto';
+      };
+    }
+    return undefined;
+  }, [loading, map]);
+
+  useEffect(() => {
+    const controllers = abortControllers.current;
+    return () => {
+      controllers.forEach(c => c.abort());
+      controllers.clear();
+    };
+  }, [viewResolution]);
+
+  console.log(loading, featureResults, clickCoordinate, pixelCoordinate);
 
   // We want to propagate the state here so the variables do
   // not change on every render cycle.
