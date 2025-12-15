@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect, useState
+  useCallback, useEffect, useMemo, useRef, useState
 } from 'react';
 
 import {
@@ -83,15 +83,11 @@ export const useCoordinateInfo = ({
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (map && loading) {
-      map.getTargetElement().style.cursor = 'wait';
-      return () => {
-        map.getTargetElement().style.cursor = 'auto';
-      };
-    }
-    return undefined;
-  }, [loading, map]);
+  const abortControllers = useRef<Map<string, AbortController>>(new Map());
+
+  const mapView = useMemo(() => map?.getView(), [map]);
+  const viewResolution = useMemo(() => mapView?.getResolution(), [mapView]);
+  const viewProjection = useMemo(() => mapView?.getProjection(), [mapView]);
 
   const onPointerMove = useCallback((olEvt: OlMapBrowserEvent) => {
     if (olEvt.dragging || _isNil(map)) {
@@ -109,7 +105,7 @@ export const useCoordinateInfo = ({
   }, [layerFilter, map]);
 
   const handleMapEvent = useCallback(async (olEvt: OlMapBrowserEvent) => {
-    if (_isNil(map)) {
+    if (_isNil(map) || _isNil(viewResolution) || _isNil(viewProjection)) {
       return;
     }
 
@@ -118,9 +114,6 @@ export const useCoordinateInfo = ({
       olEvt.stopPropagation();
     }
 
-    const mapView = map.getView();
-    const viewResolution = mapView.getResolution();
-    const viewProjection = mapView.getProjection();
     const pixel = map.getEventPixel(olEvt.originalEvent);
     const coordinate = olEvt.coordinate;
     let evtPixelCoordinate: [number, number] = [0, 0];
@@ -140,6 +133,9 @@ export const useCoordinateInfo = ({
         .filter(layerFilter)
         .filter(l => isWfsLayer(l)) as WfsLayer[];
 
+    abortControllers.current.forEach(controller => controller.abort());
+    abortControllers.current.clear();
+
     setLoading(true);
 
     try {
@@ -150,6 +146,11 @@ export const useCoordinateInfo = ({
           if (!drillDown && results.length > 0) {
             break;
           }
+
+          const layerId = getUid(layer);
+          const abortController = new AbortController();
+          abortControllers.current.set(layerId, abortController);
+
           const wmsLayerSource = layer.getSource();
           if (!wmsLayerSource) {
             continue;
@@ -157,12 +158,12 @@ export const useCoordinateInfo = ({
           const infoFormat = await getInfoFormat(layer);
           const featureInfoUrl = wmsLayerSource.getFeatureInfoUrl(
             coordinate,
-          viewResolution!,
-          viewProjection,
-          {
-            INFO_FORMAT: infoFormat,
-            FEATURE_COUNT: featureCount
-          }
+            viewResolution,
+            viewProjection,
+            {
+              INFO_FORMAT: infoFormat,
+              FEATURE_COUNT: featureCount
+            }
           );
           if (featureInfoUrl) {
             let opts;
@@ -171,7 +172,11 @@ export const useCoordinateInfo = ({
             } else {
               opts = fetchOpts[getUid(layer)];
             }
-            const response = await fetch(featureInfoUrl, opts);
+            const response = await fetch(featureInfoUrl, {
+              ...opts,
+              signal: abortController.signal
+            });
+
             let format: OlFormatGML2 | OlFormatGml3 | OlFormatGml32 |
               OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | null = null;
 
@@ -200,7 +205,9 @@ export const useCoordinateInfo = ({
             })));
           }
         } catch (error: any) {
-          Logger.error(error);
+          if (error.name !== 'AbortError') {
+            Logger.error(error);
+          }
         }
       }
       for (const layer of wfsMapLayers) {
@@ -239,12 +246,14 @@ export const useCoordinateInfo = ({
       });
 
     } catch (error: any) {
-      Logger.error(error);
-      onError?.(error);
+      if (error.name !== 'AbortError') {
+        Logger.error(error);
+        onError?.(error);
+      }
+      setLoading(false);
     }
-    setLoading(false);
-
-  }, [clickEvent, drillDown, featureCount, fetchOpts, getInfoFormat, layerFilter, map, onError, onSuccess]);
+  }, [clickEvent, drillDown, featureCount, fetchOpts, getInfoFormat,
+    layerFilter, map, onError, onSuccess, viewProjection, viewResolution]);
 
   useEffect(() => {
     let keyMove: EventsKey | undefined;
@@ -283,6 +292,23 @@ export const useCoordinateInfo = ({
     active, map, onPointerMove, handleMapEvent, registerOnClick,
     registerOnPointerMove, registerOnPointerRest, clickEvent
   ]);
+
+  useEffect(() => {
+    if (map && loading) {
+      map.getTargetElement().style.cursor = 'wait';
+      return () => {
+        map.getTargetElement().style.cursor = 'auto';
+      };
+    }
+    return undefined;
+  }, [loading, map]);
+
+  useEffect(() => {
+    return () => {
+      abortControllers.current.forEach(c => c.abort());
+      abortControllers.current.clear();
+    };
+  }, [viewResolution, abortControllers]);
 
   // We want to propagate the state here so the variables do
   // not change on every render cycle.
