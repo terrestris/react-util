@@ -374,7 +374,7 @@ export const useMeasure = ({
       }
     }
 
-    if (value === undefined || parseInt(value, 10) === 0) {
+    if (value === undefined || parseFloat(value) === 0) {
       removeMeasureTooltip();
       return;
     }
