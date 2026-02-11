@@ -1,3 +1,15 @@
+## [12.3.2](https://github.com/terrestris/react-util/compare/v12.3.1...v12.3.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* fix measure tooltips < 1 ([d3def1a](https://github.com/terrestris/react-util/commit/d3def1a52ef18d96abe8a0da31d18c73f98e5e8c))
+* fix release workflow ([baded94](https://github.com/terrestris/react-util/commit/baded94e1143909488df85a5f082f102b57d09e8))
+* fix release workflow ([7975cd6](https://github.com/terrestris/react-util/commit/7975cd6963707c348cc6f25c0610296ac43227c9))
+* fix release workflow ([62a2f6d](https://github.com/terrestris/react-util/commit/62a2f6d290e4356ab656bc654050ac4417629210))
+* fix release workflow ([54036af](https://github.com/terrestris/react-util/commit/54036af683329e10a01a3733df983f471f0217f5))
+* fix release workflow ([6ea5ece](https://github.com/terrestris/react-util/commit/6ea5ece23517d2034ac3fccf64917f0a4ebbeb49))
+
 ## [12.3.1](https://github.com/terrestris/react-util/compare/v12.3.0...v12.3.1) (2025-11-11)
 
 
