@@ -42,7 +42,7 @@ export interface FeatureLayerResult {
 export interface CoordinateInfoResult {
   clickCoordinate?: OlCoordinate;
   pixelCoordinate?: OlPixel;
-  features: FeatureLayerResult[] | undefined;
+  features?: FeatureLayerResult[];
   loading: boolean;
 }
 
@@ -82,7 +82,7 @@ export const useCoordinateInfo = ({
 
   const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | undefined>();
   const [pixelCoordinate, setPixelCoordinate] = useState<OlPixel | undefined>();
-  const [featureResults, setFeatureResults] = useState<FeatureLayerResult[] | undefined>([]);
+  const [featureResults, setFeatureResults] = useState<FeatureLayerResult[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
@@ -311,7 +311,7 @@ export const useCoordinateInfo = ({
           });
 
           const format = determineInfoFormatter(infoFormat);
-          const isJson = infoFormat === 'application/json' || infoFormat. indexOf('json') > -1;
+          const isJson = infoFormat === 'application/json' || infoFormat. contains('json');
           const text = isJson ? await response.json() : await response.text();
 
           if (! _isNil(format)) {
