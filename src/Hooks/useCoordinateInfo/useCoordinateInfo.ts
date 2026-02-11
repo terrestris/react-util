@@ -19,8 +19,8 @@ import OlLayer from 'ol/layer/Layer';
 import OlMapBrowserEvent from 'ol/MapBrowserEvent';
 import { Pixel as OlPixel } from 'ol/pixel';
 import { toSize } from 'ol/size';
-import { WMTS } from 'ol/source';
 import OlSource from 'ol/source/Source';
+import OlSourceWmts from 'ol/source/WMTS';
 
 import OlTileGridWMTS from 'ol/tilegrid/WMTS';
 
@@ -250,7 +250,7 @@ export const useCoordinateInfo = ({
         const infoFormat = await getInfoFormat(layer);
         let featureInfoUrl;
 
-        if (isWmsLayer(layer) && !(layerSource instanceof WMTS)) {
+        if (isWmsLayer(layer) && !(layerSource instanceof OlSourceWmts)) {
           featureInfoUrl = layerSource.getFeatureInfoUrl(
             coordinate,
             viewResolution,
@@ -261,7 +261,7 @@ export const useCoordinateInfo = ({
             }
           );
         } else {
-          const wmtsLayerSource = layer.getSource() as WMTS;
+          const wmtsLayerSource = layer.getSource() as OlSourceWmts;
           const tileGrid = wmtsLayerSource.getTileGrid() as OlTileGridWMTS;
           if (_isNil(tileGrid)) {
             continue;
