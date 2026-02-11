@@ -2,7 +2,6 @@ import {
   useCallback, useEffect, useMemo, useRef, useState
 } from 'react';
 
-import _cloneDeep from 'lodash/cloneDeep';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
 import _uniqueId from 'lodash/uniqueId';
@@ -311,7 +310,7 @@ export const useCoordinateInfo = ({
           });
 
           const format = determineInfoFormatter(infoFormat);
-          const isJson = infoFormat === 'application/json' || infoFormat. contains('json');
+          const isJson = infoFormat === 'application/json' || infoFormat.indexOf('json') > -1;
           const text = isJson ? await response.json() : await response.text();
 
           if (! _isNil(format)) {
@@ -388,8 +387,8 @@ export const useCoordinateInfo = ({
       evtPixelCoordinate = [olEvt.originalEvent.x, olEvt.originalEvent.y];
     }
 
-    const clonedCoordinate = _cloneDeep(coordinate);
-    const clonedPixelCoordinate = _cloneDeep(evtPixelCoordinate ?? pixel);
+    const clonedCoordinate = structuredClone(coordinate);
+    const clonedPixelCoordinate = structuredClone(evtPixelCoordinate ?? pixel);
     setClickCoordinate(clonedCoordinate);
     setPixelCoordinate(clonedPixelCoordinate);
   }, [clickEvent, map, viewProjection, viewResolution]);
@@ -447,7 +446,7 @@ export const useCoordinateInfo = ({
         }
 
         const flatResults = allResults.flat();
-        const clonedResults = _cloneDeep(flatResults);
+        const clonedResults = structuredClone(flatResults);
 
         setFeatureResults(clonedResults);
       } catch (error: any) {
