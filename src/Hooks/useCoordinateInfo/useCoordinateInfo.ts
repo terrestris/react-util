@@ -142,6 +142,10 @@ export const useCoordinateInfo = ({
     return relevantLayers;
   }, [map, wfsMapLayers, wmtsMapLayers, wmsMapLayers]);
 
+  /**
+   * Event handler for pointer move events on the map.
+   * It checks if the pointer is currently dragging or if the map instance is not available.
+   */
   const onPointerMove = useCallback((olEvt: OlMapBrowserEvent) => {
     if (olEvt.dragging || _isNil(map)) {
       return;
@@ -157,6 +161,17 @@ export const useCoordinateInfo = ({
     map.getTargetElement().style.cursor = hits?.length > 0 ? 'pointer' : 'auto';
   }, [layerFilter, map]);
 
+  /**
+   * Determines the appropriate feature info URL for a WMTS layer based on the provided parameters.
+   * @param resourceUrl - The resource URL template for the WMTS layer, which may contain placeholders for style,
+   *  tile matrix set, tile matrix, tile column, tile row, and pixel coordinates (I and J).
+   * @param tileGrid - The tile grid configuration for the WMTS layer,
+   *  which is used to calculate the tile coordinates and extent.
+   * @param coordinate - The coordinate for which to determine the feature info URL.
+   * @param resolution - The resolution of the map view, which is used to determine the appropriate tile matrix.
+   * @param matrixSet - The identifier of the tile matrix set being used by the WMTS layer
+   * @param style - The style identifier to be used in the feature info URL, defaulting to 'default' if not provided.
+   */
   const determineWmtsFeatureInfoUrl = (
     resourceUrl: string,
     tileGrid: OlTileGridWMTS,
@@ -201,6 +216,10 @@ export const useCoordinateInfo = ({
       .replace('{J}', `${j}`);
   };
 
+  /**
+   * Determines the appropriate OpenLayers format reader based on the provided info format string.
+   * @param infoFormat - The info format string to determine the format reader for.
+   */
   const determineInfoFormatter = (
     infoFormat: string
   ): OlFormatGML2 | OlFormatGml3 | OlFormatGml32 | OlFormatGeoJSON | OlFormatWMSGetFeatureInfo | undefined => {
@@ -296,7 +315,6 @@ export const useCoordinateInfo = ({
           const text = isJson ? await response.json() : await response.text();
 
           if (! _isNil(format)) {
-            // ✅ FIX:  results wurden nicht gepusht!
             const features = format.readFeatures(text).map(f => ({
               feature: f,
               layer,
@@ -305,8 +323,6 @@ export const useCoordinateInfo = ({
             results.push(...features);
           }
         }
-
-        // ✅ Wenn nicht drillDown, nach erstem Treffer stoppen
         if (!drillDown && results.length > 0) {
           break;
         }
@@ -315,7 +331,6 @@ export const useCoordinateInfo = ({
         if (error.name !== 'AbortError') {
           Logger.error(error);
         }
-        // ✅ Weiter mit nächstem Layer statt alles abzubrechen
       }
     }
 
@@ -323,7 +338,6 @@ export const useCoordinateInfo = ({
   }, [map, viewResolution, viewProjection, wmsMapLayers, wmtsMapLayers,
     getInfoFormat, featureCount, fetchOpts, drillDown]);
 
-  // ✅ FIX 2: getResultsFromWfsLayers als useCallback
   const getResultsFromWfsLayers = useCallback(async (
     coordinate: OlCoordinate
   ): Promise<FeatureLayerResult[]> => {
@@ -353,6 +367,10 @@ export const useCoordinateInfo = ({
     return results;
   }, [map, viewProjection, wfsMapLayers, drillDown]);
 
+  /**
+   * Event handler for map events (click, double-click, pointer rest) that retrieves the coordinate of the
+   * event and updates the state accordingly.
+   */
   const handleMapEvent = useCallback((olEvt: OlMapBrowserEvent) => {
     if (_isNil(map) || _isNil(viewResolution) || _isNil(viewProjection)) {
       return;
