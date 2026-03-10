@@ -54,6 +54,7 @@ export interface UseCoordinateInfoArgs {
   getInfoFormat?: (layer: WmsLayer | WmtsLayer) => string | Promise<string>;
   layerFilter?: (layerCandidate: OlLayer<OlSource>) => boolean;
   onError?: (error: any) => void;
+  onSuccess?: () => void;
   registerOnClick?: boolean;
   registerOnPointerMove?: boolean;
   registerOnPointerRest?: boolean;
@@ -72,6 +73,8 @@ export const useCoordinateInfo = ({
   fetchOpts = {},
   getInfoFormat = () => 'application/json',
   layerFilter = () => true,
+  onError = () => undefined,
+  onSuccess = () => undefined,
   registerOnClick = true,
   registerOnPointerMove = false,
   registerOnPointerRest = false
@@ -449,10 +452,12 @@ export const useCoordinateInfo = ({
         const clonedResults = structuredClone(flatResults);
 
         setFeatureResults(clonedResults);
+        onSuccess?.();
       } catch (error: any) {
         if (error. name !== 'AbortError') {
           Logger.error(error);
         }
+        onError?.(error);
       }
     };
 
@@ -462,7 +467,8 @@ export const useCoordinateInfo = ({
     });
 
   }, [
-    clickCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers
+    clickCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers,
+    onError, onSuccess
   ]);
 
   useEffect(() => {
