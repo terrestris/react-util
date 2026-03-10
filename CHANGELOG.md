@@ -1,3 +1,17 @@
+# [12.4.0](https://github.com/terrestris/react-util/compare/v12.3.2...v12.4.0) (2026-03-10)
+
+
+### Bug Fixes
+
+* add missing onError and onSuccess handlers ([d99f20d](https://github.com/terrestris/react-util/commit/d99f20ddb5fafb378d37533134aadda711ee56eb))
+* import of wmts source ([f202c3d](https://github.com/terrestris/react-util/commit/f202c3da320d3649246389d23019f30129b20308))
+* use structuredClone instead of cloneDeep ([0925db5](https://github.com/terrestris/react-util/commit/0925db5c3213e2f556b00f8524a29940f7001f25))
+
+
+### Features
+
+* **useCoordinateInfo:** support WMTS layer type and abort controllers ([b68dcc7](https://github.com/terrestris/react-util/commit/b68dcc7ba063bc288ca4ab0fe7340b18d700eeed))
+
 ## [12.3.2](https://github.com/terrestris/react-util/compare/v12.3.1...v12.3.2) (2026-02-11)
 
 
