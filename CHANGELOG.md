@@ -1,3 +1,10 @@
+## [12.4.1](https://github.com/terrestris/react-util/compare/v12.4.0...v12.4.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* structured clone can't be used for all properties of OlFeature ([54667ca](https://github.com/terrestris/react-util/commit/54667ca8a6bd34a15242c64155e9841acbfcd515))
+
 # [12.4.0](https://github.com/terrestris/react-util/compare/v12.3.2...v12.4.0) (2026-03-10)
 
 
