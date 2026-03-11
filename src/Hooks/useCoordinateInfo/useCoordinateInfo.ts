@@ -2,6 +2,7 @@ import {
   useCallback, useEffect, useMemo, useRef, useState
 } from 'react';
 
+import _cloneDeep from 'lodash/cloneDeep';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
 import _uniqueId from 'lodash/uniqueId';
@@ -390,8 +391,8 @@ export const useCoordinateInfo = ({
       evtPixelCoordinate = [olEvt.originalEvent.x, olEvt.originalEvent.y];
     }
 
-    const clonedCoordinate = structuredClone(coordinate);
-    const clonedPixelCoordinate = structuredClone(evtPixelCoordinate ?? pixel);
+    const clonedCoordinate = _cloneDeep(coordinate);
+    const clonedPixelCoordinate = _cloneDeep(evtPixelCoordinate ?? pixel);
     setClickCoordinate(clonedCoordinate);
     setPixelCoordinate(clonedPixelCoordinate);
   }, [clickEvent, map, viewProjection, viewResolution]);
@@ -449,7 +450,7 @@ export const useCoordinateInfo = ({
         }
 
         const flatResults = allResults.flat();
-        const clonedResults = structuredClone(flatResults);
+        const clonedResults = _cloneDeep(flatResults);
 
         setFeatureResults(clonedResults);
         onSuccess?.();
