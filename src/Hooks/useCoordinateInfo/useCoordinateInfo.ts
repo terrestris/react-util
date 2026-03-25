@@ -83,7 +83,7 @@ export const useCoordinateInfo = ({
 
   const map = useMap();
 
-  const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | undefined>();
+  const [mapCoordinate, setMapCoordinate] = useState<OlCoordinate | undefined>();
   const [pixelCoordinate, setPixelCoordinate] = useState<OlPixel | undefined>();
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -142,6 +142,8 @@ export const useCoordinateInfo = ({
       return aIndex - bIndex;
     });
 
+    // todo: migrate to set of uids to avoid hook issues when relevantLayers change
+    // return relevantLayers.map(l => getUid(l));
     return relevantLayers;
   }, [map, wfsMapLayers, wmtsMapLayers, wmsMapLayers]);
 
@@ -393,18 +395,25 @@ export const useCoordinateInfo = ({
 
     const clonedCoordinate = _cloneDeep(coordinate);
     const clonedPixelCoordinate = _cloneDeep(evtPixelCoordinate ?? pixel);
-    setClickCoordinate(clonedCoordinate);
+    setMapCoordinate(clonedCoordinate);
     setPixelCoordinate(clonedPixelCoordinate);
   }, [clickEvent, map, viewProjection, viewResolution]);
 
+  /**
+   * Resets featureResults when clickCoordinate changes (drilldown) OR when pixelCoordinate changes (hover).
+   */
   useEffect(() => {
-    if (!_isNil(clickCoordinate)) {
+    if (!_isNil(mapCoordinate)) {
       setFeatureResults(undefined);
     }
-  }, [clickCoordinate]);
+  }, [mapCoordinate, pixelCoordinate, drillDown]);
 
   useEffect(() => {
-    if (_isNil(clickCoordinate) || _isNil(map) || orderedLayers?.length === 0) {
+    if (loading) {
+      return;
+    }
+
+    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayers?.length === 0) {
       return;
     }
 
@@ -418,22 +427,23 @@ export const useCoordinateInfo = ({
     orderedLayers.forEach(layer => {
       const layerId = getUid(layer);
       const abortController = new AbortController();
-      abortControllers. current.set(layerId, abortController);
+      abortControllers.current.set(layerId, abortController);
     });
 
     const fetchFeatures = async () => {
       try {
         setLoading(true);
+        setFeatureResults(undefined);
 
         const promises: Promise<FeatureLayerResult[]>[] = [];
 
         for (const layer of orderedLayers) {
           if (isWmsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(clickCoordinate, true));
+            promises.push(getResultsFromImageLayers(mapCoordinate, true));
           } else if (isWmtsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(clickCoordinate, false));
+            promises.push(getResultsFromImageLayers(mapCoordinate, false));
           } else if (isWfsLayer(layer)) {
-            promises.push(getResultsFromWfsLayers(clickCoordinate));
+            promises.push(getResultsFromWfsLayers(mapCoordinate));
           }
 
           if (!drillDown) {
@@ -468,10 +478,13 @@ export const useCoordinateInfo = ({
     });
 
   }, [
-    clickCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers,
-    onError, onSuccess
+    mapCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers,
+    onError, onSuccess, loading
   ]);
 
+  /**
+   * (Re)creates map event listeners whenever relevant props change (active, drilldown, clickEvent).
+   */
   useEffect(() => {
     let keyMove: EventsKey | undefined;
     let keyRest: EventsKey | undefined;
@@ -481,11 +494,11 @@ export const useCoordinateInfo = ({
         keyClick = map?.on(clickEvent, handleMapEvent);
       }
 
-      if (registerOnPointerMove) {
+      if (registerOnPointerMove && !drillDown) {
         keyMove = map?.on('pointermove', onPointerMove);
       }
 
-      if (registerOnPointerRest) {
+      if (registerOnPointerRest && !drillDown) {
         // @ts-expect-error pointerrest is no default event
         keyRest = map?.on('pointerrest', handleMapEvent);
       }
@@ -507,7 +520,7 @@ export const useCoordinateInfo = ({
     };
   }, [
     active, map, onPointerMove, handleMapEvent, registerOnClick,
-    registerOnPointerMove, registerOnPointerRest, clickEvent
+    registerOnPointerMove, registerOnPointerRest, clickEvent, drillDown
   ]);
 
   useEffect(() => {
@@ -518,6 +531,9 @@ export const useCoordinateInfo = ({
     };
   }, [viewResolution]);
 
+  /**
+   * Update mouse cursor when GFI is loading.
+   */
   useEffect(() => {
     if (_isNil(map)) {
       return;
@@ -528,7 +544,7 @@ export const useCoordinateInfo = ({
   // We want to propagate the state here so the variables do
   // not change on every render cycle.
   return {
-    clickCoordinate,
+    clickCoordinate: mapCoordinate,
     features: featureResults,
     loading,
     pixelCoordinate
