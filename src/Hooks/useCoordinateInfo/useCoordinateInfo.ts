@@ -159,7 +159,7 @@ export const useCoordinateInfo = ({
       return aIndex - bIndex;
     });
 
-    return new Set(relevantLayers.map(l => getUid(l)));
+    return new Set(relevantLayers.map(getUid));
   }, [map, wfsMapLayerUids, wmtsMapLayerUids, wmsMapLayerUids]);
 
   /**
