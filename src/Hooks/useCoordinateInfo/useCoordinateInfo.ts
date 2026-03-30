@@ -36,7 +36,7 @@ import useOlListener from '../useOlListener/useOlListener';
 
 export interface FeatureLayerResult {
   feature: OlFeature;
-  layer: WmsLayer|WmtsLayer|WfsLayer;
+  layer: WmsLayer | WmtsLayer | WfsLayer;
   featureType: string;
 }
 
@@ -104,42 +104,49 @@ export const useCoordinateInfo = ({
     [mapView]
   );
 
-  const wmsMapLayers = useMemo(() => {
+  const wmsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l)) as WmsLayer[];
+      .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const wmtsMapLayers = useMemo(() => {
+  const wmtsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => isWmtsLayer(l)) as WmtsLayer[];
+      .filter(l => isWmtsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const wfsMapLayers = useMemo(() => {
+  const wfsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => isWfsLayer(l)) as WfsLayer[];
+      .filter(l => isWfsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const orderedLayers = useMemo(() => {
+  const orderedLayerUids = useMemo(() => {
     if (_isNil(map)) {
-      return [];
+      return new Set<string>();
     }
     const all = map.getAllLayers().reverse();
-    const relevantLayers = [...wfsMapLayers, ...wmtsMapLayers, ...wmsMapLayers];
+    const relevantLayers = map.getAllLayers()
+      .filter(l => {
+        const uid = getUid(l);
+        return wfsMapLayerUids.includes(uid) || wmtsMapLayerUids.includes(uid) || wmsMapLayerUids.includes(uid);
+      });
 
     relevantLayers.sort((a, b) => {
       if (_isNil(a) || _isNil(b)) {
@@ -152,9 +159,8 @@ export const useCoordinateInfo = ({
       return aIndex - bIndex;
     });
 
-    // todo: migrate to set of uids to avoid hook issues when relevantLayers change
-    return relevantLayers;
-  }, [map, wfsMapLayers, wmtsMapLayers, wmsMapLayers]);
+    return new Set(relevantLayers.map(l => getUid(l)));
+  }, [map, wfsMapLayerUids, wmtsMapLayerUids, wmsMapLayerUids]);
 
   /**
    * Event handler for pointer move events on the map.
@@ -264,14 +270,18 @@ export const useCoordinateInfo = ({
     }
 
     const results: FeatureLayerResult[] = [];
-    const layers = useWms ? wmsMapLayers : wmtsMapLayers;
+    const layerUids = useWms ? wmsMapLayerUids : wmtsMapLayerUids;
 
-    for (const layer of layers) {
+    for (const layerId of layerUids) {
       try {
-        const layerId = getUid(layer);
         const abortController = abortControllers.current.get(layerId);
 
         if (! abortController) {
+          continue;
+        }
+
+        const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WmsLayer | WmtsLayer | undefined;
+        if (!layer) {
           continue;
         }
 
@@ -316,7 +326,7 @@ export const useCoordinateInfo = ({
           if (fetchOpts instanceof Function) {
             opts = fetchOpts(layer);
           } else {
-            opts = fetchOpts[getUid(layer)];
+            opts = fetchOpts[layerId];
           }
 
           const response = await fetch(featureInfoUrl, {
@@ -349,7 +359,7 @@ export const useCoordinateInfo = ({
     }
 
     return results;
-  }, [map, viewResolution, viewProjection, wmsMapLayers, wmtsMapLayers,
+  }, [map, viewResolution, viewProjection, wmsMapLayerUids, wmtsMapLayerUids,
     getInfoFormat, featureCount, fetchOpts, drillDown]);
 
   const getResultsFromWfsLayers = useCallback(async (
@@ -361,9 +371,14 @@ export const useCoordinateInfo = ({
 
     const results: FeatureLayerResult[] = [];
 
-    for (const layer of wfsMapLayers) {
+    for (const layerId of wfsMapLayerUids) {
       if (! drillDown && results.length > 0) {
         break;
+      }
+
+      const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WfsLayer | undefined;
+      if (!layer) {
+        continue;
       }
 
       const wfsLayerSource = layer.getSource();
@@ -379,7 +394,7 @@ export const useCoordinateInfo = ({
     }
 
     return results;
-  }, [map, viewProjection, wfsMapLayers, drillDown]);
+  }, [map, viewProjection, wfsMapLayerUids, drillDown]);
 
   /**
    * Event handler for map events (click, double-click, pointer rest) that retrieves the coordinate of the
@@ -422,7 +437,7 @@ export const useCoordinateInfo = ({
       return;
     }
 
-    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayers?.length === 0) {
+    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayerUids?.size === 0) {
       return;
     }
 
@@ -433,10 +448,9 @@ export const useCoordinateInfo = ({
     abortControllers.current.forEach(controller => controller.abort());
     abortControllers.current.clear();
 
-    orderedLayers.forEach(layer => {
-      const layerId = getUid(layer);
+    orderedLayerUids.forEach(uid => {
       const abortController = new AbortController();
-      abortControllers.current.set(layerId, abortController);
+      abortControllers.current.set(uid, abortController);
     });
 
     const fetchFeatures = async () => {
@@ -445,8 +459,15 @@ export const useCoordinateInfo = ({
         setFeatureResults(undefined);
 
         const promises: Promise<FeatureLayerResult[]>[] = [];
+        const allRelevantLayerUids = [...wfsMapLayerUids, ...wmtsMapLayerUids, ...wmsMapLayerUids];
 
-        for (const layer of orderedLayers) {
+        for (const uid of orderedLayerUids) {
+          const layerId = allRelevantLayerUids.find(id => id === uid);
+          const layer = map.getAllLayers().find(l => getUid(l) === layerId);
+
+          if (!layer) {
+            continue;
+          }
           if (isWmsLayer(layer)) {
             promises.push(getResultsFromImageLayers(mapCoordinate, true));
           } else if (isWmtsLayer(layer)) {
@@ -454,7 +475,6 @@ export const useCoordinateInfo = ({
           } else if (isWfsLayer(layer)) {
             promises.push(getResultsFromWfsLayers(mapCoordinate));
           }
-
           if (!drillDown) {
             break;
           }
@@ -487,8 +507,8 @@ export const useCoordinateInfo = ({
     });
 
   }, [
-    mapCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers,
-    onError, onSuccess, loading
+    mapCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayerUids,
+    onError, onSuccess, loading, wfsMapLayerUids, wmsMapLayerUids, wmtsMapLayerUids
   ]);
 
   /**
