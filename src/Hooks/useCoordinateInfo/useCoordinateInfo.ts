@@ -409,13 +409,13 @@ export const useCoordinateInfo = ({
   }, [clickEvent, map, viewProjection, viewResolution]);
 
   /**
-   * Resets featureResults when clickCoordinate changes (drilldown) OR when pixelCoordinate changes (hover).
+   * Resets featureResults when mapCoordinate changes.
    */
   useEffect(() => {
     if (!_isNil(mapCoordinate)) {
       setFeatureResults(undefined);
     }
-  }, [mapCoordinate, pixelCoordinate, drillDown]);
+  }, [mapCoordinate]);
 
   useEffect(() => {
     if (loading) {
