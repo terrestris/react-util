@@ -32,6 +32,7 @@ import {
 } from '@terrestris/ol-util';
 
 import useMap from '../useMap/useMap';
+import useOlListener from '../useOlListener/useOlListener';
 
 export interface FeatureLayerResult {
   feature: OlFeature;
@@ -83,16 +84,25 @@ export const useCoordinateInfo = ({
 
   const map = useMap();
 
+  const mapView = useMemo(() => map?.getView(), [map]);
+
   const [mapCoordinate, setMapCoordinate] = useState<OlCoordinate | undefined>();
   const [pixelCoordinate, setPixelCoordinate] = useState<OlPixel | undefined>();
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [viewResolution, setViewResolution] = useState<number | undefined>(mapView?.getResolution());
 
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
 
-  const mapView = useMemo(() => map?.getView(), [map]);
-  const viewResolution = useMemo(() => mapView?.getResolution(), [mapView]);
   const viewProjection = useMemo(() => mapView?.getProjection(), [mapView]);
+
+  useOlListener(
+    mapView,
+    v => v.on('change:resolution', () => {
+      setViewResolution(v.getResolution());
+    }),
+    [mapView]
+  );
 
   const wmsMapLayers = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
@@ -143,7 +153,6 @@ export const useCoordinateInfo = ({
     });
 
     // todo: migrate to set of uids to avoid hook issues when relevantLayers change
-    // return relevantLayers.map(l => getUid(l));
     return relevantLayers;
   }, [map, wfsMapLayers, wmtsMapLayers, wmsMapLayers]);
 
