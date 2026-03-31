@@ -1,3 +1,14 @@
+## [12.4.2](https://github.com/terrestris/react-util/compare/v12.4.1...v12.4.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* a bug that prevents queries for multiple layers ([8648ac1](https://github.com/terrestris/react-util/commit/8648ac173004eb22633299ea63c05f5559674b8f))
+* fix issues with duplicated requests ([05d61ac](https://github.com/terrestris/react-util/commit/05d61ac87edb478994fc1e2f861b90bf0839826e))
+* simplify getUidmapping function ([1341c00](https://github.com/terrestris/react-util/commit/1341c00babe2bcf8243b7ec7b6a0e814648c68da))
+* update featureResults hook ([175d961](https://github.com/terrestris/react-util/commit/175d961eda7e854e2ec3382678ebdfd933d7422b))
+* use useOlListener to get updated view resolution ([608fbb1](https://github.com/terrestris/react-util/commit/608fbb13472b45f41082ac5d865fd178c709565d))
+
 ## [12.4.1](https://github.com/terrestris/react-util/compare/v12.4.0...v12.4.1) (2026-03-11)
 
 
