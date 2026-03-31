@@ -139,7 +139,7 @@ export const useCoordinateInfo = ({
 
   const orderedLayerUids = useMemo(() => {
     if (_isNil(map)) {
-      return new Set<string>();
+      return [];
     }
     const all = map.getAllLayers().reverse();
     const relevantLayers = map.getAllLayers()
@@ -159,7 +159,7 @@ export const useCoordinateInfo = ({
       return aIndex - bIndex;
     });
 
-    return new Set(relevantLayers.map(getUid));
+    return relevantLayers.map(getUid);
   }, [map, wfsMapLayerUids, wmtsMapLayerUids, wmsMapLayerUids]);
 
   /**
@@ -437,7 +437,7 @@ export const useCoordinateInfo = ({
       return;
     }
 
-    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayerUids?.size === 0) {
+    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayerUids?.length === 0) {
       return;
     }
 
@@ -475,16 +475,20 @@ export const useCoordinateInfo = ({
           } else if (isWfsLayer(layer)) {
             promises.push(getResultsFromWfsLayers(mapCoordinate));
           }
-          if (!drillDown) {
-            break;
-          }
         }
 
-        let allResults: FeatureLayerResult[][];
-        if (drillDown) {
-          allResults = await Promise.all(promises);
-        } else {
-          const firstResult = await Promise.race(promises);
+        let allResults: FeatureLayerResult[][] = await Promise.all(promises);
+        allResults = await Promise.all(promises);
+
+        if (!drillDown) {
+          // filter empty results, order by layer index and return the first layer found
+          const firstResult = allResults
+            .filter(r => r.length > 0)
+            .sort((a, b) => {
+              const aIdx = orderedLayerUids.indexOf(getUid(a[0].layer));
+              const bIdx = orderedLayerUids.indexOf(getUid(b[0].layer));
+              return aIdx - bIdx;
+            })[0] ?? [];
           allResults = [firstResult];
         }
 
