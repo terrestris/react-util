@@ -32,10 +32,11 @@ import {
 } from '@terrestris/ol-util';
 
 import useMap from '../useMap/useMap';
+import useOlListener from '../useOlListener/useOlListener';
 
 export interface FeatureLayerResult {
   feature: OlFeature;
-  layer: WmsLayer|WmtsLayer|WfsLayer;
+  layer: WmsLayer | WmtsLayer | WfsLayer;
   featureType: string;
 }
 
@@ -83,53 +84,69 @@ export const useCoordinateInfo = ({
 
   const map = useMap();
 
-  const [clickCoordinate, setClickCoordinate] = useState<OlCoordinate | undefined>();
+  const mapView = useMemo(() => map?.getView(), [map]);
+
+  const [mapCoordinate, setMapCoordinate] = useState<OlCoordinate | undefined>();
   const [pixelCoordinate, setPixelCoordinate] = useState<OlPixel | undefined>();
   const [featureResults, setFeatureResults] = useState<FeatureLayerResult[] | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [viewResolution, setViewResolution] = useState<number | undefined>(mapView?.getResolution());
 
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
 
-  const mapView = useMemo(() => map?.getView(), [map]);
-  const viewResolution = useMemo(() => mapView?.getResolution(), [mapView]);
   const viewProjection = useMemo(() => mapView?.getProjection(), [mapView]);
 
-  const wmsMapLayers = useMemo(() => {
+  useOlListener(
+    mapView,
+    v => v.on('change:resolution', () => {
+      setViewResolution(v.getResolution());
+    }),
+    [mapView]
+  );
+
+  const wmsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l)) as WmsLayer[];
+      .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const wmtsMapLayers = useMemo(() => {
+  const wmtsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => isWmtsLayer(l)) as WmtsLayer[];
+      .filter(l => isWmtsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const wfsMapLayers = useMemo(() => {
+  const wfsMapLayerUids = useMemo(() => {
     if (_isNil(map) || _isNil(pixelCoordinate)) {
       return [];
     }
     return map.getAllLayers()
       .reverse()
       .filter(layerFilter)
-      .filter(l => isWfsLayer(l)) as WfsLayer[];
+      .filter(l => isWfsLayer(l))
+      .map(getUid);
   }, [layerFilter, map, pixelCoordinate]);
 
-  const orderedLayers = useMemo(() => {
+  const orderedLayerUids = useMemo(() => {
     if (_isNil(map)) {
       return [];
     }
     const all = map.getAllLayers().reverse();
-    const relevantLayers = [...wfsMapLayers, ...wmtsMapLayers, ...wmsMapLayers];
+    const relevantLayers = map.getAllLayers()
+      .filter(l => {
+        const uid = getUid(l);
+        return wfsMapLayerUids.includes(uid) || wmtsMapLayerUids.includes(uid) || wmsMapLayerUids.includes(uid);
+      });
 
     relevantLayers.sort((a, b) => {
       if (_isNil(a) || _isNil(b)) {
@@ -142,8 +159,8 @@ export const useCoordinateInfo = ({
       return aIndex - bIndex;
     });
 
-    return relevantLayers;
-  }, [map, wfsMapLayers, wmtsMapLayers, wmsMapLayers]);
+    return relevantLayers.map(getUid);
+  }, [map, wfsMapLayerUids, wmtsMapLayerUids, wmsMapLayerUids]);
 
   /**
    * Event handler for pointer move events on the map.
@@ -253,14 +270,18 @@ export const useCoordinateInfo = ({
     }
 
     const results: FeatureLayerResult[] = [];
-    const layers = useWms ? wmsMapLayers : wmtsMapLayers;
+    const layerUids = useWms ? wmsMapLayerUids : wmtsMapLayerUids;
 
-    for (const layer of layers) {
+    for (const layerId of layerUids) {
       try {
-        const layerId = getUid(layer);
         const abortController = abortControllers.current.get(layerId);
 
         if (! abortController) {
+          continue;
+        }
+
+        const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WmsLayer | WmtsLayer | undefined;
+        if (!layer) {
           continue;
         }
 
@@ -305,7 +326,7 @@ export const useCoordinateInfo = ({
           if (fetchOpts instanceof Function) {
             opts = fetchOpts(layer);
           } else {
-            opts = fetchOpts[getUid(layer)];
+            opts = fetchOpts[layerId];
           }
 
           const response = await fetch(featureInfoUrl, {
@@ -338,7 +359,7 @@ export const useCoordinateInfo = ({
     }
 
     return results;
-  }, [map, viewResolution, viewProjection, wmsMapLayers, wmtsMapLayers,
+  }, [map, viewResolution, viewProjection, wmsMapLayerUids, wmtsMapLayerUids,
     getInfoFormat, featureCount, fetchOpts, drillDown]);
 
   const getResultsFromWfsLayers = useCallback(async (
@@ -350,9 +371,14 @@ export const useCoordinateInfo = ({
 
     const results: FeatureLayerResult[] = [];
 
-    for (const layer of wfsMapLayers) {
+    for (const layerId of wfsMapLayerUids) {
       if (! drillDown && results.length > 0) {
         break;
+      }
+
+      const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WfsLayer | undefined;
+      if (!layer) {
+        continue;
       }
 
       const wfsLayerSource = layer.getSource();
@@ -368,7 +394,7 @@ export const useCoordinateInfo = ({
     }
 
     return results;
-  }, [map, viewProjection, wfsMapLayers, drillDown]);
+  }, [map, viewProjection, wfsMapLayerUids, drillDown]);
 
   /**
    * Event handler for map events (click, double-click, pointer rest) that retrieves the coordinate of the
@@ -393,18 +419,25 @@ export const useCoordinateInfo = ({
 
     const clonedCoordinate = _cloneDeep(coordinate);
     const clonedPixelCoordinate = _cloneDeep(evtPixelCoordinate ?? pixel);
-    setClickCoordinate(clonedCoordinate);
+    setMapCoordinate(clonedCoordinate);
     setPixelCoordinate(clonedPixelCoordinate);
   }, [clickEvent, map, viewProjection, viewResolution]);
 
+  /**
+   * Resets featureResults when mapCoordinate changes.
+   */
   useEffect(() => {
-    if (!_isNil(clickCoordinate)) {
+    if (!_isNil(mapCoordinate)) {
       setFeatureResults(undefined);
     }
-  }, [clickCoordinate]);
+  }, [mapCoordinate]);
 
   useEffect(() => {
-    if (_isNil(clickCoordinate) || _isNil(map) || orderedLayers?.length === 0) {
+    if (loading) {
+      return;
+    }
+
+    if (_isNil(mapCoordinate) || _isNil(map) || orderedLayerUids?.length === 0) {
       return;
     }
 
@@ -415,37 +448,47 @@ export const useCoordinateInfo = ({
     abortControllers.current.forEach(controller => controller.abort());
     abortControllers.current.clear();
 
-    orderedLayers.forEach(layer => {
-      const layerId = getUid(layer);
+    orderedLayerUids.forEach(uid => {
       const abortController = new AbortController();
-      abortControllers. current.set(layerId, abortController);
+      abortControllers.current.set(uid, abortController);
     });
 
     const fetchFeatures = async () => {
       try {
         setLoading(true);
+        setFeatureResults(undefined);
 
         const promises: Promise<FeatureLayerResult[]>[] = [];
+        const allRelevantLayerUids = [...wfsMapLayerUids, ...wmtsMapLayerUids, ...wmsMapLayerUids];
 
-        for (const layer of orderedLayers) {
-          if (isWmsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(clickCoordinate, true));
-          } else if (isWmtsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(clickCoordinate, false));
-          } else if (isWfsLayer(layer)) {
-            promises.push(getResultsFromWfsLayers(clickCoordinate));
+        for (const uid of orderedLayerUids) {
+          const layerId = allRelevantLayerUids.find(id => id === uid);
+          const layer = map.getAllLayers().find(l => getUid(l) === layerId);
+
+          if (!layer) {
+            continue;
           }
-
-          if (!drillDown) {
-            break;
+          if (isWmsLayer(layer)) {
+            promises.push(getResultsFromImageLayers(mapCoordinate, true));
+          } else if (isWmtsLayer(layer)) {
+            promises.push(getResultsFromImageLayers(mapCoordinate, false));
+          } else if (isWfsLayer(layer)) {
+            promises.push(getResultsFromWfsLayers(mapCoordinate));
           }
         }
 
-        let allResults: FeatureLayerResult[][];
-        if (drillDown) {
-          allResults = await Promise.all(promises);
-        } else {
-          const firstResult = await Promise.race(promises);
+        let allResults: FeatureLayerResult[][] = await Promise.all(promises);
+        allResults = await Promise.all(promises);
+
+        if (!drillDown) {
+          // filter empty results, order by layer index and return the first layer found
+          const firstResult = allResults
+            .filter(r => r.length > 0)
+            .sort((a, b) => {
+              const aIdx = orderedLayerUids.indexOf(getUid(a[0].layer));
+              const bIdx = orderedLayerUids.indexOf(getUid(b[0].layer));
+              return aIdx - bIdx;
+            })[0] ?? [];
           allResults = [firstResult];
         }
 
@@ -468,10 +511,13 @@ export const useCoordinateInfo = ({
     });
 
   }, [
-    clickCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayers,
-    onError, onSuccess
+    mapCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayerUids,
+    onError, onSuccess, loading, wfsMapLayerUids, wmsMapLayerUids, wmtsMapLayerUids
   ]);
 
+  /**
+   * (Re)creates map event listeners whenever relevant props change (active, drilldown, clickEvent).
+   */
   useEffect(() => {
     let keyMove: EventsKey | undefined;
     let keyRest: EventsKey | undefined;
@@ -481,11 +527,11 @@ export const useCoordinateInfo = ({
         keyClick = map?.on(clickEvent, handleMapEvent);
       }
 
-      if (registerOnPointerMove) {
+      if (registerOnPointerMove && !drillDown) {
         keyMove = map?.on('pointermove', onPointerMove);
       }
 
-      if (registerOnPointerRest) {
+      if (registerOnPointerRest && !drillDown) {
         // @ts-expect-error pointerrest is no default event
         keyRest = map?.on('pointerrest', handleMapEvent);
       }
@@ -507,7 +553,7 @@ export const useCoordinateInfo = ({
     };
   }, [
     active, map, onPointerMove, handleMapEvent, registerOnClick,
-    registerOnPointerMove, registerOnPointerRest, clickEvent
+    registerOnPointerMove, registerOnPointerRest, clickEvent, drillDown
   ]);
 
   useEffect(() => {
@@ -518,6 +564,9 @@ export const useCoordinateInfo = ({
     };
   }, [viewResolution]);
 
+  /**
+   * Update mouse cursor when GFI is loading.
+   */
   useEffect(() => {
     if (_isNil(map)) {
       return;
@@ -528,7 +577,7 @@ export const useCoordinateInfo = ({
   // We want to propagate the state here so the variables do
   // not change on every render cycle.
   return {
-    clickCoordinate,
+    clickCoordinate: mapCoordinate,
     features: featureResults,
     loading,
     pixelCoordinate
