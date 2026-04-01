@@ -263,107 +263,104 @@ export const useCoordinateInfo = ({
   };
 
   const getResultsFromImageLayers = useCallback(async (
-    coordinate: OlCoordinate,
-    useWms: boolean
+    layerId: string,
+    coordinate: OlCoordinate
   ): Promise<FeatureLayerResult[]> => {
     if (_isNil(map) || _isNil(viewResolution) || _isNil(viewProjection)) {
       return [];
     }
 
     const results: FeatureLayerResult[] = [];
-    const layerUids = useWms ? wmsMapLayerUids : wmtsMapLayerUids;
 
-    for (const layerId of layerUids) {
-      try {
-        const abortController = abortControllers.current.get(layerId);
+    try {
+      const abortController = abortControllers.current.get(layerId);
 
-        if (! abortController) {
-          continue;
+      if (! abortController) {
+        return [];
+      }
+
+      const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WmsLayer | WmtsLayer | undefined;
+      if (!layer) {
+        return [];
+      }
+
+      const layerSource = layer.getSource();
+      if (!layerSource) {
+        return [];
+      }
+
+      const infoFormat = await getInfoFormat(layer);
+      let featureInfoUrl;
+
+      if (isWmsLayer(layer) && !(layerSource instanceof OlSourceWmts)) {
+        featureInfoUrl = layerSource.getFeatureInfoUrl(
+          coordinate,
+          viewResolution,
+          viewProjection,
+          {
+            INFO_FORMAT: infoFormat,
+            FEATURE_COUNT: featureCount
+          }
+        );
+      } else {
+        const wmtsLayerSource = layer.getSource() as OlSourceWmts;
+        const tileGrid = wmtsLayerSource.getTileGrid() as OlTileGridWMTS;
+        if (_isNil(tileGrid)) {
+          return [];
         }
 
-        const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WmsLayer | WmtsLayer | undefined;
-        if (!layer) {
-          continue;
-        }
+        const featureInfoTemplates = layer.get('featureInfoTemplates') as Record<string, string>;
 
-        const layerSource = layer.getSource();
-        if (!layerSource) {
-          continue;
-        }
+        featureInfoUrl = determineWmtsFeatureInfoUrl(
+          featureInfoTemplates[infoFormat],
+          tileGrid,
+          coordinate,
+          viewResolution,
+          wmtsLayerSource.getMatrixSet()
+        );
+      }
 
-        const infoFormat = await getInfoFormat(layer);
-        let featureInfoUrl;
-
-        if (isWmsLayer(layer) && !(layerSource instanceof OlSourceWmts)) {
-          featureInfoUrl = layerSource.getFeatureInfoUrl(
-            coordinate,
-            viewResolution,
-            viewProjection,
-            {
-              INFO_FORMAT: infoFormat,
-              FEATURE_COUNT: featureCount
-            }
-          );
+      if (featureInfoUrl) {
+        let opts;
+        if (fetchOpts instanceof Function) {
+          opts = fetchOpts(layer);
         } else {
-          const wmtsLayerSource = layer.getSource() as OlSourceWmts;
-          const tileGrid = wmtsLayerSource.getTileGrid() as OlTileGridWMTS;
-          if (_isNil(tileGrid)) {
-            continue;
-          }
-
-          const featureInfoTemplates = layer.get('featureInfoTemplates') as Record<string, string>;
-
-          featureInfoUrl = determineWmtsFeatureInfoUrl(
-            featureInfoTemplates[infoFormat],
-            tileGrid,
-            coordinate,
-            viewResolution,
-            wmtsLayerSource.getMatrixSet()
-          );
+          opts = fetchOpts[layerId];
         }
 
-        if (featureInfoUrl) {
-          let opts;
-          if (fetchOpts instanceof Function) {
-            opts = fetchOpts(layer);
-          } else {
-            opts = fetchOpts[layerId];
-          }
+        const response = await fetch(featureInfoUrl, {
+          ...opts,
+          signal: abortController.signal
+        });
 
-          const response = await fetch(featureInfoUrl, {
-            ...opts,
-            signal: abortController.signal
-          });
+        const format = determineInfoFormatter(infoFormat);
+        const isJson = infoFormat === 'application/json' || infoFormat.indexOf('json') > -1;
+        const text = isJson ? await response.json() : await response.text();
 
-          const format = determineInfoFormatter(infoFormat);
-          const isJson = infoFormat === 'application/json' || infoFormat.indexOf('json') > -1;
-          const text = isJson ? await response.json() : await response.text();
-
-          if (! _isNil(format)) {
-            const features = format.readFeatures(text).map(f => ({
-              feature: f,
-              layer,
-              featureType: getFeatureType(f)
-            }));
-            results.push(...features);
-          }
+        if (! _isNil(format)) {
+          const features = format.readFeatures(text).map(f => ({
+            feature: f,
+            layer,
+            featureType: getFeatureType(f)
+          }));
+          results.push(...features);
         }
-        if (!drillDown && results.length > 0) {
-          break;
-        }
+      }
+      if (!drillDown && results.length > 0) {
+        return results;
+      }
 
-      } catch (error: any) {
-        if (error.name !== 'AbortError') {
-          Logger.error(error);
-        }
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        Logger.error(error);
       }
     }
 
     return results;
-  }, [map, viewResolution, viewProjection, wmsMapLayerUids, wmtsMapLayerUids,
-    getInfoFormat, featureCount, fetchOpts, drillDown]);
+  }, [map, viewResolution, viewProjection, getInfoFormat, featureCount, fetchOpts, drillDown]);
 
   const getResultsFromWfsLayers = useCallback(async (
+    layer: WfsLayer,
     coordinate: OlCoordinate
   ): Promise<FeatureLayerResult[]> => {
     if (_isNil(map) || _isNil(viewProjection)) {
@@ -372,30 +369,18 @@ export const useCoordinateInfo = ({
 
     const results: FeatureLayerResult[] = [];
 
-    for (const layerId of wfsMapLayerUids) {
-      if (! drillDown && results.length > 0) {
-        break;
-      }
-
-      const layer = map.getAllLayers().find(l => getUid(l) === layerId) as WfsLayer | undefined;
-      if (!layer) {
-        continue;
-      }
-
-      const wfsLayerSource = layer.getSource();
-      if (!wfsLayerSource) {
-        continue;
-      }
-
-      results.push(...wfsLayerSource.getFeaturesAtCoordinate(coordinate).map(f => ({
-        feature: f,
-        layer,
-        featureType: getFeatureType(f)
-      })));
+    const wfsLayerSource = layer.getSource();
+    if (!wfsLayerSource) {
+      return [];
     }
 
+    results.push(...wfsLayerSource.getFeaturesAtCoordinate(coordinate).map(f => ({
+      feature: f,
+      layer,
+      featureType: getFeatureType(f)
+    })));
     return results;
-  }, [map, viewProjection, wfsMapLayerUids, drillDown]);
+  }, [map, viewProjection]);
 
   /**
    * Event handler for map events (click, double-click, pointer rest) that retrieves the coordinate of the
@@ -467,15 +452,15 @@ export const useCoordinateInfo = ({
           const layerId = allRelevantLayerUids.find(id => id === uid);
           const layer = map.getAllLayers().find(l => getUid(l) === layerId);
 
-          if (!layer) {
+          if (!layer || !layerId) {
             continue;
           }
           if (isWmsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(mapCoordinate, true));
+            promises.push(getResultsFromImageLayers(layerId, mapCoordinate));
           } else if (isWmtsLayer(layer)) {
-            promises.push(getResultsFromImageLayers(mapCoordinate, false));
+            promises.push(getResultsFromImageLayers(layerId, mapCoordinate));
           } else if (isWfsLayer(layer)) {
-            promises.push(getResultsFromWfsLayers(mapCoordinate));
+            promises.push(getResultsFromWfsLayers(layer, mapCoordinate));
           }
         }
 
