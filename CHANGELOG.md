@@ -1,3 +1,10 @@
+## [12.4.4](https://github.com/terrestris/react-util/compare/v12.4.3...v12.4.4) (2026-04-01)
+
+
+### Bug Fixes
+
+* pass layer / layerId directly to getResultsFromImageLayers ([a09b766](https://github.com/terrestris/react-util/commit/a09b766f7922966daa257fa0fe043e0d311ba5fa))
+
 ## [12.4.3](https://github.com/terrestris/react-util/compare/v12.4.2...v12.4.3) (2026-04-01)
 
 
