@@ -109,7 +109,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l))
       .map(getUid);
@@ -120,7 +120,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => isWmtsLayer(l))
       .map(getUid);
@@ -131,7 +131,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => isWfsLayer(l))
       .map(getUid);
@@ -141,7 +141,7 @@ export const useCoordinateInfo = ({
     if (_isNil(map)) {
       return [];
     }
-    const all = map.getAllLayers().reverse();
+    const all = map.getAllLayers().toReversed();
     const relevantLayers = map.getAllLayers()
       .filter(l => {
         const uid = getUid(l);
