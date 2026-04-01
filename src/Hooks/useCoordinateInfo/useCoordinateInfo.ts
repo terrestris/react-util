@@ -93,6 +93,7 @@ export const useCoordinateInfo = ({
   const [viewResolution, setViewResolution] = useState<number | undefined>(mapView?.getResolution());
 
   const abortControllers = useRef<Map<string, AbortController>>(new Map());
+  const isFetchingRef = useRef<boolean>(false);
 
   const viewProjection = useMemo(() => mapView?.getProjection(), [mapView]);
 
@@ -109,7 +110,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => l.getData && l.getData(pixelCoordinate) && isWmsLayer(l))
       .map(getUid);
@@ -120,7 +121,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => isWmtsLayer(l))
       .map(getUid);
@@ -131,7 +132,7 @@ export const useCoordinateInfo = ({
       return [];
     }
     return map.getAllLayers()
-      .reverse()
+      .toReversed()
       .filter(layerFilter)
       .filter(l => isWfsLayer(l))
       .map(getUid);
@@ -141,7 +142,7 @@ export const useCoordinateInfo = ({
     if (_isNil(map)) {
       return [];
     }
-    const all = map.getAllLayers().reverse();
+    const all = map.getAllLayers().toReversed();
     const relevantLayers = map.getAllLayers()
       .filter(l => {
         const uid = getUid(l);
@@ -433,7 +434,7 @@ export const useCoordinateInfo = ({
   }, [mapCoordinate]);
 
   useEffect(() => {
-    if (loading) {
+    if (isFetchingRef.current) {
       return;
     }
 
@@ -455,6 +456,7 @@ export const useCoordinateInfo = ({
 
     const fetchFeatures = async () => {
       try {
+        isFetchingRef.current = true;
         setLoading(true);
         setFeatureResults(undefined);
 
@@ -478,7 +480,6 @@ export const useCoordinateInfo = ({
         }
 
         let allResults: FeatureLayerResult[][] = await Promise.all(promises);
-        allResults = await Promise.all(promises);
 
         if (!drillDown) {
           // filter empty results, order by layer index and return the first layer found
@@ -498,7 +499,7 @@ export const useCoordinateInfo = ({
         setFeatureResults(clonedResults);
         onSuccess?.();
       } catch (error: any) {
-        if (error. name !== 'AbortError') {
+        if (error.name !== 'AbortError') {
           Logger.error(error);
         }
         onError?.(error);
@@ -506,13 +507,14 @@ export const useCoordinateInfo = ({
     };
 
     fetchFeatures().finally(() => {
+      isFetchingRef.current = false;
       setLoading(false);
       map.getTargetElement().style.cursor = 'auto';
     });
 
   }, [
     mapCoordinate, drillDown, featureResults, getResultsFromImageLayers, getResultsFromWfsLayers, map, orderedLayerUids,
-    onError, onSuccess, loading, wfsMapLayerUids, wmsMapLayerUids, wmtsMapLayerUids
+    onError, onSuccess, wfsMapLayerUids, wmsMapLayerUids, wmtsMapLayerUids
   ]);
 
   /**
