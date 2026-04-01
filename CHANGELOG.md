@@ -1,3 +1,11 @@
+## [12.4.3](https://github.com/terrestris/react-util/compare/v12.4.2...v12.4.3) (2026-04-01)
+
+
+### Bug Fixes
+
+* infinite reload issues ([c9eef83](https://github.com/terrestris/react-util/commit/c9eef83e0a62c669b7f3b1a0ad4f2f87a32edf11))
+* use toReversed instead of reverse ([157327e](https://github.com/terrestris/react-util/commit/157327e823747bd8fd74e105699c9c6c26f072ff))
+
 ## [12.4.2](https://github.com/terrestris/react-util/compare/v12.4.1...v12.4.2) (2026-03-31)
 
 
