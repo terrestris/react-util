@@ -79,7 +79,7 @@
     "jest-fetch-mock": "4.2.0",
     "jspdf": "^3.0.1",
     "ol": "10.10.0",
-    "ol-mapbox-style": "12.6.1",
+    "ol-mapbox-style": "13.4.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "rimraf": "6.1.3",
