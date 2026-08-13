@@ -59,7 +59,7 @@
     "@terrestris/eslint-config-typescript": "10.0.0",
     "@terrestris/eslint-config-typescript-react": "6.0.0",
     "@terrestris/ol-util": "21.3.2",
-    "@testing-library/jest-dom": "7.0.0",
+    "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.2",
     "@types/geojson": "7946.0.16",
     "@types/jest": "29.5.14",
