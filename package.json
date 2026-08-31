@@ -75,7 +75,7 @@
     "fs-extra": "11.4.0",
     "globals": "17.11.0",
     "jest": "29.7.0",
-    "jest-environment-jsdom": "30.4.1",
+    "jest-environment-jsdom": "30.5.0",
     "jest-fetch-mock": "4.2.0",
     "jspdf": "^3.0.1",
     "ol": "10.10.0",
